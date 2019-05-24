@@ -1,0 +1,21 @@
+Fractal Language Thoughts
+-------------------------
+
+Node Types:
+Constant
+Variable
+Binary Operation
+Function Call
+
+2nd stage:
+Variable declaration
+Variable assignment
+Function assignment
+
+3rd? stage:
+Class/Structure things?
+
+Should variables have types? If possible, yes.
+Should variables be re-assignable? If possible, yes.
+Should there be function definitions? If possible, yes.
+Should function definitions have references to all variables in their creation's scope? If possible, yes.

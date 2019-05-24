@@ -1,0 +1,23 @@
+Subprojects:
+generatorapi        -- contains the api that a fractal generator implements
+generatorsimple     -- contains a simple implementation of the fractal generator api
+generatorthreaded   -- contains a multithreaded implementation of the fractal generator api
+generatornative     -- contains an experimental system for compiling fractal language into native bytecode
+generatorgpu        -- contains a gpu-based implementation of the fractal generator api
+generatormanager    -- contains a system for managing multiple sub-fractal generators
+netslave            -- contains a networking system for running fractal generators on its system based on network commands
+netmaster           -- contains a networking system for issuing commands to networked slave systems
+simplefractalapp    -- contains a commandline interface application for generating fractals
+
+Fractal api interface:
+Requirements:
+ - has a uniform interface wrapping each generator
+ - exposes special functionality specific to some generators
+     * things like if the system has multiple gpus, which gpu the generator should run on
+     * or if the implementation is a manager, which sub-generators it should use and the configurations for those
+ - not clunky
+ - easily configurable for each backend
+ - chainable when using sub-generators
+
+Thoughts:
+Potentially a simple interface for the uniform piece and relying on each implementation's interface for implementation-specific details, like configuration, specificly like when initializing a fractal generator.
