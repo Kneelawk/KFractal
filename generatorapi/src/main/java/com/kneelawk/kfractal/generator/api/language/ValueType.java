@@ -1,4 +1,5 @@
 package com.kneelawk.kfractal.generator.api.language;
 
-public interface IBinaryOperationStatement {
+public enum ValueType {
+	BOOL, COMPLEX, FUNCTION
 }

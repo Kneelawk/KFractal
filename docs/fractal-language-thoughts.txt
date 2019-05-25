@@ -6,6 +6,7 @@ Constant
 Variable
 Binary Operation
 Function Call
+Block
 
 2nd stage:
 Variable declaration
