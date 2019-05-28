@@ -1,0 +1,42 @@
+Programs have:
+ * Global Variable Declarations
+ * Structures?
+ * Functions
+
+All Functions have a type.
+All Functions are base-level.
+
+Variable values of function type simply reference a function,
+just like how variables of bool type "reference" true or false
+or how variables of complex type "reference" complex numbers.
+
+Variable values of function type also contain context variables.
+These context variables can be pointers, or normal variables.
+
+Variables would have types:
+ * Void (not valid for variable types, but valid for function return types)
+ * Bool
+ * Real (double)
+ * Complex (is likely a structure in implementations)
+ * Function (contains a function pointer or name, and context variables) (is derived type)
+    (type signature depends on target function's signature) (context variable types can be verified at compile type
+    when creating the function variable)
+ * Pointer (backing memory must be explicitly allocated. can have backing memory of any of these variable types)
+    (backing memory may be subject to reference-counting, or garbage collection) (is derived type)
+ * Structure (is derived type) (maybe shouldn't have this) (can-of-worms)
+
+Functions would have:
+ * Name
+ * Return Type
+ * Context Variable Declarations (in practice, context variables would likely be part of the arguments list, but would
+    come from the function variable's stored set of context variables)
+ * Argument Variable Declarations
+ * Local Variable Declarations
+ * Instructions
+
+Some Instructions could be:
+ * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the result in the first)
+ * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the result in the first)
+ * PointerAllocate(Pointer(*)) (allocates memory and stores the reference to that memory in the argument)
+
+// TODO: Add more when have enough time

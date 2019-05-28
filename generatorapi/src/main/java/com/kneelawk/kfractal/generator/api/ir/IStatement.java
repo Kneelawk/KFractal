@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.language;
+package com.kneelawk.kfractal.generator.api.ir;
 
 public interface IStatement {
 	void accept(IStatementVisitor visitor);

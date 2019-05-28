@@ -1,6 +1,8 @@
 package com.kneelawk.kfractal.generator.api.language;
 
 import com.google.common.collect.ImmutableList;
+import com.kneelawk.kfractal.generator.api.ir.IStatement;
+import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
 
 import java.util.List;
 

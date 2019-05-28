@@ -1,5 +1,9 @@
 package com.kneelawk.kfractal.generator.api.language;
 
+import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
+import com.kneelawk.kfractal.generator.api.ir.IStatement;
+import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import org.apache.commons.math3.complex.Complex;
 
 public class ConstantStatement implements IStatement {

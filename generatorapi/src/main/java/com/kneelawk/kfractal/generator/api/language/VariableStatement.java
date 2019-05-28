@@ -1,5 +1,8 @@
 package com.kneelawk.kfractal.generator.api.language;
 
+import com.kneelawk.kfractal.generator.api.ir.IStatement;
+import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+
 public class VariableStatement implements IStatement {
 	private String name;
 

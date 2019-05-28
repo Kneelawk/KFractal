@@ -1,10 +1,13 @@
-package com.kneelawk.kfractal.generator.api.language;
+package com.kneelawk.kfractal.generator.api.ir;
 
-public class VariableDefinition {
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+public class VariableDeclaration {
 	private ValueType type;
 	private String name;
 
-	private VariableDefinition(ValueType type, String name) {
+	private VariableDeclaration(ValueType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
@@ -15,6 +18,14 @@ public class VariableDefinition {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("type", type)
+				.append("name", name)
+				.toString();
 	}
 
 	public static class Builder {
@@ -29,8 +40,8 @@ public class VariableDefinition {
 			this.name = name;
 		}
 
-		public VariableDefinition build() {
-			return new VariableDefinition(type, name);
+		public VariableDeclaration build() {
+			return new VariableDeclaration(type, name);
 		}
 
 		public ValueType getType() {
