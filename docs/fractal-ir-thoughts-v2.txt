@@ -1,6 +1,6 @@
 Programs have:
  * Global Variable Declarations
- * Structures?
+ * Structures? // No, structure types are described by their contents, not by their names
  * Functions
 
 All Functions have a type.
@@ -38,5 +38,146 @@ Some Instructions could be:
  * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the result in the first)
  * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the result in the first)
  * PointerAllocate(Pointer(*)) (allocates memory and stores the reference to that memory in the argument)
+ * FunctionCall(Function(*), *, [ ** ]) (calls a function with its context if it has any) (all variables are copied,
+    Pointers maintain their reference though, so setting the referenced value of a pointer here will set in other places
+    too.)
+ * Return(*) (exits the current function and returns control flow over to the parent function, variables declared in the
+    current function are de-allocated, including Pointers. If pointers are using a reference-counting system, this is
+    where the referenced value would decrease its number of references.)
 
-// TODO: Add more when have enough time
+Some InstructionIOs could be:
+ * VariableReference
+ * BoolConstant
+ * RealConstant
+ * ComplexConstant
+ * FunctionContext
+ * PointerTargetReference
+
+Simple Program:
+Program(
+[ ],
+[
+    "main"=FunctionDefinition(
+        "main", // name
+        COMPLEX, // return type
+        [ ], // context variables
+        [ // arguments
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [ // local variables
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX)
+        ],
+        [ // instructions
+            ComplexMultiply(VariableReference("tmp0"), VariableReference("z"), VariableReference("z")),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("tmp0"), VariableReference("c")),
+            Return("tmp0")
+        ]
+    )
+]
+)
+Easy, simple. Memory management is not nearly so much of an issue now because each declaration comes with its own
+allocated piece of memory. Only Pointers have to have explicitly allocated memory, and that's just because the data they
+hold is the reference to memory.
+
+Slightly more complicated program:
+Program(
+[ ],
+[
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [
+            "z2"=VariableDeclaration("z2", COMPLEX),
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX)
+        ],
+        [
+            ComplexMultiply(VariableReference("z2"), VariableReference("z"), VariableReference("z")),
+            FunctionCall(FunctionContext("cos", [ ]), VariableReference("tmp0"), [ VariableReference("z2") ]),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("z2"), VariableReference("tmp0")),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("tmp0"), VariableReference("c")),
+            Return("tmp0")
+        ]
+    )
+]
+)
+
+Composition Test Program:
+Program(
+[ ],
+[
+    "a"=FunctionDeclaration(
+        "a",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            ComplexAdd(VariableReference("tmp0"), VariableReference("x"), ComplexConstant((2 + 0i))),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "b"=FunctionDeclaration(
+        "b",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            ComplexMultiply(VariableReference("tmp0"), VariableReference("x"), ComplexConstant((2 + 0i))),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "compose"=FunctionDeclaration(
+        "compose",
+        FUNCTION(COMPLEX, [ COMPLEX ]),
+        [ ],
+        [
+            "f1"=VariableDeclaration("f1", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "f2"=VariableDeclaration("f2", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [ ],
+        [
+            Return(FunctionContext("compose$1", [ VariableReference("f1"), VariableReference("f2") ]))
+        ]
+    ),
+    "compose$1"=FunctionDeclaration(
+        "compose$1",
+        COMPLEX,
+        [
+            "f"=VariableDeclaration("f", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "g"=VariableDeclaration("g", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            FunctionCall(VariableReference("f"), VariableReference("tmp0"), [ VariableReference("x") ]),
+            FunctionCall(VariableReference("g"), VariableReference("tmp0"), [ VariableReference("tmp0") ]),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "main"=FunctionDeclaration(
+        "main",
+        COMPLEX,
+        [ ],
+        [
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [
+            "tmp0"=VariableDeclaration("tmp0", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "tmp1"=VariableDeclaration("tmp1", COMPLEX)
+        ],
+        [
+            FunctionCall(FunctionContext("compose", [ ]), VariableReference("tmp0"), [ FunctionContext("a", [ ]), FunctionContext("b" [ ]) ]),
+            FunctionCall(VariableReference("tmp0"), VariableReference("tmp1"), [ ComplexConstant((2 + 0i)) ]),
+            Return(VariableReference("tmp1"))
+        ]
+    )
+]
+)
