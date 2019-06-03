@@ -1,6 +1,8 @@
 Programs have:
  * Global Variable Declarations
- * Structures? // No, structure types are described by their contents, not by their names
+ * Structures? // No, structure types are described by their contents, not by their names. No structure types must have
+    type names. Otherwise, it would be impossible to have a structure that contains pointers to itself or structures
+    containing itself.
  * Functions
 
 All Functions have a type.
@@ -56,6 +58,7 @@ Some InstructionIOs could be:
 Simple Program:
 Program(
 [ ],
+[ ],
 [
     "main"=FunctionDefinition(
         "main", // name
@@ -83,6 +86,7 @@ hold is the reference to memory.
 Slightly more complicated program:
 Program(
 [ ],
+[ ],
 [
     "main"=FunctionDefinition(
         "main",
@@ -107,8 +111,38 @@ Program(
 ]
 )
 
+Program in C:
+struct complex_t complex_add(struct complex_t a, struct complex_t b);
+struct complex_t complex_multiply(struct complex_t a, struct complex_t b);
+struct complex_t cos(struct complex_t x);
+struct complex_t f(struct complex_t z, struct complex_t c) {
+    struct complex_t z2;
+    z2 = complex_multiply(z, z);
+    return complex_add(complex_add(z2, cos(z2)), c);
+}
+
+Program in LLVM Bytecode:
+declare { double, double } @complex_multiply(double, double, double, double)
+declare { double, double } @complex_add(double, double, double, double)
+declare { double, double } @cos(double, double)
+define { double, double } @f(double %z.coerce0, double %z.coerce1, double %c.coerce0, double %c.coerce1) {
+entry:
+  %call = tail call { double, double } @complex_multiply(double %z.coerce0, double %z.coerce1, double %z.coerce0, double %z.coerce1)
+  %0 = extractvalue { double, double } %call, 0
+  %1 = extractvalue { double, double } %call, 1
+  %call2 = tail call { double, double } @cos(double %0, double %1)
+  %2 = extractvalue { double, double } %call2, 0
+  %3 = extractvalue { double, double } %call2, 1
+  %call3 = tail call { double, double } @complex_add(double %0, double %1, double %2, double %3)
+  %4 = extractvalue { double, double } %call3, 0
+  %5 = extractvalue { double, double } %call3, 1
+  %call4 = tail call { double, double } @complex_add(double %4, double %5, double %c.coerce0, double %c.coerce1)
+  ret { double, double } %call4
+}
+
 Composition Test Program:
 Program(
+[ ],
 [ ],
 [
     "a"=FunctionDeclaration(
