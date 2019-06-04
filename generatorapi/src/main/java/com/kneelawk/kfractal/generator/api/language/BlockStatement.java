@@ -2,8 +2,8 @@ package com.kneelawk.kfractal.generator.api.language;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.IInstruction;
-import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
+import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.instruction.IInstructionVisitor;
 
 import java.util.List;
 

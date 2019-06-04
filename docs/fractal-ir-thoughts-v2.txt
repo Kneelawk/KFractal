@@ -61,6 +61,10 @@ Some InstructionIOs could be:
  * FunctionContextConstant
  * NullPointer
 
+InstructionIO type compatibility with Instructions should be validated when the IR is compiled into something else,
+meaning that the IR structure is built in a way that can have mistyped arguments, but hopefully provides enough
+information for a compiler of that IR to be able to detect those mistypes.
+
 Simple Program:
 Program(
 [ ], // global variables

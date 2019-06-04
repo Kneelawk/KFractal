@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

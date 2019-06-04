@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 /**
  * Created by Kneelawk on 5/26/19.

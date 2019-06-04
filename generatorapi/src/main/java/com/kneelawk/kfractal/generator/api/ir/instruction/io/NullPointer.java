@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 public class NullPointer implements IInstructionIO {
 	public static final NullPointer INSTANCE = new NullPointer();

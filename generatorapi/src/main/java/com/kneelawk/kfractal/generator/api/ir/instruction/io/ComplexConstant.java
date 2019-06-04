@@ -1,22 +1,26 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.math3.complex.Complex;
 
-public class RealConstant implements IInstructionIO {
-	private double value;
+/**
+ * Created by Kneelawk on 5/27/19.
+ */
+public class ComplexConstant implements IInstructionIO {
+	private Complex value;
 
-	private RealConstant(double value) {
+	private ComplexConstant(Complex value) {
 		this.value = value;
 	}
 
-	public double getValue() {
+	public Complex getValue() {
 		return value;
 	}
 
 	@Override
 	public void accept(IInstructionIOVisitor visitor) {
-		visitor.visitRealConstant(this);
+		visitor.visitComplexConstant(this);
 	}
 
 	@Override
@@ -27,24 +31,24 @@ public class RealConstant implements IInstructionIO {
 	}
 
 	public static class Builder {
-		private double value;
+		private Complex value;
 
 		public Builder() {
 		}
 
-		public Builder(double value) {
+		public Builder(Complex value) {
 			this.value = value;
 		}
 
-		public RealConstant build() {
-			return new RealConstant(value);
+		public ComplexConstant build() {
+			return new ComplexConstant(value);
 		}
 
-		public double getValue() {
+		public Complex getValue() {
 			return value;
 		}
 
-		public Builder setValue(double value) {
+		public Builder setValue(Complex value) {
 			this.value = value;
 			return this;
 		}

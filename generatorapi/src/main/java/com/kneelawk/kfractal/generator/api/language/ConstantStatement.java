@@ -1,8 +1,8 @@
 package com.kneelawk.kfractal.generator.api.language;
 
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
-import com.kneelawk.kfractal.generator.api.ir.IInstruction;
-import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
+import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.instruction.IInstructionVisitor;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import org.apache.commons.math3.complex.Complex;
 

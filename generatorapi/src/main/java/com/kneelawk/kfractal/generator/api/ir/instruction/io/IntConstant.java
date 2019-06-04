@@ -1,26 +1,22 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.math3.complex.Complex;
 
-/**
- * Created by Kneelawk on 5/27/19.
- */
-public class ComplexConstant implements IInstructionIO {
-	private Complex value;
+public class IntConstant implements IInstructionIO {
+	private int value;
 
-	private ComplexConstant(Complex value) {
+	private IntConstant(int value) {
 		this.value = value;
 	}
 
-	public Complex getValue() {
+	public int getValue() {
 		return value;
 	}
 
 	@Override
 	public void accept(IInstructionIOVisitor visitor) {
-		visitor.visitComplexConstant(this);
+		visitor.visitIntConstant(this);
 	}
 
 	@Override
@@ -31,24 +27,24 @@ public class ComplexConstant implements IInstructionIO {
 	}
 
 	public static class Builder {
-		private Complex value;
+		private int value;
 
 		public Builder() {
 		}
 
-		public Builder(Complex value) {
+		public Builder(int value) {
 			this.value = value;
 		}
 
-		public ComplexConstant build() {
-			return new ComplexConstant(value);
+		public IntConstant build() {
+			return new IntConstant(value);
 		}
 
-		public Complex getValue() {
+		public int getValue() {
 			return value;
 		}
 
-		public Builder setValue(Complex value) {
+		public Builder setValue(int value) {
 			this.value = value;
 			return this;
 		}

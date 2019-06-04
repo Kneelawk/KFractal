@@ -1,25 +1,22 @@
-package com.kneelawk.kfractal.generator.api.ir;
+package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-/**
- * Created by Kneelawk on 5/27/19.
- */
-public class BoolConstant implements IInstructionIO {
-	private boolean value;
+public class RealConstant implements IInstructionIO {
+	private double value;
 
-	private BoolConstant(boolean value) {
+	private RealConstant(double value) {
 		this.value = value;
 	}
 
-	public boolean isValue() {
+	public double getValue() {
 		return value;
 	}
 
 	@Override
 	public void accept(IInstructionIOVisitor visitor) {
-		visitor.visitBoolConstant(this);
+		visitor.visitRealConstant(this);
 	}
 
 	@Override
@@ -30,24 +27,24 @@ public class BoolConstant implements IInstructionIO {
 	}
 
 	public static class Builder {
-		private boolean value;
+		private double value;
 
 		public Builder() {
 		}
 
-		public Builder(boolean value) {
+		public Builder(double value) {
 			this.value = value;
 		}
 
-		public BoolConstant build() {
-			return new BoolConstant(value);
+		public RealConstant build() {
+			return new RealConstant(value);
 		}
 
-		public boolean isValue() {
+		public double getValue() {
 			return value;
 		}
 
-		public Builder setValue(boolean value) {
+		public Builder setValue(double value) {
 			this.value = value;
 			return this;
 		}
