@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -23,7 +24,7 @@ public class BoolConstant implements IStatementIO {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
 				.append("value", value)
 				.toString();
 	}
