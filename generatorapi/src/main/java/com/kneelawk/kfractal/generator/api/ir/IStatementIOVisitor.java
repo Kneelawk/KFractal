@@ -8,5 +8,13 @@ public interface IStatementIOVisitor {
 
 	void visitBoolConstant(BoolConstant constant);
 
+	void visitIntConstant(IntConstant constant);
+
+	void visitRealConstant(RealConstant constant);
+
 	void visitComplexConstant(ComplexConstant constant);
+
+	void visitFunctionContextConstant(FunctionContextConstant contextConstant);
+
+	void visitNullPointer();
 }

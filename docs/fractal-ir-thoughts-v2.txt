@@ -58,8 +58,8 @@ Some InstructionIOs could be:
  * IntConstant
  * RealConstant
  * ComplexConstant
- * FunctionContext
- * Null Pointer
+ * FunctionContextConstant
+ * NullPointer
 
 Simple Program:
 Program(
