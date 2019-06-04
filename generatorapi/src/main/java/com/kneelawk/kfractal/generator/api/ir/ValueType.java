@@ -11,6 +11,7 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 	ValueType VOID = new VoidType();
 	ValueType BOOL = new BoolType();
+	ValueType INT = new IntType();
 	ValueType REAL = new RealType();
 	ValueType COMPLEX = new ComplexType();
 
@@ -32,14 +33,6 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		if (pointerType == null)
 			throw new NullPointerException();
 		return new PointerType(pointerType);
-	}
-
-	static ValueType STRUCTURE(List<ValueType> componentTypes) {
-		return new StructureType(ImmutableList.copyOf(componentTypes));
-	}
-
-	static ValueType STRUCTURE(ValueType... componentTypes) {
-		return new StructureType(ImmutableList.copyOf(componentTypes));
 	}
 
 	/* Type check utilities */
@@ -68,10 +61,6 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		return type instanceof PointerType;
 	}
 
-	static boolean isStructure(ValueType type) {
-		return type instanceof StructureType;
-	}
-
 	/* Type converter utilities */
 
 	static FunctionType toFunction(ValueType type) {
@@ -80,10 +69,6 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 	static PointerType toPointer(ValueType type) {
 		return (PointerType) type;
-	}
-
-	static StructureType toStructure(ValueType type) {
-		return (StructureType) type;
 	}
 
 	/* Abstract functions */
@@ -146,13 +131,37 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		}
 	}
 
+	class IntType implements ValueType {
+		private IntType() {
+		}
+
+		@Override
+		public int compareTo(ValueType type) {
+			if (type == VOID || type == BOOL)
+				return 1;
+			if (type == INT)
+				return 0;
+			return -1;
+		}
+
+		@Override
+		public String name() {
+			return "INT";
+		}
+
+		@Override
+		public String toString() {
+			return name();
+		}
+	}
+
 	class RealType implements ValueType {
 		private RealType() {
 		}
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL)
+			if (type == VOID || type == BOOL || type == INT)
 				return 1;
 			if (type == REAL)
 				return 0;
@@ -176,7 +185,7 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == REAL || type == BOOL)
+			if (type == VOID || type == BOOL || type == INT || type == REAL)
 				return 1;
 			if (type == COMPLEX)
 				return 0;
@@ -214,7 +223,7 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == REAL || type == COMPLEX)
+			if (type == VOID || type == BOOL || type == INT || type == REAL || type == COMPLEX)
 				return 1;
 			if (type instanceof FunctionType) {
 				FunctionType other = (FunctionType) type;
@@ -278,7 +287,7 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == REAL || type == COMPLEX || type instanceof FunctionType)
+			if (type == VOID || type == BOOL || type == INT || type == REAL || type == COMPLEX || type instanceof FunctionType)
 				return 1;
 			if (type instanceof PointerType) {
 				PointerType other = (PointerType) type;
@@ -303,67 +312,6 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		@Override
 		public String name() {
 			return "POINTER(" + pointerType + ')';
-		}
-
-		@Override
-		public String toString() {
-			return name();
-		}
-	}
-
-	class StructureType implements ValueType {
-		private List<ValueType> componentTypes;
-
-		private StructureType(List<ValueType> componentTypes) {
-			this.componentTypes = componentTypes;
-		}
-
-		public List<ValueType> getComponentTypes() {
-			return componentTypes;
-		}
-
-		@Override
-		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == REAL || type == COMPLEX || type instanceof FunctionType || type instanceof PointerType)
-				return 1;
-			if (type instanceof StructureType) {
-				StructureType other = (StructureType) type;
-				int result;
-				int mySize = componentTypes.size();
-				int otherSize = other.componentTypes.size();
-				int size = Math.max(mySize, otherSize);
-				for (int i = 0; i < size; i++) {
-					if (i >= mySize) {
-						return -1;
-					} else if (i >= otherSize) {
-						return 1;
-					} else {
-						result = componentTypes.get(i).compareTo(other.componentTypes.get(i));
-						if (result != 0)
-							return result;
-					}
-				}
-				return 0;
-			}
-			return -1;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			StructureType that = (StructureType) o;
-			return componentTypes.equals(that.componentTypes);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(componentTypes);
-		}
-
-		@Override
-		public String name() {
-			return "STRUCTURE(" + componentTypes.toString() + ')';
 		}
 
 		@Override
