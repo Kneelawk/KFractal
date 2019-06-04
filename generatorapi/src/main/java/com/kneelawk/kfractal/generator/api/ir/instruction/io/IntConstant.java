@@ -3,7 +3,7 @@ package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class IntConstant implements IInstructionIO {
+public class IntConstant implements IInstructionInput {
 	private int value;
 
 	private IntConstant(int value) {
@@ -15,7 +15,7 @@ public class IntConstant implements IInstructionIO {
 	}
 
 	@Override
-	public void accept(IInstructionIOVisitor visitor) {
+	public void accept(IInstructionInputVisitor visitor) {
 		visitor.visitIntConstant(this);
 	}
 

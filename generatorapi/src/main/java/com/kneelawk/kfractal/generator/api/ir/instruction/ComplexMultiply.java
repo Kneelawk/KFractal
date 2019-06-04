@@ -1,6 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionIO;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -10,25 +11,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * ComplexMultiply(Complex product, Complex a, Complex b)
  */
 public class ComplexMultiply implements IInstruction {
-	private IInstructionIO product;
-	private IInstructionIO leftFactor;
-	private IInstructionIO rightFactor;
+	private IInstructionOutput product;
+	private IInstructionInput leftFactor;
+	private IInstructionInput rightFactor;
 
-	private ComplexMultiply(IInstructionIO product, IInstructionIO leftFactor, IInstructionIO rightFactor) {
+	private ComplexMultiply(IInstructionOutput product, IInstructionInput leftFactor, IInstructionInput rightFactor) {
 		this.product = product;
 		this.leftFactor = leftFactor;
 		this.rightFactor = rightFactor;
 	}
 
-	public IInstructionIO getProduct() {
+	public IInstructionOutput getProduct() {
 		return product;
 	}
 
-	public IInstructionIO getLeftFactor() {
+	public IInstructionInput getLeftFactor() {
 		return leftFactor;
 	}
 
-	public IInstructionIO getRightFactor() {
+	public IInstructionInput getRightFactor() {
 		return rightFactor;
 	}
 
@@ -47,14 +48,14 @@ public class ComplexMultiply implements IInstruction {
 	}
 
 	public static class Builder {
-		private IInstructionIO product;
-		private IInstructionIO leftFactor;
-		private IInstructionIO rightFactor;
+		private IInstructionOutput product;
+		private IInstructionInput leftFactor;
+		private IInstructionInput rightFactor;
 
 		public Builder() {
 		}
 
-		public Builder(IInstructionIO product, IInstructionIO leftFactor, IInstructionIO rightFactor) {
+		public Builder(IInstructionOutput product, IInstructionInput leftFactor, IInstructionInput rightFactor) {
 			this.product = product;
 			this.leftFactor = leftFactor;
 			this.rightFactor = rightFactor;
@@ -64,29 +65,29 @@ public class ComplexMultiply implements IInstruction {
 			return new ComplexMultiply(product, leftFactor, rightFactor);
 		}
 
-		public IInstructionIO getProduct() {
+		public IInstructionOutput getProduct() {
 			return product;
 		}
 
-		public Builder setProduct(IInstructionIO product) {
+		public Builder setProduct(IInstructionOutput product) {
 			this.product = product;
 			return this;
 		}
 
-		public IInstructionIO getLeftFactor() {
+		public IInstructionInput getLeftFactor() {
 			return leftFactor;
 		}
 
-		public Builder setLeftFactor(IInstructionIO leftFactor) {
+		public Builder setLeftFactor(IInstructionInput leftFactor) {
 			this.leftFactor = leftFactor;
 			return this;
 		}
 
-		public IInstructionIO getRightFactor() {
+		public IInstructionInput getRightFactor() {
 			return rightFactor;
 		}
 
-		public Builder setRightFactor(IInstructionIO rightFactor) {
+		public Builder setRightFactor(IInstructionInput rightFactor) {
 			this.rightFactor = rightFactor;
 			return this;
 		}

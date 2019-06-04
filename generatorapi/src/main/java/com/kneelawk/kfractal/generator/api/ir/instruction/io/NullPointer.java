@@ -1,13 +1,13 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
-public class NullPointer implements IInstructionIO {
+public class NullPointer implements IInstructionInput {
 	public static final NullPointer INSTANCE = new NullPointer();
 
 	private NullPointer() {
 	}
 
 	@Override
-	public void accept(IInstructionIOVisitor visitor) {
+	public void accept(IInstructionInputVisitor visitor) {
 		visitor.visitNullPointer();
 	}
 

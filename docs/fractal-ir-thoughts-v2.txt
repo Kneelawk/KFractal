@@ -52,7 +52,8 @@ Some Instructions could be:
     current function are de-allocated, including Pointers. If pointers are using a reference-counting system, this is
     where the referenced value would decrease its number of references.)
 
-Some InstructionIOs could be:
+Instructions should have Inputs and Outputs. These seem like they should be separate.
+Some InstructionInputs could be:
  * VariableReference
  * BoolConstant
  * IntConstant
@@ -60,6 +61,11 @@ Some InstructionIOs could be:
  * ComplexConstant
  * FunctionContextConstant
  * NullPointer
+ * VoidConstant
+
+Some InstructionOutputs could be:
+ * VariableReference
+ * VoidConstant
 
 InstructionIO type compatibility with Instructions should be validated when the IR is compiled into something else,
 meaning that the IR structure is built in a way that can have mistyped arguments, but hopefully provides enough

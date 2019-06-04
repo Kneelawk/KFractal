@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class VariableReference implements IInstructionIO {
+public class VariableReference implements IInstructionInput, IInstructionOutput {
 	private String name;
 
 	private VariableReference(String name) {
@@ -18,7 +18,12 @@ public class VariableReference implements IInstructionIO {
 	}
 
 	@Override
-	public void accept(IInstructionIOVisitor visitor) {
+	public void accept(IInstructionInputVisitor visitor) {
+		visitor.visitVariableReference(this);
+	}
+
+	@Override
+	public void accept(IInstructionOutputVisitor visitor) {
 		visitor.visitVariableReference(this);
 	}
 

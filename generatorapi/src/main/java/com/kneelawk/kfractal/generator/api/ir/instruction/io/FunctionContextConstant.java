@@ -7,11 +7,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 
-public class FunctionContextConstant implements IInstructionIO {
+public class FunctionContextConstant implements IInstructionInput {
 	private String functionName;
-	private List<IInstructionIO> contextVariables;
+	private List<IInstructionInput> contextVariables;
 
-	private FunctionContextConstant(String functionName, List<IInstructionIO> contextVariables) {
+	private FunctionContextConstant(String functionName, List<IInstructionInput> contextVariables) {
 		this.functionName = functionName;
 		this.contextVariables = contextVariables;
 	}
@@ -20,12 +20,12 @@ public class FunctionContextConstant implements IInstructionIO {
 		return functionName;
 	}
 
-	public List<IInstructionIO> getContextVariables() {
+	public List<IInstructionInput> getContextVariables() {
 		return contextVariables;
 	}
 
 	@Override
-	public void accept(IInstructionIOVisitor visitor) {
+	public void accept(IInstructionInputVisitor visitor) {
 		visitor.visitFunctionContextConstant(this);
 	}
 
@@ -39,12 +39,12 @@ public class FunctionContextConstant implements IInstructionIO {
 
 	public static class Builder {
 		private String functionName;
-		private List<IInstructionIO> contextVariables = Lists.newArrayList();
+		private List<IInstructionInput> contextVariables = Lists.newArrayList();
 
 		public Builder() {
 		}
 
-		public Builder(String functionName, List<IInstructionIO> contextVariables) {
+		public Builder(String functionName, List<IInstructionInput> contextVariables) {
 			this.functionName = functionName;
 			this.contextVariables.addAll(contextVariables);
 		}
@@ -62,17 +62,17 @@ public class FunctionContextConstant implements IInstructionIO {
 			return this;
 		}
 
-		public List<IInstructionIO> getContextVariables() {
+		public List<IInstructionInput> getContextVariables() {
 			return contextVariables;
 		}
 
-		public Builder setContextVariables(List<IInstructionIO> contextVariables) {
+		public Builder setContextVariables(List<IInstructionInput> contextVariables) {
 			this.contextVariables.clear();
 			this.contextVariables.addAll(contextVariables);
 			return this;
 		}
 
-		public Builder addContextVariable(IInstructionIO contextVariable) {
+		public Builder addContextVariable(IInstructionInput contextVariable) {
 			contextVariables.add(contextVariable);
 			return this;
 		}

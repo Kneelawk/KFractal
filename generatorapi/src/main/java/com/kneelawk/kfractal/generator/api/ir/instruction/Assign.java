@@ -1,6 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionIO;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -11,19 +12,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Assign(? dest, ? source)
  */
 public class Assign implements IInstruction {
-	private IInstructionIO dest;
-	private IInstructionIO source;
+	private IInstructionOutput dest;
+	private IInstructionInput source;
 
-	private Assign(IInstructionIO dest, IInstructionIO source) {
+	private Assign(IInstructionOutput dest, IInstructionInput source) {
 		this.dest = dest;
 		this.source = source;
 	}
 
-	public IInstructionIO getDest() {
+	public IInstructionOutput getDest() {
 		return dest;
 	}
 
-	public IInstructionIO getSource() {
+	public IInstructionInput getSource() {
 		return source;
 	}
 
@@ -41,13 +42,13 @@ public class Assign implements IInstruction {
 	}
 
 	public static class Builder {
-		private IInstructionIO dest;
-		private IInstructionIO source;
+		private IInstructionOutput dest;
+		private IInstructionInput source;
 
 		public Builder() {
 		}
 
-		public Builder(IInstructionIO dest, IInstructionIO source) {
+		public Builder(IInstructionOutput dest, IInstructionInput source) {
 			this.dest = dest;
 			this.source = source;
 		}
@@ -56,20 +57,20 @@ public class Assign implements IInstruction {
 			return new Assign(dest, source);
 		}
 
-		public IInstructionIO getDest() {
+		public IInstructionOutput getDest() {
 			return dest;
 		}
 
-		public Builder setDest(IInstructionIO dest) {
+		public Builder setDest(IInstructionOutput dest) {
 			this.dest = dest;
 			return this;
 		}
 
-		public IInstructionIO getSource() {
+		public IInstructionInput getSource() {
 			return source;
 		}
 
-		public Builder setSource(IInstructionIO source) {
+		public Builder setSource(IInstructionInput source) {
 			this.source = source;
 			return this;
 		}

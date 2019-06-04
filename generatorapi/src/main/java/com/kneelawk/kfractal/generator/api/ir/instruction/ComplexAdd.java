@@ -1,6 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionIO;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -11,25 +12,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * ComplexAdd(Complex sum, Complex leftAddend, Complex rightAddend)
  */
 public class ComplexAdd implements IInstruction {
-	private IInstructionIO sum;
-	private IInstructionIO leftAddend;
-	private IInstructionIO rightAddend;
+	private IInstructionOutput sum;
+	private IInstructionInput leftAddend;
+	private IInstructionInput rightAddend;
 
-	private ComplexAdd(IInstructionIO sum, IInstructionIO leftAddend, IInstructionIO rightAddend) {
+	private ComplexAdd(IInstructionOutput sum, IInstructionInput leftAddend, IInstructionInput rightAddend) {
 		this.sum = sum;
 		this.leftAddend = leftAddend;
 		this.rightAddend = rightAddend;
 	}
 
-	public IInstructionIO getSum() {
+	public IInstructionOutput getSum() {
 		return sum;
 	}
 
-	public IInstructionIO getLeftAddend() {
+	public IInstructionInput getLeftAddend() {
 		return leftAddend;
 	}
 
-	public IInstructionIO getRightAddend() {
+	public IInstructionInput getRightAddend() {
 		return rightAddend;
 	}
 
@@ -48,14 +49,14 @@ public class ComplexAdd implements IInstruction {
 	}
 
 	public static class Builder {
-		private IInstructionIO sum;
-		private IInstructionIO leftAddend;
-		private IInstructionIO rightAddend;
+		private IInstructionOutput sum;
+		private IInstructionInput leftAddend;
+		private IInstructionInput rightAddend;
 
 		public Builder() {
 		}
 
-		public Builder(IInstructionIO sum, IInstructionIO leftAddend, IInstructionIO rightAddend) {
+		public Builder(IInstructionOutput sum, IInstructionInput leftAddend, IInstructionInput rightAddend) {
 			this.sum = sum;
 			this.leftAddend = leftAddend;
 			this.rightAddend = rightAddend;
@@ -65,29 +66,29 @@ public class ComplexAdd implements IInstruction {
 			return new ComplexAdd(sum, leftAddend, rightAddend);
 		}
 
-		public IInstructionIO getSum() {
+		public IInstructionOutput getSum() {
 			return sum;
 		}
 
-		public Builder setSum(IInstructionIO sum) {
+		public Builder setSum(IInstructionOutput sum) {
 			this.sum = sum;
 			return this;
 		}
 
-		public IInstructionIO getLeftAddend() {
+		public IInstructionInput getLeftAddend() {
 			return leftAddend;
 		}
 
-		public Builder setLeftAddend(IInstructionIO leftAddend) {
+		public Builder setLeftAddend(IInstructionInput leftAddend) {
 			this.leftAddend = leftAddend;
 			return this;
 		}
 
-		public IInstructionIO getRightAddend() {
+		public IInstructionInput getRightAddend() {
 			return rightAddend;
 		}
 
-		public Builder setRightAddend(IInstructionIO rightAddend) {
+		public Builder setRightAddend(IInstructionInput rightAddend) {
 			this.rightAddend = rightAddend;
 			return this;
 		}

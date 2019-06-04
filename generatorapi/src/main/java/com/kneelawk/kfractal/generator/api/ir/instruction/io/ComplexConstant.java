@@ -7,7 +7,7 @@ import org.apache.commons.math3.complex.Complex;
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class ComplexConstant implements IInstructionIO {
+public class ComplexConstant implements IInstructionInput {
 	private Complex value;
 
 	private ComplexConstant(Complex value) {
@@ -19,7 +19,7 @@ public class ComplexConstant implements IInstructionIO {
 	}
 
 	@Override
-	public void accept(IInstructionIOVisitor visitor) {
+	public void accept(IInstructionInputVisitor visitor) {
 		visitor.visitComplexConstant(this);
 	}
 

@@ -3,7 +3,7 @@ package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public interface IInstructionIOVisitor {
+public interface IInstructionInputVisitor {
 	void visitVariableReference(VariableReference reference);
 
 	void visitBoolConstant(BoolConstant constant);
@@ -17,4 +17,6 @@ public interface IInstructionIOVisitor {
 	void visitFunctionContextConstant(FunctionContextConstant contextConstant);
 
 	void visitNullPointer();
+
+	void visitVoid();
 }

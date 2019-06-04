@@ -1,29 +1,30 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionIO;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ComplexDivide implements IInstruction {
-	private IInstructionIO quotient;
-	private IInstructionIO dividend;
-	private IInstructionIO divisor;
+	private IInstructionOutput quotient;
+	private IInstructionInput dividend;
+	private IInstructionInput divisor;
 
-	private ComplexDivide(IInstructionIO quotient, IInstructionIO dividend, IInstructionIO divisor) {
+	private ComplexDivide(IInstructionOutput quotient, IInstructionInput dividend, IInstructionInput divisor) {
 		this.quotient = quotient;
 		this.dividend = dividend;
 		this.divisor = divisor;
 	}
 
-	public IInstructionIO getQuotient() {
+	public IInstructionOutput getQuotient() {
 		return quotient;
 	}
 
-	public IInstructionIO getDividend() {
+	public IInstructionInput getDividend() {
 		return dividend;
 	}
 
-	public IInstructionIO getDivisor() {
+	public IInstructionInput getDivisor() {
 		return divisor;
 	}
 
@@ -42,14 +43,14 @@ public class ComplexDivide implements IInstruction {
 	}
 
 	public static class Builder {
-		private IInstructionIO quotient;
-		private IInstructionIO dividend;
-		private IInstructionIO divisor;
+		private IInstructionOutput quotient;
+		private IInstructionInput dividend;
+		private IInstructionInput divisor;
 
 		public Builder() {
 		}
 
-		public Builder(IInstructionIO quotient, IInstructionIO dividend, IInstructionIO divisor) {
+		public Builder(IInstructionOutput quotient, IInstructionInput dividend, IInstructionInput divisor) {
 			this.quotient = quotient;
 			this.dividend = dividend;
 			this.divisor = divisor;
@@ -59,29 +60,29 @@ public class ComplexDivide implements IInstruction {
 			return new ComplexDivide(quotient, dividend, divisor);
 		}
 
-		public IInstructionIO getQuotient() {
+		public IInstructionOutput getQuotient() {
 			return quotient;
 		}
 
-		public Builder setQuotient(IInstructionIO quotient) {
+		public Builder setQuotient(IInstructionOutput quotient) {
 			this.quotient = quotient;
 			return this;
 		}
 
-		public IInstructionIO getDividend() {
+		public IInstructionInput getDividend() {
 			return dividend;
 		}
 
-		public Builder setDividend(IInstructionIO dividend) {
+		public Builder setDividend(IInstructionInput dividend) {
 			this.dividend = dividend;
 			return this;
 		}
 
-		public IInstructionIO getDivisor() {
+		public IInstructionInput getDivisor() {
 			return divisor;
 		}
 
-		public Builder setDivisor(IInstructionIO divisor) {
+		public Builder setDivisor(IInstructionInput divisor) {
 			this.divisor = divisor;
 			return this;
 		}
