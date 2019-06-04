@@ -42,8 +42,8 @@ Structure type should be a reference to a structure definition.
 Structures should not be in a programming language designed for generating fractals.
 
 Some Instructions could be:
- * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the result in the first)
- * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the result in the first)
+ * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the sum in the first)
+ * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the product in the first)
  * PointerAllocate(Pointer(*)) (allocates memory and stores the reference to that memory in the argument)
  * FunctionCall(Function(*), *, [ ** ]) (calls a function with its context if it has any) (all variables are copied,
     Pointers maintain their reference though, so setting the referenced value of a pointer here will set in other places
@@ -254,7 +254,7 @@ Program(
             While(
                 VariableReference("tmp2"),
                 [
-                    Assignment(VariableReference("elem"), VariableReference("tmp1")),
+                    Assign(VariableReference("elem"), VariableReference("tmp1")),
                     GetPointerValue(VariableReference("tmp0"), VariableReference("elem")),
                     GetStructureComponent(VariableReference("tmp1"), VariableReference("tmp0"), "next"),
                     IsPointerEqual(VariableReference("tmp2"), VariableReference("tmp1"), NullPointer)
