@@ -1,7 +1,7 @@
 package com.kneelawk.kfractal.generator.api.language;
 
-import com.kneelawk.kfractal.generator.api.ir.IStatement;
+import com.kneelawk.kfractal.generator.api.ir.IInstruction;
 
 public class Program {
-	private IStatement statement;
+	private IInstruction statement;
 }

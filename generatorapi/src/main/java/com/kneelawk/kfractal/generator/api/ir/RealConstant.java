@@ -3,7 +3,7 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class RealConstant implements IStatementIO {
+public class RealConstant implements IInstructionIO {
 	private double value;
 
 	private RealConstant(double value) {
@@ -15,7 +15,7 @@ public class RealConstant implements IStatementIO {
 	}
 
 	@Override
-	public void accept(IStatementIOVisitor visitor) {
+	public void accept(IInstructionIOVisitor visitor) {
 		visitor.visitRealConstant(this);
 	}
 

@@ -1,24 +1,24 @@
 package com.kneelawk.kfractal.generator.api.language;
 
-import com.kneelawk.kfractal.generator.api.ir.IStatement;
-import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
 
-public class BinaryOperationStatement implements IStatement {
-	private IStatement left;
-	private IStatement right;
+public class BinaryOperationStatement implements IInstruction {
+	private IInstruction left;
+	private IInstruction right;
 	private String operation;
 
-	private BinaryOperationStatement(IStatement left, IStatement right, String operation) {
+	private BinaryOperationStatement(IInstruction left, IInstruction right, String operation) {
 		this.left = left;
 		this.right = right;
 		this.operation = operation;
 	}
 
-	public IStatement getLeft() {
+	public IInstruction getLeft() {
 		return left;
 	}
 
-	public IStatement getRight() {
+	public IInstruction getRight() {
 		return right;
 	}
 
@@ -27,19 +27,19 @@ public class BinaryOperationStatement implements IStatement {
 	}
 
 	@Override
-	public void accept(IStatementVisitor visitor) {
+	public void accept(IInstructionVisitor visitor) {
 		visitor.visitBinaryOperation(this);
 	}
 
 	public static class Builder {
-		private IStatement left;
-		private IStatement right;
+		private IInstruction left;
+		private IInstruction right;
 		private String operation;
 
 		public Builder() {
 		}
 
-		public Builder(IStatement left, IStatement right, String operation) {
+		public Builder(IInstruction left, IInstruction right, String operation) {
 			this.left = left;
 			this.right = right;
 			this.operation = operation;
@@ -49,20 +49,20 @@ public class BinaryOperationStatement implements IStatement {
 			return new BinaryOperationStatement(left, right, operation);
 		}
 
-		public IStatement getLeft() {
+		public IInstruction getLeft() {
 			return left;
 		}
 
-		public Builder setLeft(IStatement left) {
+		public Builder setLeft(IInstruction left) {
 			this.left = left;
 			return this;
 		}
 
-		public IStatement getRight() {
+		public IInstruction getRight() {
 			return right;
 		}
 
-		public Builder setRight(IStatement right) {
+		public Builder setRight(IInstruction right) {
 			this.right = right;
 			return this;
 		}

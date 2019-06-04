@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class BoolConstant implements IStatementIO {
+public class BoolConstant implements IInstructionIO {
 	private boolean value;
 
 	private BoolConstant(boolean value) {
@@ -18,7 +18,7 @@ public class BoolConstant implements IStatementIO {
 	}
 
 	@Override
-	public void accept(IStatementIOVisitor visitor) {
+	public void accept(IInstructionIOVisitor visitor) {
 		visitor.visitBoolConstant(this);
 	}
 

@@ -1,12 +1,12 @@
 package com.kneelawk.kfractal.generator.api.language;
 
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
-import com.kneelawk.kfractal.generator.api.ir.IStatement;
-import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import org.apache.commons.math3.complex.Complex;
 
-public class ConstantStatement implements IStatement {
+public class ConstantStatement implements IInstruction {
 	private ValueType type;
 	private boolean boolValue;
 	private Complex complexValue;
@@ -36,7 +36,7 @@ public class ConstantStatement implements IStatement {
 	}
 
 	@Override
-	public void accept(IStatementVisitor visitor) {
+	public void accept(IInstructionVisitor visitor) {
 		visitor.visitConstant(this);
 	}
 

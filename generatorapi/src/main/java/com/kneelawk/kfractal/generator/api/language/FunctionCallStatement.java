@@ -1,41 +1,41 @@
 package com.kneelawk.kfractal.generator.api.language;
 
 import com.google.common.collect.ImmutableList;
-import com.kneelawk.kfractal.generator.api.ir.IStatement;
-import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
 
 import java.util.List;
 
-public class FunctionCallStatement implements IStatement {
-	private IStatement function;
-	private List<IStatement> arguments;
+public class FunctionCallStatement implements IInstruction {
+	private IInstruction function;
+	private List<IInstruction> arguments;
 
-	private FunctionCallStatement(IStatement function, List<IStatement> arguments) {
+	private FunctionCallStatement(IInstruction function, List<IInstruction> arguments) {
 		this.function = function;
 		this.arguments = arguments;
 	}
 
-	public IStatement getFunction() {
+	public IInstruction getFunction() {
 		return function;
 	}
 
-	public List<IStatement> getArguments() {
+	public List<IInstruction> getArguments() {
 		return arguments;
 	}
 
 	@Override
-	public void accept(IStatementVisitor visitor) {
+	public void accept(IInstructionVisitor visitor) {
 		visitor.visitFunctionCall(this);
 	}
 
 	public static class Builder {
-		private IStatement function;
-		private List<IStatement> arguments;
+		private IInstruction function;
+		private List<IInstruction> arguments;
 
 		public Builder() {
 		}
 
-		public Builder(IStatement function, List<IStatement> arguments) {
+		public Builder(IInstruction function, List<IInstruction> arguments) {
 			this.function = function;
 			this.arguments = arguments;
 		}
@@ -44,20 +44,20 @@ public class FunctionCallStatement implements IStatement {
 			return new FunctionCallStatement(function, ImmutableList.copyOf(arguments));
 		}
 
-		public IStatement getFunction() {
+		public IInstruction getFunction() {
 			return function;
 		}
 
-		public Builder setFunction(IStatement function) {
+		public Builder setFunction(IInstruction function) {
 			this.function = function;
 			return this;
 		}
 
-		public List<IStatement> getArguments() {
+		public List<IInstruction> getArguments() {
 			return arguments;
 		}
 
-		public Builder setArguments(List<IStatement> arguments) {
+		public Builder setArguments(List<IInstruction> arguments) {
 			this.arguments = arguments;
 			return this;
 		}

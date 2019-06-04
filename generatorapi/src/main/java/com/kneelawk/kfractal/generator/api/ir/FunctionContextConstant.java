@@ -7,11 +7,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 
-public class FunctionContextConstant implements IStatementIO {
+public class FunctionContextConstant implements IInstructionIO {
 	private String functionName;
-	private List<IStatementIO> contextVariables;
+	private List<IInstructionIO> contextVariables;
 
-	private FunctionContextConstant(String functionName, List<IStatementIO> contextVariables) {
+	private FunctionContextConstant(String functionName, List<IInstructionIO> contextVariables) {
 		this.functionName = functionName;
 		this.contextVariables = contextVariables;
 	}
@@ -20,12 +20,12 @@ public class FunctionContextConstant implements IStatementIO {
 		return functionName;
 	}
 
-	public List<IStatementIO> getContextVariables() {
+	public List<IInstructionIO> getContextVariables() {
 		return contextVariables;
 	}
 
 	@Override
-	public void accept(IStatementIOVisitor visitor) {
+	public void accept(IInstructionIOVisitor visitor) {
 		visitor.visitFunctionContextConstant(this);
 	}
 
@@ -39,12 +39,12 @@ public class FunctionContextConstant implements IStatementIO {
 
 	public static class Builder {
 		private String functionName;
-		private List<IStatementIO> contextVariables = Lists.newArrayList();
+		private List<IInstructionIO> contextVariables = Lists.newArrayList();
 
 		public Builder() {
 		}
 
-		public Builder(String functionName, List<IStatementIO> contextVariables) {
+		public Builder(String functionName, List<IInstructionIO> contextVariables) {
 			this.functionName = functionName;
 			this.contextVariables.addAll(contextVariables);
 		}
@@ -62,17 +62,17 @@ public class FunctionContextConstant implements IStatementIO {
 			return this;
 		}
 
-		public List<IStatementIO> getContextVariables() {
+		public List<IInstructionIO> getContextVariables() {
 			return contextVariables;
 		}
 
-		public Builder setContextVariables(List<IStatementIO> contextVariables) {
+		public Builder setContextVariables(List<IInstructionIO> contextVariables) {
 			this.contextVariables.clear();
 			this.contextVariables.addAll(contextVariables);
 			return this;
 		}
 
-		public Builder addContextVariable(IStatementIO contextVariable) {
+		public Builder addContextVariable(IInstructionIO contextVariable) {
 			contextVariables.add(contextVariable);
 			return this;
 		}

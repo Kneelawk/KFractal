@@ -1,9 +1,9 @@
 package com.kneelawk.kfractal.generator.api.language;
 
-import com.kneelawk.kfractal.generator.api.ir.IStatement;
-import com.kneelawk.kfractal.generator.api.ir.IStatementVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.IInstructionVisitor;
 
-public class VariableStatement implements IStatement {
+public class VariableStatement implements IInstruction {
 	private String name;
 
 	private VariableStatement(String name) {
@@ -15,7 +15,7 @@ public class VariableStatement implements IStatement {
 	}
 
 	@Override
-	public void accept(IStatementVisitor visitor) {
+	public void accept(IInstructionVisitor visitor) {
 		visitor.visitVariable(this);
 	}
 

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class VariableReference implements IStatementIO {
+public class VariableReference implements IInstructionIO {
 	private String name;
 
 	private VariableReference(String name) {
@@ -18,7 +18,7 @@ public class VariableReference implements IStatementIO {
 	}
 
 	@Override
-	public void accept(IStatementIOVisitor visitor) {
+	public void accept(IInstructionIOVisitor visitor) {
 		visitor.visitVariableReference(this);
 	}
 

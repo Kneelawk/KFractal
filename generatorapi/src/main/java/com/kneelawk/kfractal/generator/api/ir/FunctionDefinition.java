@@ -18,7 +18,7 @@ public class FunctionDefinition {
 	private Map<String, VariableDeclaration> arguments;
 	private List<VariableDeclaration> argumentList;
 	private Map<String, VariableDeclaration> localVariables;
-	private List<IStatement> body;
+	private List<IInstruction> body;
 
 	private FunctionDefinition(String name, ValueType returnType,
 							   Map<String, VariableDeclaration> contextVariables,
@@ -26,7 +26,7 @@ public class FunctionDefinition {
 							   Map<String, VariableDeclaration> arguments,
 							   List<VariableDeclaration> argumentList,
 							   Map<String, VariableDeclaration> localVariables,
-							   List<IStatement> body) {
+							   List<IInstruction> body) {
 		this.name = name;
 		this.returnType = returnType;
 		this.contextVariables = contextVariables;
@@ -65,7 +65,7 @@ public class FunctionDefinition {
 		return localVariables;
 	}
 
-	public List<IStatement> getBody() {
+	public List<IInstruction> getBody() {
 		return body;
 	}
 
@@ -87,7 +87,7 @@ public class FunctionDefinition {
 		private Map<String, VariableDeclaration> contextVariables = Maps.newLinkedHashMap();
 		private Map<String, VariableDeclaration> arguments = Maps.newLinkedHashMap();
 		private Map<String, VariableDeclaration> localVariables = Maps.newHashMap();
-		private List<IStatement> body = Lists.newArrayList();
+		private List<IInstruction> body = Lists.newArrayList();
 
 		public Builder() {
 		}
@@ -96,7 +96,7 @@ public class FunctionDefinition {
 					   Map<String, VariableDeclaration> contextVariables,
 					   Map<String, VariableDeclaration> arguments,
 					   Map<String, VariableDeclaration> localVariables,
-					   List<IStatement> body) {
+					   List<IInstruction> body) {
 			this.name = name;
 			this.contextVariables.putAll(contextVariables);
 			this.arguments.putAll(arguments);
@@ -177,17 +177,17 @@ public class FunctionDefinition {
 			return this;
 		}
 
-		public List<IStatement> getBody() {
+		public List<IInstruction> getBody() {
 			return body;
 		}
 
-		public Builder setBody(List<IStatement> body) {
+		public Builder setBody(List<IInstruction> body) {
 			this.body.clear();
 			this.body.addAll(body);
 			return this;
 		}
 
-		public Builder addStatement(IStatement statement) {
+		public Builder addStatement(IInstruction statement) {
 			body.add(statement);
 			return this;
 		}
