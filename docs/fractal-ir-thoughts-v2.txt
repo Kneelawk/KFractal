@@ -18,6 +18,7 @@ These context variables can be pointers, or normal variables.
 Variables would have types:
  * Void (not valid for variable types, but valid for function return types)
  * Bool
+ * Int
  * Real (double)
  * Complex (is likely a structure in implementations)
  * Function (contains a function pointer or name, and context variables) (is derived type)
@@ -25,7 +26,7 @@ Variables would have types:
     when creating the function variable)
  * Pointer (backing memory must be explicitly allocated. can have backing memory of any of these variable types)
     (backing memory may be subject to reference-counting, or garbage collection) (is derived type)
- * Structure (is derived type) (maybe shouldn't have this) (can-of-worms)
+!* Structure (is derived type) (maybe shouldn't have this) (can-of-worms) (makes reference-counting GC impossible)
 
 Functions would have:
  * Name
@@ -35,6 +36,10 @@ Functions would have:
  * Argument Variable Declarations
  * Local Variable Declarations
  * Instructions
+
+Structures would be:
+Structure type should be a reference to a structure definition.
+Structures should not be in a programming language designed for generating fractals.
 
 Some Instructions could be:
  * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the result in the first)
@@ -50,16 +55,16 @@ Some Instructions could be:
 Some InstructionIOs could be:
  * VariableReference
  * BoolConstant
+ * IntConstant
  * RealConstant
  * ComplexConstant
  * FunctionContext
- * PointerTargetReference
+ * Null Pointer
 
 Simple Program:
 Program(
-[ ],
-[ ],
-[
+[ ], // global variables
+[ // functions
     "main"=FunctionDefinition(
         "main", // name
         COMPLEX, // return type
@@ -85,7 +90,6 @@ hold is the reference to memory.
 
 Slightly more complicated program:
 Program(
-[ ],
 [ ],
 [
     "main"=FunctionDefinition(
@@ -143,9 +147,8 @@ entry:
 Composition Test Program:
 Program(
 [ ],
-[ ],
 [
-    "a"=FunctionDeclaration(
+    "a"=FunctionDefinition(
         "a",
         COMPLEX,
         [ ],
@@ -156,7 +159,7 @@ Program(
             Return(VariableReference("tmp0"))
         ]
     ),
-    "b"=FunctionDeclaration(
+    "b"=FunctionDefinition(
         "b",
         COMPLEX,
         [ ],
@@ -167,7 +170,7 @@ Program(
             Return(VariableReference("tmp0"))
         ]
     ),
-    "compose"=FunctionDeclaration(
+    "compose"=FunctionDefinition(
         "compose",
         FUNCTION(COMPLEX, [ COMPLEX ]),
         [ ],
@@ -180,7 +183,7 @@ Program(
             Return(FunctionContext("compose$1", [ VariableReference("f1"), VariableReference("f2") ]))
         ]
     ),
-    "compose$1"=FunctionDeclaration(
+    "compose$1"=FunctionDefinition(
         "compose$1",
         COMPLEX,
         [
@@ -195,7 +198,7 @@ Program(
             Return(VariableReference("tmp0"))
         ]
     ),
-    "main"=FunctionDeclaration(
+    "main"=FunctionDefinition(
         "main",
         COMPLEX,
         [ ],
@@ -215,3 +218,54 @@ Program(
     )
 ]
 )
+
+Structure Test Program:
+Program(
+[ ],
+[ // structures
+    "LinkedListElement"=StructureDefinition(
+        "LinkedListElement", // name
+        [ // internal types
+            "data"=VariableDeclaration("data", COMPLEX),
+            "next"=VariableDeclaration("next", POINTER(STRUCT("LinkedListElement")))
+        ]
+    )
+],
+[
+    "last"=FunctionDefinition(
+        "last",
+        COMPLEX,
+        [ ],
+        [ "elem"=VariableDeclaration("elem", POINTER(STRUCT("LinkedListElement"))) ],
+        [
+            "tmp0"=VariableDeclaration("tmp0", STRUCT("LinkedListElement")),
+            "tmp1"=VariableDeclaration("tmp1", POINTER(STRUCT("LinkedListElement"))),
+            "tmp2"=VariableDeclaration("tmp1", BOOL),
+            "tmp3"=VariableDeclaration("tmp2", COMPLEX)
+        ],
+        [
+            GetPointerValue(VariableReference("tmp0"), VariableReference("elem")),
+            GetStructureComponent(VariableReference("tmp1"), VariableReference("tmp0"), "next"),
+            IsPointerEqual(VariableReference("tmp2"), VariableReference("tmp1"), NullPointer),
+            While(
+                VariableReference("tmp2"),
+                [
+                    Assignment(VariableReference("elem"), VariableReference("tmp1")),
+                    GetPointerValue(VariableReference("tmp0"), VariableReference("elem")),
+                    GetStructureComponent(VariableReference("tmp1"), VariableReference("tmp0"), "next"),
+                    IsPointerEqual(VariableReference("tmp2"), VariableReference("tmp1"), NullPointer)
+                ]
+            ),
+            GetStructureComponent(VariableReference("tmp3"), VariableReference("tmp0"), "data"),
+            Return(VariableReference("tmp3"))
+        ]
+    )
+]
+)
+
+I created structures knowing that I could use a mark-and-sweep GC because structures open up the possibility for cyclic
+references. I just remembered that my GPU targets probably won't have a GC however. I have two options: write my own
+GC for GPUs, or use strong and weak pointers and force the compiler to keep track of it.
+
+I don't actually know why I've been adding structures though. This is unneeded complexity.
+I think it would be best for me to remove structures entirely.
