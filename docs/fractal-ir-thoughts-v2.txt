@@ -45,6 +45,7 @@ Some Instructions could be:
  * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the sum in the first)
  * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the product in the first)
  * PointerAllocate(Pointer(*)) (allocates memory and stores the reference to that memory in the argument)
+ * PointerFree(Pointer(*)) (frees the memory that the pointer points to)
  * FunctionCall(Function(*), *, [ ** ]) (calls a function with its context if it has any) (all variables are copied,
     Pointers maintain their reference though, so setting the referenced value of a pointer here will set in other places
     too.)
@@ -66,6 +67,13 @@ Some InstructionInputs could be:
 Some InstructionOutputs could be:
  * VariableReference
  * VoidConstant
+
+When declaring a variable, each variable should be able to have attributes/annotation things.
+Not every attribute should be able to be applied to every type of variable.
+Attributes could be:
+ * Constant (Variable value cannot be changed)
+ * Preallocated (Only for pointers) (The memory referenced by this pointer is governed by this pointer's scope)
+    (This pointer variable cannot be reassigned to a new target)
 
 InstructionIO type compatibility with Instructions should be validated when the IR is compiled into something else,
 meaning that the IR structure is built in a way that can have mistyped arguments, but hopefully provides enough
