@@ -6,17 +6,19 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * ComplexSubtract - Instruction. Subtracts the last argument from the second to last argument and stores the result in
- * the variable referenced by the first argument.
+ * IntSubtract - Instruction. Subtracts the last argument from the second to last argument and stores the result in the
+ * variable referenced by the first argument.
  * <p>
- * ComplexSubtract(Complex difference, Complex minuend, Complex subtrahend)
+ * IntSubtract(Int difference, Int minuend, Int subtrahend)
  */
-public class ComplexSubtract implements IInstruction {
+public class IntSubtract implements IInstruction {
 	private IInstructionOutput difference;
 	private IInstructionInput minuend;
 	private IInstructionInput subtrahend;
 
-	private ComplexSubtract(IInstructionOutput difference, IInstructionInput minuend, IInstructionInput subtrahend) {
+	private IntSubtract(IInstructionOutput difference,
+						IInstructionInput minuend,
+						IInstructionInput subtrahend) {
 		this.difference = difference;
 		this.minuend = minuend;
 		this.subtrahend = subtrahend;
@@ -36,7 +38,7 @@ public class ComplexSubtract implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitComplexSubtract(this);
+		visitor.visitIntSubtract(this);
 	}
 
 	@Override
@@ -56,21 +58,24 @@ public class ComplexSubtract implements IInstruction {
 		public Builder() {
 		}
 
-		public Builder(IInstructionOutput difference, IInstructionInput minuend, IInstructionInput subtrahend) {
+		public Builder(IInstructionOutput difference,
+					   IInstructionInput minuend,
+					   IInstructionInput subtrahend) {
 			this.difference = difference;
 			this.minuend = minuend;
 			this.subtrahend = subtrahend;
 		}
 
-		public ComplexSubtract build() {
-			return new ComplexSubtract(difference, minuend, subtrahend);
+		public IntSubtract build() {
+			return new IntSubtract(difference, minuend, subtrahend);
 		}
 
 		public IInstructionOutput getDifference() {
 			return difference;
 		}
 
-		public Builder setDifference(IInstructionOutput difference) {
+		public Builder setDifference(
+				IInstructionOutput difference) {
 			this.difference = difference;
 			return this;
 		}
@@ -88,7 +93,8 @@ public class ComplexSubtract implements IInstruction {
 			return subtrahend;
 		}
 
-		public Builder setSubtrahend(IInstructionInput subtrahend) {
+		public Builder setSubtrahend(
+				IInstructionInput subtrahend) {
 			this.subtrahend = subtrahend;
 			return this;
 		}

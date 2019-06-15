@@ -13,6 +13,16 @@ public interface IInstructionVisitor {
 
 	/* Int Operations */
 
+	void visitIntAdd(IntAdd intAdd);
+
+	void visitIntSubtract(IntSubtract intSubtract);
+
+	void visitIntMultiply(IntMultiply intMultiply);
+
+	void visitIntDivide(IntDivide intDivide);
+
+	void visitIntModulo(IntModulo intModulo);
+
 	/* Real Operations */
 
 	/* Complex Operations */
