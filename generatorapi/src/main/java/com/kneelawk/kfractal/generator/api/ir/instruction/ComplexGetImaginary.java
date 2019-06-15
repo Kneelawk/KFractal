@@ -2,6 +2,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * ComplexGetImaginary - Instruction. Gets the imaginary component of the last argument and stores it in the variable
@@ -30,6 +32,14 @@ public class ComplexGetImaginary implements IInstruction {
 	@Override
 	public void accept(IInstructionVisitor visitor) {
 		visitor.visitComplexGetImaginary(this);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("imaginary", imaginary)
+				.append("complex", complex)
+				.toString();
 	}
 
 	public static class Builder {

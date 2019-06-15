@@ -2,6 +2,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * IntDivide - Instruction. Divides the second to last argument by the last argument and stores the result in the
@@ -37,6 +39,15 @@ public class IntDivide implements IInstruction {
 	@Override
 	public void accept(IInstructionVisitor visitor) {
 		visitor.visitIntDivide(this);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("quotient", quotient)
+				.append("dividend", dividend)
+				.append("divisor", divisor)
+				.toString();
 	}
 
 	public static class Builder {

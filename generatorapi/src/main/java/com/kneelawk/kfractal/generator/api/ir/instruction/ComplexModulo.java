@@ -2,6 +2,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * ComplexModulo - Instruction. Computes the complex modulo of the last argument and stores it in the variable
@@ -31,6 +33,14 @@ public class ComplexModulo implements IInstruction {
 	@Override
 	public void accept(IInstructionVisitor visitor) {
 		visitor.visitComplexModulo(this);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("modulus", modulus)
+				.append("complex", complex)
+				.toString();
 	}
 
 	public static class Builder {

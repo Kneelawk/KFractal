@@ -2,6 +2,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * IntXor - Instruction. Bitwise xors the last two arguments together and stores the result in the variable referenced
@@ -36,6 +38,15 @@ public class IntXor implements IInstruction {
 	@Override
 	public void accept(IInstructionVisitor visitor) {
 		visitor.visitIntXor(this);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("result", result)
+				.append("left", left)
+				.append("right", right)
+				.toString();
 	}
 
 	public static class Builder {

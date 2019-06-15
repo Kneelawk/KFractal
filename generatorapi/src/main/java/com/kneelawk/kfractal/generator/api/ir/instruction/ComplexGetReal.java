@@ -2,6 +2,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.util.KFractalToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * ComplexGetReal - Instruction. Gets the real component of the last argument and stores it in the variable referenced
@@ -30,6 +32,14 @@ public class ComplexGetReal implements IInstruction {
 	@Override
 	public void accept(IInstructionVisitor visitor) {
 		visitor.visitComplexGetReal(this);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+				.append("real", real)
+				.append("complex", complex)
+				.toString();
 	}
 
 	public static class Builder {
