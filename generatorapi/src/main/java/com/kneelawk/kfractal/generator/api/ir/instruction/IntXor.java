@@ -4,18 +4,18 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 
 /**
- * IntModulo - Instruction. Finds the modulus of dividing the second to last argument by the last argument and stores
- * the result in the variable referenced by the first argument.
+ * IntXor - Instruction. Bitwise xors the last two arguments together and stores the result in the variable referenced
+ * by the first argument.
  * <p>
- * IntModulo(Int result, Int left, Int right)
+ * IntXor(Int result, Int left, Int right)
  */
-public class IntModulo implements IInstruction {
+public class IntXor implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput left;
 	private IInstructionInput right;
 
-	private IntModulo(IInstructionOutput result,
-					 IInstructionInput left, IInstructionInput right) {
+	private IntXor(IInstructionOutput result, IInstructionInput left,
+				   IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -35,7 +35,7 @@ public class IntModulo implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitIntModulo(this);
+		visitor.visitIntXor(this);
 	}
 
 	public static class Builder {
@@ -54,8 +54,8 @@ public class IntModulo implements IInstruction {
 			this.right = right;
 		}
 
-		public IntModulo build() {
-			return new IntModulo(result, left, right);
+		public IntXor build() {
+			return new IntXor(result, left, right);
 		}
 
 		public IInstructionOutput getResult() {

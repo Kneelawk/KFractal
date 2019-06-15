@@ -5,6 +5,12 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+/**
+ * ComplexDivide - Instruction. Divides the second to last argument by the last argument and stores the result in the
+ * variable referenced by the first argument.
+ * <p>
+ * ComplexDivide(Complex quotient, Complex dividend, Complex divisor)
+ */
 public class ComplexDivide implements IInstruction {
 	private IInstructionOutput quotient;
 	private IInstructionInput dividend;

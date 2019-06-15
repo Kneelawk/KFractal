@@ -23,6 +23,12 @@ public interface IInstructionVisitor {
 
 	void visitIntModulo(IntModulo intModulo);
 
+	void visitIntAnd(IntAnd intAnd);
+
+	void visitIntOr(IntOr intOr);
+
+	void visitIntXor(IntXor intXor);
+
 	/* Real Operations */
 
 	/* Complex Operations */

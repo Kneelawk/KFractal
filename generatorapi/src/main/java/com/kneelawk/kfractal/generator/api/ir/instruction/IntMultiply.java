@@ -14,7 +14,7 @@ public class IntMultiply implements IInstruction {
 	private IInstructionInput leftFactor;
 	private IInstructionInput rightFactor;
 
-	public IntMultiply(IInstructionOutput product,
+	private IntMultiply(IInstructionOutput product,
 					   IInstructionInput leftFactor,
 					   IInstructionInput rightFactor) {
 		this.product = product;

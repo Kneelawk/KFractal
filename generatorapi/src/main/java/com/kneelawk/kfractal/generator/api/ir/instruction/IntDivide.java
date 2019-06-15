@@ -14,7 +14,7 @@ public class IntDivide implements IInstruction {
 	private IInstructionInput dividend;
 	private IInstructionInput divisor;
 
-	public IntDivide(IInstructionOutput quotient,
+	private IntDivide(IInstructionOutput quotient,
 					 IInstructionInput dividend,
 					 IInstructionInput divisor) {
 		this.quotient = quotient;
