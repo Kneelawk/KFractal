@@ -54,5 +54,11 @@ public interface IInstructionVisitor {
 
 	void visitComplexDivide(ComplexDivide complexDivide);
 
+	void visitComplexGetReal(ComplexGetReal complexGetReal);
+
+	void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary);
+
+	void visitComplexModulo(ComplexModulo complexModulo);
+
 	/* Function Operations */
 }
