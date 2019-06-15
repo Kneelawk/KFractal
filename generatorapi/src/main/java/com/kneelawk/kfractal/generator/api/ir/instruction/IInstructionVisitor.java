@@ -10,6 +10,8 @@ public interface IInstructionVisitor {
 
 	/* Bool Operations */
 
+	void visitBoolNot(BoolNot boolNot);
+
 	void visitBoolAnd(BoolAnd boolAnd);
 
 	void visitBoolOr(BoolOr boolOr);
@@ -31,6 +33,14 @@ public interface IInstructionVisitor {
 	void visitIntOr(IntOr intOr);
 
 	void visitIntXor(IntXor intXor);
+
+	void visitIntEqual(IntEqual intEqual);
+
+	void visitIntNotEqual(IntNotEqual intNotEqual);
+
+	void visitIntGreaterThan(IntGreaterThan intGreaterThan);
+
+	void visitIntGreaterThanOrEqual(IntGreaterThanOrEqual intGreaterThanOrEqual);
 
 	/* Real Operations */
 
