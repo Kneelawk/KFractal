@@ -16,6 +16,10 @@ public interface IInstructionVisitor {
 
 	void visitBoolOr(BoolOr boolOr);
 
+	void visitBoolEqual(BoolEqual boolEqual);
+
+	void visitBoolNotEqual(BoolNotEqual boolNotEqual);
+
 	/* Int Operations */
 
 	void visitIntAdd(IntAdd intAdd);
