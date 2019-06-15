@@ -1,5 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
+/**
+ * This interface is implemented by anything that wants to be able to traverse a Fractal IR instruction tree.
+ */
 public interface IInstructionVisitor {
 	/* General Purpose Operations */
 
