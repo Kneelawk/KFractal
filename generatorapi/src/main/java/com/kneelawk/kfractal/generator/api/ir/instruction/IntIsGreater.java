@@ -6,18 +6,19 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntEqual - Instruction. Checks to see if the last two arguments have the same integer value and stores the boolean
- * result in the variable referenced by the first argument.
+ * IntIsGreater - Instruction. Checks to see if the second to last argument is greater than the last argument and stores
+ * the resulting boolean in the variable referenced by the first argument.
  * <p>
- * IntEqual(Bool result, Int left, Int right)
+ * IntIsGreater(Bool result, Int left, Int right)
  */
-public class IntEqual implements IInstruction {
+public class IntIsGreater implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput left;
 	private IInstructionInput right;
 
-	private IntEqual(IInstructionOutput result, IInstructionInput left,
-					IInstructionInput right) {
+	private IntIsGreater(IInstructionOutput result,
+						 IInstructionInput left,
+						 IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -37,7 +38,7 @@ public class IntEqual implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitIntEqual(this);
+		visitor.visitIntIsGreater(this);
 	}
 
 	@Override
@@ -65,8 +66,8 @@ public class IntEqual implements IInstruction {
 			this.right = right;
 		}
 
-		public IntEqual build() {
-			return new IntEqual(result, left, right);
+		public IntIsGreater build() {
+			return new IntIsGreater(result, left, right);
 		}
 
 		public IInstructionOutput getResult() {

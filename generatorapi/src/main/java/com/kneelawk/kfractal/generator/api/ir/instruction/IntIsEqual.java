@@ -6,18 +6,17 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntNotEqual - Instruction. Checks to see if the last two arguments do not have the same integer value and stores the
+ * IntIsEqual - Instruction. Checks to see if the last two arguments have the same integer value and stores the boolean
  * result in the variable referenced by the first argument.
  * <p>
- * IntNotEqual(Bool result, Int left, Int right)
+ * IntIsEqual(Bool result, Int left, Int right)
  */
-public class IntNotEqual implements IInstruction {
+public class IntIsEqual implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput left;
 	private IInstructionInput right;
 
-	private IntNotEqual(IInstructionOutput result,
-					   IInstructionInput left,
+	private IntIsEqual(IInstructionOutput result, IInstructionInput left,
 					   IInstructionInput right) {
 		this.result = result;
 		this.left = left;
@@ -38,7 +37,7 @@ public class IntNotEqual implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitIntNotEqual(this);
+		visitor.visitIntIsEqual(this);
 	}
 
 	@Override
@@ -66,8 +65,8 @@ public class IntNotEqual implements IInstruction {
 			this.right = right;
 		}
 
-		public IntNotEqual build() {
-			return new IntNotEqual(result, left, right);
+		public IntIsEqual build() {
+			return new IntIsEqual(result, left, right);
 		}
 
 		public IInstructionOutput getResult() {

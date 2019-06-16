@@ -16,9 +16,9 @@ public interface IInstructionVisitor {
 
 	void visitBoolOr(BoolOr boolOr);
 
-	void visitBoolEqual(BoolEqual boolEqual);
+	void visitBoolIsEqual(BoolIsEqual boolIsEqual);
 
-	void visitBoolNotEqual(BoolNotEqual boolNotEqual);
+	void visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual);
 
 	/* Int Operations */
 
@@ -38,13 +38,13 @@ public interface IInstructionVisitor {
 
 	void visitIntXor(IntXor intXor);
 
-	void visitIntEqual(IntEqual intEqual);
+	void visitIntIsEqual(IntIsEqual intIsEqual);
 
-	void visitIntNotEqual(IntNotEqual intNotEqual);
+	void visitIntIsNotEqual(IntIsNotEqual intIsNotEqual);
 
-	void visitIntGreaterThan(IntGreaterThan intGreaterThan);
+	void visitIntIsGreater(IntIsGreater intIsGreater);
 
-	void visitIntGreaterThanOrEqual(IntGreaterThanOrEqual intGreaterThanOrEqual);
+	void visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual);
 
 	/* Real Operations */
 

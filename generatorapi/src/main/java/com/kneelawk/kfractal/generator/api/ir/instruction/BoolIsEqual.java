@@ -6,19 +6,18 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * BoolNotEqual - Instruction. Checks to see if the two last boolean arguments are not equal and stores the result in
- * the variable referenced by the first argument. This is the same as a boolean XOR.
+ * BoolIsEqual - Instruction. Checks to see if the two last boolean arguments are equal then stores the result in the
+ * variable referenced by the first argument. This is the same as a boolean XNOR.
  * <p>
- * BoolNotEqual(Bool result, Bool left, Bool right)
+ * BoolIsEqual(Bool result, Bool left, Bool right)
  */
-public class BoolNotEqual implements IInstruction {
+public class BoolIsEqual implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput left;
 	private IInstructionInput right;
 
-	private BoolNotEqual(IInstructionOutput result,
-						IInstructionInput left,
-						IInstructionInput right) {
+	private BoolIsEqual(IInstructionOutput result,
+						IInstructionInput left, IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -38,7 +37,7 @@ public class BoolNotEqual implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitBoolNotEqual(this);
+		visitor.visitBoolIsEqual(this);
 	}
 
 	@Override
@@ -66,8 +65,8 @@ public class BoolNotEqual implements IInstruction {
 			this.right = right;
 		}
 
-		public BoolNotEqual build() {
-			return new BoolNotEqual(result, left, right);
+		public BoolIsEqual build() {
+			return new BoolIsEqual(result, left, right);
 		}
 
 		public IInstructionOutput getResult() {

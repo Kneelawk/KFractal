@@ -6,19 +6,19 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntGreaterThanOrEqual - Instruction. Checks to see if the second to last argument is greater than or equal to the
- * last argument and stores the resulting boolean in the variable republicferenced by the first argument.
+ * IntIsGreaterOrEqual - Instruction. Checks to see if the second to last argument is greater than or equal to the last
+ * argument and stores the resulting boolean in the variable referenced by the first argument.
  * <p>
- * IntGreaterThanOrEqual(Bool result, Int left, Int right)
+ * IntIsGreaterOrEqual(Bool result, Int left, Int right)
  */
-public class IntGreaterThanOrEqual implements IInstruction {
+public class IntIsGreaterOrEqual implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput left;
 	private IInstructionInput right;
 
-	private IntGreaterThanOrEqual(IInstructionOutput result,
-								 IInstructionInput left,
-								 IInstructionInput right) {
+	private IntIsGreaterOrEqual(IInstructionOutput result,
+								IInstructionInput left,
+								IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -38,7 +38,7 @@ public class IntGreaterThanOrEqual implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitIntGreaterThanOrEqual(this);
+		visitor.visitIntIsGreaterOrEqual(this);
 	}
 
 	@Override
@@ -66,8 +66,8 @@ public class IntGreaterThanOrEqual implements IInstruction {
 			this.right = right;
 		}
 
-		public IntGreaterThanOrEqual build() {
-			return new IntGreaterThanOrEqual(result, left, right);
+		public IntIsGreaterOrEqual build() {
+			return new IntIsGreaterOrEqual(result, left, right);
 		}
 
 		public IInstructionOutput getResult() {
