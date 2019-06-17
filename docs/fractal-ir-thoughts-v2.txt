@@ -1,0 +1,289 @@
+Programs have:
+ * Global Variable Declarations
+ * Structures? // No, structure types are described by their contents, not by their names. No structure types must have
+    type names. Otherwise, it would be impossible to have a structure that contains pointers to itself or structures
+    containing itself.
+ * Functions
+
+All Functions have a type.
+All Functions are base-level.
+
+Variable values of function type simply reference a function,
+just like how variables of bool type "reference" true or false
+or how variables of complex type "reference" complex numbers.
+
+Variable values of function type also contain context variables.
+These context variables can be pointers, or normal variables.
+
+Variables would have types:
+ * Void (not valid for variable types, but valid for function return types)
+ * Bool
+ * Int
+ * Real (double)
+ * Complex (is likely a structure in implementations)
+ * Function (contains a function pointer or name, and context variables) (is derived type)
+    (type signature depends on target function's signature) (context variable types can be verified at compile type
+    when creating the function variable)
+ * Pointer (backing memory must be explicitly allocated. can have backing memory of any of these variable types)
+    (backing memory may be subject to reference-counting, or garbage collection) (is derived type)
+!* Structure (is derived type) (maybe shouldn't have this) (can-of-worms) (makes reference-counting GC impossible)
+
+Functions would have:
+ * Name
+ * Return Type
+ * Context Variable Declarations (in practice, context variables would likely be part of the arguments list, but would
+    come from the function variable's stored set of context variables)
+ * Argument Variable Declarations
+ * Local Variable Declarations
+ * Instructions
+
+Structures would be:
+Structure type should be a reference to a structure definition.
+Structures should not be in a programming language designed for generating fractals.
+
+Some Instructions could be:
+ * ComplexAdd(Complex, Complex, Complex) (adds the last two complex numbers and stores the sum in the first)
+ * ComplexMultiply(Complex, Complex, Complex) (multiplies the last two complex numbers and stores the product in the first)
+ * PointerAllocate(Pointer(*)) (allocates memory and stores the reference to that memory in the argument)
+ * PointerFree(Pointer(*)) (frees the memory that the pointer points to)
+ * FunctionCall(Function(*), *, [ ** ]) (calls a function with its context if it has any) (all variables are copied,
+    Pointers maintain their reference though, so setting the referenced value of a pointer here will set in other places
+    too.)
+ * Return(*) (exits the current function and returns control flow over to the parent function, variables declared in the
+    current function are de-allocated, including Pointers. If pointers are using a reference-counting system, this is
+    where the referenced value would decrease its number of references.)
+
+Instructions should have Inputs and Outputs. These seem like they should be separate.
+Some InstructionInputs could be:
+ * VariableReference
+ * BoolConstant
+ * IntConstant
+ * RealConstant
+ * ComplexConstant
+ * FunctionContextConstant
+ * NullPointer
+ * VoidConstant
+
+Some InstructionOutputs could be:
+ * VariableReference
+ * VoidConstant
+
+When declaring a variable, each variable should be able to have attributes/annotation things.
+Not every attribute should be able to be applied to every type of variable.
+Attributes could be:
+ * Constant (Variable value cannot be changed)
+ * Preallocated (Only for pointers) (The memory referenced by this pointer is governed by this pointer's scope)
+    (This pointer variable cannot be reassigned to a new target)
+
+InstructionIO type compatibility with Instructions should be validated when the IR is compiled into something else,
+meaning that the IR structure is built in a way that can have mistyped arguments, but hopefully provides enough
+information for a compiler of that IR to be able to detect those mistypes.
+
+Simple Program:
+Program(
+[ ], // global variables
+[ // functions
+    "main"=FunctionDefinition(
+        "main", // name
+        COMPLEX, // return type
+        [ ], // context variables
+        [ // arguments
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [ // local variables
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX)
+        ],
+        [ // instructions
+            ComplexMultiply(VariableReference("tmp0"), VariableReference("z"), VariableReference("z")),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("tmp0"), VariableReference("c")),
+            Return("tmp0")
+        ]
+    )
+]
+)
+Easy, simple. Memory management is not nearly so much of an issue now because each declaration comes with its own
+allocated piece of memory. Only Pointers have to have explicitly allocated memory, and that's just because the data they
+hold is the reference to memory.
+
+Slightly more complicated program:
+Program(
+[ ],
+[
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [
+            "z2"=VariableDeclaration("z2", COMPLEX),
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX)
+        ],
+        [
+            ComplexMultiply(VariableReference("z2"), VariableReference("z"), VariableReference("z")),
+            FunctionCall(FunctionContext("cos", [ ]), VariableReference("tmp0"), [ VariableReference("z2") ]),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("z2"), VariableReference("tmp0")),
+            ComplexAdd(VariableReference("tmp0"), VariableReference("tmp0"), VariableReference("c")),
+            Return("tmp0")
+        ]
+    )
+]
+)
+
+Program in C:
+struct complex_t complex_add(struct complex_t a, struct complex_t b);
+struct complex_t complex_multiply(struct complex_t a, struct complex_t b);
+struct complex_t cos(struct complex_t x);
+struct complex_t f(struct complex_t z, struct complex_t c) {
+    struct complex_t z2;
+    z2 = complex_multiply(z, z);
+    return complex_add(complex_add(z2, cos(z2)), c);
+}
+
+Program in LLVM Bytecode:
+declare { double, double } @complex_multiply(double, double, double, double)
+declare { double, double } @complex_add(double, double, double, double)
+declare { double, double } @cos(double, double)
+define { double, double } @f(double %z.coerce0, double %z.coerce1, double %c.coerce0, double %c.coerce1) {
+entry:
+  %call = tail call { double, double } @complex_multiply(double %z.coerce0, double %z.coerce1, double %z.coerce0, double %z.coerce1)
+  %0 = extractvalue { double, double } %call, 0
+  %1 = extractvalue { double, double } %call, 1
+  %call2 = tail call { double, double } @cos(double %0, double %1)
+  %2 = extractvalue { double, double } %call2, 0
+  %3 = extractvalue { double, double } %call2, 1
+  %call3 = tail call { double, double } @complex_add(double %0, double %1, double %2, double %3)
+  %4 = extractvalue { double, double } %call3, 0
+  %5 = extractvalue { double, double } %call3, 1
+  %call4 = tail call { double, double } @complex_add(double %4, double %5, double %c.coerce0, double %c.coerce1)
+  ret { double, double } %call4
+}
+
+Composition Test Program:
+Program(
+[ ],
+[
+    "a"=FunctionDefinition(
+        "a",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            ComplexAdd(VariableReference("tmp0"), VariableReference("x"), ComplexConstant((2 + 0i))),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "b"=FunctionDefinition(
+        "b",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            ComplexMultiply(VariableReference("tmp0"), VariableReference("x"), ComplexConstant((2 + 0i))),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "compose"=FunctionDefinition(
+        "compose",
+        FUNCTION(COMPLEX, [ COMPLEX ]),
+        [ ],
+        [
+            "f1"=VariableDeclaration("f1", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "f2"=VariableDeclaration("f2", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [ ],
+        [
+            Return(FunctionContext("compose$1", [ VariableReference("f1"), VariableReference("f2") ]))
+        ]
+    ),
+    "compose$1"=FunctionDefinition(
+        "compose$1",
+        COMPLEX,
+        [
+            "f"=VariableDeclaration("f", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "g"=VariableDeclaration("g", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            FunctionCall(VariableReference("f"), VariableReference("tmp0"), [ VariableReference("x") ]),
+            FunctionCall(VariableReference("g"), VariableReference("tmp0"), [ VariableReference("tmp0") ]),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [
+            "tmp0"=VariableDeclaration("tmp0", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "tmp1"=VariableDeclaration("tmp1", COMPLEX)
+        ],
+        [
+            FunctionCall(FunctionContext("compose", [ ]), VariableReference("tmp0"), [ FunctionContext("a", [ ]), FunctionContext("b" [ ]) ]),
+            FunctionCall(VariableReference("tmp0"), VariableReference("tmp1"), [ ComplexConstant((2 + 0i)) ]),
+            Return(VariableReference("tmp1"))
+        ]
+    )
+]
+)
+
+Structure Test Program:
+Program(
+[ ],
+[ // structures
+    "LinkedListElement"=StructureDefinition(
+        "LinkedListElement", // name
+        [ // internal types
+            "data"=VariableDeclaration("data", COMPLEX),
+            "next"=VariableDeclaration("next", POINTER(STRUCT("LinkedListElement")))
+        ]
+    )
+],
+[
+    "last"=FunctionDefinition(
+        "last",
+        COMPLEX,
+        [ ],
+        [ "elem"=VariableDeclaration("elem", POINTER(STRUCT("LinkedListElement"))) ],
+        [
+            "tmp0"=VariableDeclaration("tmp0", STRUCT("LinkedListElement")),
+            "tmp1"=VariableDeclaration("tmp1", POINTER(STRUCT("LinkedListElement"))),
+            "tmp2"=VariableDeclaration("tmp1", BOOL),
+            "tmp3"=VariableDeclaration("tmp2", COMPLEX)
+        ],
+        [
+            GetPointerValue(VariableReference("tmp0"), VariableReference("elem")),
+            GetStructureComponent(VariableReference("tmp1"), VariableReference("tmp0"), "next"),
+            IsPointerEqual(VariableReference("tmp2"), VariableReference("tmp1"), NullPointer),
+            While(
+                VariableReference("tmp2"),
+                [
+                    Assign(VariableReference("elem"), VariableReference("tmp1")),
+                    GetPointerValue(VariableReference("tmp0"), VariableReference("elem")),
+                    GetStructureComponent(VariableReference("tmp1"), VariableReference("tmp0"), "next"),
+                    IsPointerEqual(VariableReference("tmp2"), VariableReference("tmp1"), NullPointer)
+                ]
+            ),
+            GetStructureComponent(VariableReference("tmp3"), VariableReference("tmp0"), "data"),
+            Return(VariableReference("tmp3"))
+        ]
+    )
+]
+)
+
+I created structures knowing that I could use a mark-and-sweep GC because structures open up the possibility for cyclic
+references. I just remembered that my GPU targets probably won't have a GC however. I have two options: write my own
+GC for GPUs, or use strong and weak pointers and force the compiler to keep track of it.
+
+I don't actually know why I've been adding structures though. This is unneeded complexity.
+I think it would be best for me to remove structures entirely.

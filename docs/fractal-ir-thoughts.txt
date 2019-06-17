@@ -1,0 +1,235 @@
+Programs have:
+ * Global Variables
+ * Functions
+
+All Variables have a type.
+All Functions are base level.
+
+Variable values of function type simply reference a function,
+just like how variables of bool type "reference" true or false
+or how variables of complex type "reference" complex numbers.
+
+In practice, Function references would also have references to
+all context variables used in the function. In IR though, all variables
+are just strings referencing variables' names.
+
+Variables would have types:
+ * Bool
+ * Complex
+ * Function
+
+All Variables are references. These references could potentially
+use reference counters for memory management or simply use the host
+language's GC or a mark-and-sweep GC like the Boehm-Demers-Weiser GC.
+
+In one sense, all variables would be a reference to a "reference".
+
+Functions have:
+ * Local Variables
+ * Statements
+
+All Statements that input take from variables (global, context, or local) or constants.
+All Statements that output put into variables (global, context, or local) or nothing.
+
+Functions have their own scopes but those are the only kinds of scopes there are.
+
+Control Flow Statements are trees, but do not have internal scopes.
+
+Statements can be:
+ * Allocate (Allocate a garbage-collected piece of memory with a specific value for references to point to and
+    make this reference point to it) (like: a = make_shared<int>(42);)
+ * Assignment (set one variable's reference's value to that of another) (like: *a = 10;)
+ * Reference Update (replaces this variable's reference with the one referenced by the other variable) (like: a = b;)
+ * Builtin Operation (set one variable's value to the result of a builtin operation on a list of inputs) (like: *a = *b ? *c;)
+ * Function Call (call a function by reference or name)
+    (like: *a = f(*b, *c); if f's signature were: int f(int a, int b))
+    (passing the value of a reference which is in turn copied into a new piece of memory for use in the function)
+    (returning the value of a reference which is in turn copied into the memory referenced by the FunctionCall's output target variable)
+ * If Statement (has a bool argument, an inner set of statements that get executed if the argument is true,
+    and another inner set of statements that get executed if the argument is false)
+ * While Statement (has a bool argument and an inner set of statements that gets executed repeatedly until the bool
+    argument is false. After every execution, the bool argument is checked again.)
+ * Return (returns a single value from the function)
+
+Statement Inputs/Outputs can be:
+ * Variable Reference
+ * Bool Constant
+ * Complex Constant
+ * Function Context
+ * Nothing
+
+Example Program:
+Program(
+[ ],
+[
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [ "z"=VariableDeclaration("z", COMPLEX), "c"=VariableDeclaration("c", COMPLEX) ],
+        [
+            "z2"=VariableDeclaration("z2", COMPLEX),
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX),
+            "tmp1"=VariableDeclaration("tmp1", COMPLEX),
+            "tmp2"=VariableDeclaration("tmp2", COMPLEX)
+        ],
+        [
+            Allocate(VariableReference("z2"), ComplexConstant((0 + 0i))),
+            Allocate(VariableReference("tmp0"), ComplexConstant((0 + 0i))),
+            Allocate(VariableReference("tmp1"), ComplexConstant((0 + 0i))),
+            Allocate(VariableReference("tmp2"), ComplexConstant((0 + 0i))),
+            BuiltinOperation("pow", VariableReference("z2"), [ VariableReference("z"), ComplexConstant((2 + 0i)) ]),
+            FunctionCall(FunctionContext("cos", [ ]), VariableReference("tmp0"), [ VariableReference("z2") ]),
+            BuiltinOperation("add", VariableReference("tmp1"), [ VariableReference("z2"), VariableReference("tmp0") ]),
+            BuiltinOperation("add", VariableReference("tmp2"), [ VariableReference("tmp1"), VariableReference("c") ]),
+            Return(VariableReference("tmp2"))
+        ]
+    )
+]
+)
+
+C:
+complex_ref main(complex_ref z, complex_ref c) {
+    complex_ref z2, tmp0, tmp1, tmp2;
+    z2 = allocate_complex_ref(0, 0);
+    tmp0 = allocate_complex_ref(0, 0);
+    tmp1 = allocate_complex_ref(0, 0);
+    tmp2 = allocate_complex_ref(0, 0);
+    builtin_operation("pow", z2, { z, allocate_complex_ref(2, 0) });
+    function_call(allocate_function_context(cos, { }, 0), tmp0, { z2 });
+    builtin_operation("add", tmp1, { z2, tmp0 });
+    builtin_operation("add", tmp2, { tmp1, c });
+    return tmp2;
+}
+
+This is abysmal performance.
+What I would like to see is:
+complex main(complex z, complex c) {
+    complex z2, tmp0, tmp1, tmp2;
+    z2 = complex_pow(z, mk_complex(2, 0));
+    tmp0 = function_call(mk_function_context(cos, { }), { z2 });
+    tmp1 = complex_add(z2, tmp0);
+    tmp2 = complex_add(tmp1, c);
+    return tmp2;
+}
+No need for references at all in this program.
+In order to get this kind of efficiency, I will likely need to completely revamp the type and instruction systems.
+
+Optimised:
+Program(
+[ ],
+[
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [ "z"=VariableDeclaration("z", COMPLEX), "c"=VariableDeclaration("c", COMPLEX) ],
+        [
+            "z2"=VariableDeclaration("z2", COMPLEX),
+            "tmp0"=VariableDeclaration("tmp0", COMPLEX)
+        ],
+        [
+            Allocate(VariableReference("z2"), ComplexConstant((0 + 0i))),
+            Allocate(VariableReference("tmp0"), ComplexConstant((0 + 0i))),
+            BuiltinOperation("mul", VariableReference("z2"), [ VariableReference("z"), VariableReference("z") ]),
+            FunctionCall(FunctionContext("cos", [ ]), VariableReference("tmp0"), [ VariableReference("z2") ]),
+            BuiltinOperation("add", VariableReference("tmp0"), [ VariableReference("z2"), VariableReference("tmp0") ]),
+            BuiltinOperation("add", VariableReference("tmp0"), [ VariableReference("tmp0"), VariableReference("c") ]),
+            Return(VariableReference("tmp0"))
+        ]
+    )
+]
+)
+
+In this program, VariableReference("tmp0") is a reference to the 'tmp0' variable, which is a reference to
+a reference-counting object, which in turn contains a "reference" to a concrete value. WTF 3 references deep?
+
+Compose Test Program:
+Program(
+[ ],
+[
+    "a"=FunctionDefinition(
+        "a",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            Allocate(VariableReference("tmp0"), ComplexConstant((0 + 0i))),
+            BuiltinOperation("add", VariableReference("tmp0"), [ VariableReference("x"), ComplexConstant((2 + 0i)) ]),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "b"=FunctionDefinition(
+        "b",
+        COMPLEX,
+        [ ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            Allocate(VariableReference("tmp0"), ComplexConstant((0 + 0i))),
+            BuiltinOperation("mul", VariableReference("tmp0"), [ VariableReference("x"), ComplexConstant((3 + 0i)) ]),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "compose"=FunctionDefinition(
+        "compose",
+        FUNCTION(COMPLEX, [ COMPLEX ]),
+        [ ],
+        [
+            "f"=VariableDeclaration("f", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "g"=VariableDeclaration("g", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [
+            Return(FunctionContext("compose$1", [ VariableReference("f"), VariableReference("g") ])
+        ]
+    ),
+    "compose$1"=FunctionDefinition(
+        "compose$1",
+        COMPLEX,
+        [
+            "f1"=VariableDeclaration("f1", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "f2"=VariableDeclaration("f2", FUNCTION(COMPLEX, [ COMPLEX ]))
+        ],
+        [ "x"=VariableDeclaration("x", COMPLEX) ],
+        [ "tmp0"=VariableDeclaration("tmp0", COMPLEX) ],
+        [
+            FunctionCall(VariableReference("f1"), VariableReference("tmp0"), [ VariableReference("x") ]),
+            FunctionCall(VariableReference("f2"), VariableReference("tmp0"), [ VariableReference("tmp0") ]),
+            Return(VariableReference("tmp0"))
+        ]
+    ),
+    "main"=FunctionDefinition(
+        "main",
+        COMPLEX,
+        [ ],
+        [
+            "z"=VariableDeclaration("z", COMPLEX),
+            "c"=VariableDeclaration("c", COMPLEX)
+        ],
+        [
+            "a"=VariableDeclaration("a", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "b"=VariableDeclaration("b", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "compose"=VariableDeclaration("compose", FUNCTION(FUNCTION(COMPLEX, [ COMPLEX ]), [ FUNCTION(COMPLEX, [ COMPLEX ]), FUNCTION(COMPLEX, [ COMPLEX ]) ])),
+            "tmp0"=VariableDeclaration("tmp0", FUNCTION(COMPLEX, [ COMPLEX ])),
+            "tmp1"=VariableDeclaration("tmp1", COMPLEX)
+        ],
+        [
+            Assignment(VariableReference("a"), FunctionContext("a", [ ]),
+            Assignment(VariableReference("b"), FunctionContext("b", [ ]),
+            Assignment(VariableReference("compose"), FunctionContext("compose", [ ]),
+            FunctionCall(VariableReference("compose"), VariableReference("tmp0"), [ VariableReference("a"), VariableReference("b") ]),
+            FunctionCall(VariableReference("tmp0"), VariableReference("tmp1"), [ VariableReference("z") ]),
+            Return("tmp1")
+        ]
+    )
+]
+)
+
+Program Issues:
+Function type variables' functions' type-signatures can only be verified at runtime.
+This issue can be solved by having FUNCTION type be specifiable with sub-types.
+
+Control-Flow Test:
+Program(
+[ ],
