@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.api;
 
-import com.kneelawk.kfractal.generator.api.language.Program;
+import com.kneelawk.kfractal.generator.api.ir.Program;
 
 public class FractalInfo {
 	private int imageWidth;
@@ -15,7 +15,9 @@ public class FractalInfo {
 	private double cImaginary;
 	private Program generatorFunction;
 
-	public FractalInfo(int imageWidth, int imageHeight, double planeWidth, double planeHeight, double planeStartX, double planeStartY, boolean mandelbrot, int iterations, double cReal, double cImaginary, Program generatorFunction) {
+	public FractalInfo(int imageWidth, int imageHeight, double planeWidth, double planeHeight, double planeStartX,
+					   double planeStartY, boolean mandelbrot, int iterations, double cReal, double cImaginary,
+					   Program generatorFunction) {
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.planeWidth = planeWidth;
