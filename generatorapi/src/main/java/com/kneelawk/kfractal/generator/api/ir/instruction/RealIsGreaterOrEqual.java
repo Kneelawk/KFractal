@@ -6,19 +6,20 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntIsGreaterOrEqual - Instruction. Checks to see if the second to last argument is greater than or equal to the last
- * argument and stores the resulting boolean in the variable referenced by the first argument.
+ * RealIsGreaterOrEqual - Instruction. Checks to see if the second to last argument has a greater real value than or
+ * equal real value to the last argument and stores the resulting boolean value in the variable referenced by the first
+ * argument.
  * <p>
- * IntIsGreaterOrEqual(Bool result, Int subject, Int basis)
+ * RealIsGreaterOrEqual(Bool result, Real subject, Real basis)
  */
-public class IntIsGreaterOrEqual implements IInstruction {
+public class RealIsGreaterOrEqual implements IInstruction {
 	private IInstructionOutput result;
 	private IInstructionInput subject;
 	private IInstructionInput basis;
 
-	private IntIsGreaterOrEqual(IInstructionOutput result,
-								IInstructionInput subject,
-								IInstructionInput basis) {
+	private RealIsGreaterOrEqual(IInstructionOutput result,
+								 IInstructionInput subject,
+								 IInstructionInput basis) {
 		this.result = result;
 		this.subject = subject;
 		this.basis = basis;
@@ -38,7 +39,7 @@ public class IntIsGreaterOrEqual implements IInstruction {
 
 	@Override
 	public void accept(IInstructionVisitor visitor) {
-		visitor.visitIntIsGreaterOrEqual(this);
+		visitor.visitRealIsGreaterOrEqual(this);
 	}
 
 	@Override
@@ -66,8 +67,8 @@ public class IntIsGreaterOrEqual implements IInstruction {
 			this.basis = basis;
 		}
 
-		public IntIsGreaterOrEqual build() {
-			return new IntIsGreaterOrEqual(result, subject, basis);
+		public RealIsGreaterOrEqual build() {
+			return new RealIsGreaterOrEqual(result, subject, basis);
 		}
 
 		public IInstructionOutput getResult() {

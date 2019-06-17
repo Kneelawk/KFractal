@@ -8,6 +8,8 @@ public interface IInstructionVisitor {
 
 	void visitAssign(Assign assign);
 
+	void visitReturn(Return aReturn);
+
 	/* Bool Operations */
 
 	void visitBoolNot(BoolNot boolNot);
@@ -32,6 +34,10 @@ public interface IInstructionVisitor {
 
 	void visitIntModulo(IntModulo intModulo);
 
+	void visitIntPower(IntPower intPower);
+
+	void visitIntNot(IntNot intNot);
+
 	void visitIntAnd(IntAnd intAnd);
 
 	void visitIntOr(IntOr intOr);
@@ -48,6 +54,26 @@ public interface IInstructionVisitor {
 
 	/* Real Operations */
 
+	void visitRealAdd(RealAdd realAdd);
+
+	void visitRealSubtract(RealSubtract realSubtract);
+
+	void visitRealMultiply(RealMultiply realMultiply);
+
+	void visitRealDivide(RealDivide realDivide);
+
+	void visitRealPower(RealPower realPower);
+
+	void visitRealIsEqual(RealIsEqual realIsEqual);
+
+	void visitRealIsNotEqual(RealIsNotEqual realIsNotEqual);
+
+	void visitRealIsGreater(RealIsGreater realIsGreater);
+
+	void visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual);
+
+	void visitRealComposeComplex(RealComposeComplex realComposeComplex);
+
 	/* Complex Operations */
 
 	void visitComplexAdd(ComplexAdd complexAdd);
@@ -58,6 +84,8 @@ public interface IInstructionVisitor {
 
 	void visitComplexDivide(ComplexDivide complexDivide);
 
+	void visitComplexPower(ComplexPower complexPower);
+
 	void visitComplexGetReal(ComplexGetReal complexGetReal);
 
 	void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary);
@@ -65,4 +93,22 @@ public interface IInstructionVisitor {
 	void visitComplexModulo(ComplexModulo complexModulo);
 
 	/* Function Operations */
+
+	void visitFunctionCall(FunctionCall functionCall);
+
+	/* Pointer Operations */
+
+	void visitPointerAllocate(PointerAllocate pointerAllocate);
+
+	void visitPointerFree(PointerFree pointerFree);
+
+	void visitPointerGet(PointerGet pointerGet);
+
+	void visitPointerSet(PointerSet pointerSet);
+
+	/* Control-Flow Operations */
+
+	void visitIf(If anIf);
+
+	void visitWhile(While aWhile);
 }

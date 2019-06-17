@@ -9,31 +9,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * IntIsGreater - Instruction. Checks to see if the second to last argument is greater than the last argument and stores
  * the resulting boolean in the variable referenced by the first argument.
  * <p>
- * IntIsGreater(Bool result, Int left, Int right)
+ * IntIsGreater(Bool result, Int subject, Int basis)
  */
 public class IntIsGreater implements IInstruction {
 	private IInstructionOutput result;
-	private IInstructionInput left;
-	private IInstructionInput right;
+	private IInstructionInput subject;
+	private IInstructionInput basis;
 
 	private IntIsGreater(IInstructionOutput result,
-						 IInstructionInput left,
-						 IInstructionInput right) {
+						 IInstructionInput subject,
+						 IInstructionInput basis) {
 		this.result = result;
-		this.left = left;
-		this.right = right;
+		this.subject = subject;
+		this.basis = basis;
 	}
 
 	public IInstructionOutput getResult() {
 		return result;
 	}
 
-	public IInstructionInput getLeft() {
-		return left;
+	public IInstructionInput getSubject() {
+		return subject;
 	}
 
-	public IInstructionInput getRight() {
-		return right;
+	public IInstructionInput getBasis() {
+		return basis;
 	}
 
 	@Override
@@ -45,29 +45,29 @@ public class IntIsGreater implements IInstruction {
 	public String toString() {
 		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
 				.append("result", result)
-				.append("left", left)
-				.append("right", right)
+				.append("subject", subject)
+				.append("basis", basis)
 				.toString();
 	}
 
 	public static class Builder {
 		private IInstructionOutput result;
-		private IInstructionInput left;
-		private IInstructionInput right;
+		private IInstructionInput subject;
+		private IInstructionInput basis;
 
 		public Builder() {
 		}
 
 		public Builder(IInstructionOutput result,
-					   IInstructionInput left,
-					   IInstructionInput right) {
+					   IInstructionInput subject,
+					   IInstructionInput basis) {
 			this.result = result;
-			this.left = left;
-			this.right = right;
+			this.subject = subject;
+			this.basis = basis;
 		}
 
 		public IntIsGreater build() {
-			return new IntIsGreater(result, left, right);
+			return new IntIsGreater(result, subject, basis);
 		}
 
 		public IInstructionOutput getResult() {
@@ -79,21 +79,21 @@ public class IntIsGreater implements IInstruction {
 			return this;
 		}
 
-		public IInstructionInput getLeft() {
-			return left;
+		public IInstructionInput getSubject() {
+			return subject;
 		}
 
-		public Builder setLeft(IInstructionInput left) {
-			this.left = left;
+		public Builder setSubject(IInstructionInput subject) {
+			this.subject = subject;
 			return this;
 		}
 
-		public IInstructionInput getRight() {
-			return right;
+		public IInstructionInput getBasis() {
+			return basis;
 		}
 
-		public Builder setRight(IInstructionInput right) {
-			this.right = right;
+		public Builder setBasis(IInstructionInput basis) {
+			this.basis = basis;
 			return this;
 		}
 	}

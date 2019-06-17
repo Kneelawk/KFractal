@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Assign - Instruction. Copies the value of the last argument into the first argument. The first and last argument must
  * represent the same types of values.
  *
- * Assign(? dest, ? source)
+ * Assign(* dest, * source)
  */
 public class Assign implements IInstruction {
 	private IInstructionOutput dest;
