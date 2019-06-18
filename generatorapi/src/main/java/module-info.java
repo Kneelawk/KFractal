@@ -1,6 +1,7 @@
 module com.kneelwak.kfractal.generator.api {
     exports com.kneelawk.kfractal.generator.api;
     exports com.kneelawk.kfractal.generator.api.ir;
+    exports com.kneelawk.kfractal.generator.api.ir.attribute;
     exports com.kneelawk.kfractal.generator.api.ir.instruction;
     exports com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
