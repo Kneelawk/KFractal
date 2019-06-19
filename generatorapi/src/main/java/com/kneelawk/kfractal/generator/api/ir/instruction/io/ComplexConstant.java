@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.math3.complex.Complex;
@@ -19,8 +20,8 @@ public class ComplexConstant implements IInstructionInput {
 	}
 
 	@Override
-	public void accept(IInstructionInputVisitor visitor) {
-		visitor.visitComplexConstant(this);
+	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitComplexConstant(this);
 	}
 
 	@Override

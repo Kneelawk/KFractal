@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
@@ -34,8 +35,8 @@ public class BoolOr implements IInstruction {
 	}
 
 	@Override
-	public void accept(IInstructionVisitor visitor) {
-		visitor.visitBoolOr(this);
+	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitBoolOr(this);
 	}
 
 	@Override

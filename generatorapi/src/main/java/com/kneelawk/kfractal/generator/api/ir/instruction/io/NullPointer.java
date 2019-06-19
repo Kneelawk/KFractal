@@ -1,5 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+
 public class NullPointer implements IInstructionInput {
 	public static final NullPointer INSTANCE = new NullPointer();
 
@@ -7,8 +9,8 @@ public class NullPointer implements IInstructionInput {
 	}
 
 	@Override
-	public void accept(IInstructionInputVisitor visitor) {
-		visitor.visitNullPointer();
+	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitNullPointer();
 	}
 
 	@Override
