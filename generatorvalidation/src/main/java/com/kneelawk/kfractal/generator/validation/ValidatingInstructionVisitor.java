@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.ir.validation;
+package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;

@@ -1,3 +1,4 @@
 // subprojects
 include 'generatorapi'
+include 'generatorvalidation'
 include 'util'

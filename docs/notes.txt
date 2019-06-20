@@ -1,5 +1,6 @@
 Subprojects:
 generatorapi        -- contains the api that a fractal generator implements
+generatorvalidation -- contains the system for detecting invalid fractal generator settings including invalid fractal ir
 generatorsimple     -- contains a simple implementation of the fractal generator api
 generatorthreaded   -- contains a multithreaded implementation of the fractal generator api
 generatornative     -- contains an experimental system for compiling fractal language into native bytecode

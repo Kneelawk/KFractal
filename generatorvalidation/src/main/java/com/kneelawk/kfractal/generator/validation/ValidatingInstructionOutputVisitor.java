@@ -1,4 +1,4 @@
-package com.kneelawk.kfractal.generator.api.ir.validation;
+package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutputVisitor;
