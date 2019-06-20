@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -18,13 +19,13 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
 	}
 
 	@Override
-	public void accept(IInstructionInputVisitor visitor) {
-		visitor.visitVariableReference(this);
+	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitVariableReference(this);
 	}
 
 	@Override
-	public void accept(IInstructionOutputVisitor visitor) {
-		visitor.visitVariableReference(this);
+	public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitVariableReference(this);
 	}
 
 	@Override

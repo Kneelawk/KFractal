@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -18,8 +19,8 @@ public class BoolConstant implements IInstructionInput {
 	}
 
 	@Override
-	public void accept(IInstructionInputVisitor visitor) {
-		visitor.visitBoolConstant(this);
+	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitBoolConstant(this);
 	}
 
 	@Override
