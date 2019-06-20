@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,8 +22,8 @@ public class Return implements IInstruction {
 	}
 
 	@Override
-	public void accept(IInstructionVisitor visitor) {
-		visitor.visitReturn(this);
+	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+		return visitor.visitReturn(this);
 	}
 
 	@Override

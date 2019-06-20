@@ -1,22 +1,24 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public interface IInstructionInputVisitor {
-	void visitVariableReference(VariableReference reference);
+public interface IInstructionInputVisitor<R> {
+	R visitVariableReference(VariableReference reference) throws FractalIRException;
 
-	void visitBoolConstant(BoolConstant constant);
+	R visitBoolConstant(BoolConstant constant) throws FractalIRException;
 
-	void visitIntConstant(IntConstant constant);
+	R visitIntConstant(IntConstant constant) throws FractalIRException;
 
-	void visitRealConstant(RealConstant constant);
+	R visitRealConstant(RealConstant constant) throws FractalIRException;
 
-	void visitComplexConstant(ComplexConstant constant);
+	R visitComplexConstant(ComplexConstant constant) throws FractalIRException;
 
-	void visitFunctionContextConstant(FunctionContextConstant contextConstant);
+	R visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalIRException;
 
-	void visitNullPointer();
+	R visitNullPointer() throws FractalIRException;
 
-	void visitVoid();
+	R visitVoid() throws FractalIRException;
 }
