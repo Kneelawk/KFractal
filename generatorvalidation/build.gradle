@@ -1,3 +1,4 @@
 dependencies {
     api project(':generatorapi')
+    implementation project(':util')
 }
