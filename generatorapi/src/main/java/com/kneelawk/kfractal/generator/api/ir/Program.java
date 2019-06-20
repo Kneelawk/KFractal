@@ -14,15 +14,17 @@ import java.util.Map;
  * Created by Kneelawk on 5/25/19.
  */
 public class Program {
-	private List<VariableDeclaration> globalVariables;
+	private Map<String, VariableDeclaration> globalVariables;
 	private Map<String, FunctionDefinition> functions;
 
-	private Program(List<VariableDeclaration> globalVariables, Map<String, FunctionDefinition> functions) {
+	private Program(
+			Map<String, VariableDeclaration> globalVariables,
+			Map<String, FunctionDefinition> functions) {
 		this.globalVariables = globalVariables;
 		this.functions = functions;
 	}
 
-	public List<VariableDeclaration> getGlobalVariables() {
+	public Map<String, VariableDeclaration> getGlobalVariables() {
 		return globalVariables;
 	}
 
@@ -39,33 +41,36 @@ public class Program {
 	}
 
 	public static class Builder {
-		private List<VariableDeclaration> globalVariables = Lists.newArrayList();
+		private Map<String, VariableDeclaration>
+				globalVariables = Maps.newHashMap();
 		private Map<String, FunctionDefinition> functions = Maps.newHashMap();
 
 		public Builder() {
 		}
 
-		public Builder(List<VariableDeclaration> globalVariables, Map<String, FunctionDefinition> functions) {
-			this.globalVariables = globalVariables;
-			this.functions = functions;
+		public Builder(
+				Map<String, VariableDeclaration> globalVariables,
+				Map<String, FunctionDefinition> functions) {
+			this.globalVariables.putAll(globalVariables);
+			this.functions.putAll(functions);
 		}
 
 		public Program build() {
-			return new Program(ImmutableList.copyOf(globalVariables), ImmutableMap.copyOf(functions));
+			return new Program(globalVariables, functions);
 		}
 
-		public List<VariableDeclaration> getGlobalVariables() {
+		public Map<String, VariableDeclaration> getGlobalVariables() {
 			return globalVariables;
 		}
 
-		public Builder setGlobalVariables(List<VariableDeclaration> globalVariables) {
-			this.globalVariables.clear();
-			this.globalVariables.addAll(globalVariables);
+		public Builder setGlobalVariables(
+				Map<String, VariableDeclaration> globalVariables) {
+			this.globalVariables = globalVariables;
 			return this;
 		}
 
 		public Builder addGlobalVariable(VariableDeclaration globalVariable) {
-			globalVariables.add(globalVariable);
+			globalVariables.put(globalVariable.getName(), globalVariable);
 			return this;
 		}
 
@@ -73,9 +78,9 @@ public class Program {
 			return functions;
 		}
 
-		public Builder setFunctions(Map<String, FunctionDefinition> functions) {
-			this.functions.clear();
-			this.functions.putAll(functions);
+		public Builder setFunctions(
+				Map<String, FunctionDefinition> functions) {
+			this.functions = functions;
 			return this;
 		}
 
