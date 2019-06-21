@@ -3,24 +3,49 @@ package com.kneelawk.kfractal.generator.validation;
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.Program;
+import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 
 public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	private Program program;
 	private FunctionDefinition function;
+	private ValidatingInstructionInputVisitor inputVisitor;
+	private ValidatingInstructionOutputVisitor outputVisitor;
+
+	private boolean returned = false;
 
 	public ValidatingInstructionVisitor(Program program, FunctionDefinition function) {
 		this.program = program;
 		this.function = function;
+		inputVisitor = new ValidatingInstructionInputVisitor(program, function);
+		outputVisitor = new ValidatingInstructionOutputVisitor(program, function);
+	}
+
+	private void checkState() throws FractalIRException {
+		if (returned) {
+			throw new FractalIRValidationException("This set of instructions has already reached a return statement");
+		}
 	}
 
 	@Override
 	public Void visitAssign(Assign assign) throws FractalIRException {
+		checkState();
+		ValueInfo dest = assign.getDest().accept(outputVisitor);
+		ValueInfo source = assign.getSource().accept(inputVisitor);
+		if (!dest.getType().equals(source.getType())) {
+			throw new FractalIRValidationException("Unable to assign incompatible types");
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitReturn(Return aReturn) throws FractalIRException {
+		checkState();
+		returned = true;
+		ValueInfo returnValue = aReturn.getReturnValue().accept(inputVisitor);
+		if (!function.getReturnType().equals(returnValue.getType())) {
+			throw new FractalIRValidationException("Unable to return incompatible type");
+		}
 		return null;
 	}
 
