@@ -51,26 +51,73 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitBoolNot(BoolNot boolNot) throws FractalIRException {
+		checkState();
+		if (!ValueType.isBool(boolNot.getOutput().accept(outputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolNot output is not a bool");
+		}
+		if (!ValueType.isBool(boolNot.getInput().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolNot input is not a bool");
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitBoolAnd(BoolAnd boolAnd) throws FractalIRException {
+		checkState();
+		if (!ValueType.isBool(boolAnd.getResult().accept(outputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolAnd result is not a bool");
+		}
+		if (!ValueType.isBool(boolAnd.getLeft().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolAnd left is not a bool");
+		}
+		if (!ValueType.isBool(boolAnd.getRight().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolAnd right is not a bool");
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitBoolOr(BoolOr boolOr) throws FractalIRException {
+		checkState();
+		if (!ValueType.isBool(boolOr.getResult().accept(outputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolOr result is not a bool");
+		}
+		if (!ValueType.isBool(boolOr.getLeft().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolOr left is not a bool");
+		}
+		if (!ValueType.isBool(boolOr.getLeft().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolOr right is not a bool");
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalIRException {
+		checkState();
+		if (!ValueType.isBool(boolIsEqual.getResult().accept(outputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsEqual result is not a bool");
+		}
+		if (!ValueType.isBool(boolIsEqual.getLeft().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsEqual left is not a bool");
+		}
+		if (!ValueType.isBool(boolIsEqual.getRight().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsEqual right is not a bool");
+		}
 		return null;
 	}
 
 	@Override
 	public Void visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalIRException {
+		checkState();
+		if (!ValueType.isBool(boolIsNotEqual.getResult().accept(outputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsNotEqual result is not a bool");
+		}
+		if (!ValueType.isBool(boolIsNotEqual.getLeft().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsNotEqual left is not a bool");
+		}
+		if (!ValueType.isBool(boolIsNotEqual.getRight().accept(inputVisitor).getType())) {
+			throw new FractalIRValidationException("BoolIsNotEqual right is not a bool");
+		}
 		return null;
 	}
 
