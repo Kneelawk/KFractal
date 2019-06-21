@@ -108,6 +108,10 @@ public interface IInstructionVisitor<R> {
 
 	R visitPointerSet(PointerSet pointerSet) throws FractalIRException;
 
+	R visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException;
+
+	R visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException;
+
 	/* Control-Flow Operations */
 
 	R visitIf(If anIf) throws FractalIRException;
