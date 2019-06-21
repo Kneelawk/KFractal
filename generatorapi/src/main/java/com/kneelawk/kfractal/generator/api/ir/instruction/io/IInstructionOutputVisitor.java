@@ -1,7 +1,9 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
-public interface IInstructionOutputVisitor<R> {
-	R visitVariableReference(VariableReference reference);
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 
-	R visitVoid();
+public interface IInstructionOutputVisitor<R> {
+	R visitVariableReference(VariableReference reference) throws FractalIRException;
+
+	R visitVoid() throws FractalIRException;
 }
