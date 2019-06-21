@@ -45,6 +45,10 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		return type == BOOL;
 	}
 
+	static boolean isInt(ValueType type) {
+		return type == INT;
+	}
+
 	static boolean isReal(ValueType type) {
 		return type == REAL;
 	}
