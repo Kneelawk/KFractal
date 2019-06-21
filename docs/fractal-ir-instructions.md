@@ -52,6 +52,8 @@ The Fractal IR Instructions are:
     * [`PointerFree`](#pointerfree)
     * [`PointerGet`](#pointerget)
     * [`PointerSet`](#pointerset)
+    * [`PointerIsEqual`](#pointerisequal)
+    * [`PointerIsNotEqual`](#pointerisnotequal)
 * [Control-Flow Instructions](#control-flow-instructions)
     * [`If`](#if)
     * [`While`](#while)
@@ -317,6 +319,18 @@ first argument.
 Sets the value of the data pointed to by the handle in the first argument to the data in the second argument.
 
 `PointerSet(Pointer(*) pointer, * data)`
+
+### PointerIsEqual
+Checks to see if the last two pointer arguments hold handles to the same data and stores the result in the variable 
+referenced by the first argument.
+
+`PointerIsEqual(Bool result, Pointer(*) left, Pointer(*) right)`
+
+### PointerIsNotEqual
+Checks to see if the two last pointer arguments do not hold handles to the same data and stores the result in the 
+variable referenced by the first argument.
+
+`PointerIsNotEqual(Bool result, Pointer(*) left, Pointer(*) right)`
 
 ## Control-Flow Instructions
 
