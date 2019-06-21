@@ -235,6 +235,16 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	}
 
 	@Override
+	public Void visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException {
+		return null;
+	}
+
+	@Override
+	public Void visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException {
+		return null;
+	}
+
+	@Override
 	public Void visitIf(If anIf) throws FractalIRException {
 		return null;
 	}
