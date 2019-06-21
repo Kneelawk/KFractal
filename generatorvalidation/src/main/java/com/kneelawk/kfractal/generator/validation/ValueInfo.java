@@ -43,7 +43,7 @@ public class ValueInfo {
 	}
 
 	public static class Builder {
-		private boolean variable;
+		private boolean variable = false;
 		private ValueType type;
 		private List<IAttribute> variableAttributes = Lists.newArrayList();
 
