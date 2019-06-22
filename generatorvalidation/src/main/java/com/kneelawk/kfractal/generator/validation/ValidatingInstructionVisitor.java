@@ -378,41 +378,91 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitComplexAdd(ComplexAdd complexAdd) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(complexAdd.getSum().accept(outputVisitor).getType()),
+				"ComplexAdd sum is not a Complex");
+		validIfTrue(ValueType.isComplex(complexAdd.getLeftAddend().accept(inputVisitor).getType()),
+				"ComplexAdd left addend is not a Complex");
+		validIfTrue(ValueType.isComplex(complexAdd.getRightAddend().accept(inputVisitor).getType()),
+				"ComplexAdd right addend is not a Complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(complexSubtract.getDifference().accept(outputVisitor).getType()),
+				"ComplexSubtract difference is not a Complex");
+		validIfTrue(ValueType.isComplex(complexSubtract.getMinuend().accept(inputVisitor).getType()),
+				"ComplexSubtract minuend is not a Complex");
+		validIfTrue(ValueType.isComplex(complexSubtract.getSubtrahend().accept(inputVisitor).getType()),
+				"ComplexSubtract subtrahend is not a Complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(complexMultiply.getProduct().accept(outputVisitor).getType()),
+				"ComplexMultiply product is not a Complex");
+		validIfTrue(ValueType.isComplex(complexMultiply.getLeftFactor().accept(inputVisitor).getType()),
+				"ComplexMultiply left factor is not a Complex");
+		validIfTrue(ValueType.isComplex(complexMultiply.getRightFactor().accept(inputVisitor).getType()),
+				"ComplexMultiply right factor is not a Complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexDivide(ComplexDivide complexDivide) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(complexDivide.getQuotient().accept(outputVisitor).getType()),
+				"ComplexDivide quotient is not a Complex");
+		validIfTrue(ValueType.isComplex(complexDivide.getDividend().accept(inputVisitor).getType()),
+				"ComplexDivide dividend is not a Complex");
+		validIfTrue(ValueType.isComplex(complexDivide.getDivisor().accept(inputVisitor).getType()),
+				"ComplexDivide divisor is not a Complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexPower(ComplexPower complexPower) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(complexPower.getResult().accept(outputVisitor).getType()),
+				"ComplexPower result is not a Complex");
+		validIfTrue(ValueType.isComplex(complexPower.getBase().accept(inputVisitor).getType()),
+				"ComplexPower base is not a Complex");
+		validIfTrue(ValueType.isComplex(complexPower.getExponent().accept(inputVisitor).getType()),
+				"ComplexPower exponent is not a Complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(complexGetReal.getReal().accept(outputVisitor).getType()),
+				"ComplexGetReal real is not a Real");
+		validIfTrue(ValueType.isComplex(complexGetReal.getComplex().accept(inputVisitor).getType()),
+				"ComplexGetReal complex is not a complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(complexGetImaginary.getImaginary().accept(outputVisitor).getType()),
+				"ComplexGetReal imaginary is not a Real");
+		validIfTrue(ValueType.isComplex(complexGetImaginary.getComplex().accept(inputVisitor).getType()),
+				"ComplexGetReal complex is not a complex");
 		return null;
 	}
 
 	@Override
 	public Void visitComplexModulo(ComplexModulo complexModulo) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(complexModulo.getModulus().accept(outputVisitor).getType()),
+				"ComplexModulo modulus is not a Real");
+		validIfTrue(ValueType.isComplex(complexModulo.getComplex().accept(inputVisitor).getType()),
+				"ComplexGetReal complex is not a complex");
 		return null;
 	}
 
