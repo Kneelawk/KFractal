@@ -259,51 +259,120 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitRealAdd(RealAdd realAdd) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(realAdd.getSum().accept(outputVisitor).getType()), "RealAdd sum is not a Real");
+		validIfTrue(ValueType.isReal(realAdd.getLeftAddend().accept(inputVisitor).getType()),
+				"RealAdd left addend is not a Real");
+		validIfTrue(ValueType.isReal(realAdd.getRightAddend().accept(inputVisitor).getType()),
+				"RealAdd right addend is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealSubtract(RealSubtract realSubtract) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(realSubtract.getDifference().accept(outputVisitor).getType()),
+				"RealSubtract difference is not a Real");
+		validIfTrue(ValueType.isReal(realSubtract.getMinuend().accept(inputVisitor).getType()),
+				"RealSubtract minuend is not a Real");
+		validIfTrue(ValueType.isReal(realSubtract.getSubtrahend().accept(inputVisitor).getType()),
+				"RealSubtract subtract is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealMultiply(RealMultiply realMultiply) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(realMultiply.getProduct().accept(outputVisitor).getType()),
+				"RealMultiply product is not a Real");
+		validIfTrue(ValueType.isReal(realMultiply.getLeftFactor().accept(inputVisitor).getType()),
+				"RealMultiply left factor is not a Real");
+		validIfTrue(ValueType.isReal(realMultiply.getRightFactor().accept(inputVisitor).getType()),
+				"RealMultiply right factor is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealDivide(RealDivide realDivide) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(realDivide.getQuotient().accept(outputVisitor).getType()),
+				"RealDivide quotient is not a Real");
+		validIfTrue(ValueType.isReal(realDivide.getDividend().accept(inputVisitor).getType()),
+				"RealDivide dividend is not a Real");
+		validIfTrue(ValueType.isReal(realDivide.getDivisor().accept(inputVisitor).getType()),
+				"RealDivide divisor is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealPower(RealPower realPower) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isReal(realPower.getResult().accept(outputVisitor).getType()),
+				"RealPower result is not a Real");
+		validIfTrue(ValueType.isReal(realPower.getBase().accept(inputVisitor).getType()),
+				"RealPower base is not a Real");
+		validIfTrue(ValueType.isReal(realPower.getExponent().accept(inputVisitor).getType()),
+				"RealPower exponent is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealIsEqual(RealIsEqual realIsEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(realIsEqual.getResult().accept(outputVisitor).getType()),
+				"RealIsEqual result is not a Bool");
+		validIfTrue(ValueType.isReal(realIsEqual.getLeft().accept(inputVisitor).getType()),
+				"RealIsEqual left is not a Real");
+		validIfTrue(ValueType.isReal(realIsEqual.getRight().accept(inputVisitor).getType()),
+				"RealIsEqual right is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(realIsNotEqual.getResult().accept(outputVisitor).getType()),
+				"RealIsNotEqual result is not a Bool");
+		validIfTrue(ValueType.isReal(realIsNotEqual.getLeft().accept(inputVisitor).getType()),
+				"RealIsNotEqual left is not a Real");
+		validIfTrue(ValueType.isReal(realIsNotEqual.getRight().accept(inputVisitor).getType()),
+				"RealIsNotEqual right is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealIsGreater(RealIsGreater realIsGreater) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(realIsGreater.getResult().accept(outputVisitor).getType()),
+				"RealIsGreater result is not a Bool");
+		validIfTrue(ValueType.isReal(realIsGreater.getSubject().accept(inputVisitor).getType()),
+				"RealIsGreater subject is not a Real");
+		validIfTrue(ValueType.isReal(realIsGreater.getBasis().accept(inputVisitor).getType()),
+				"RealIsGreater basis is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(realIsGreaterOrEqual.getResult().accept(outputVisitor).getType()),
+				"RealIsGreaterOrEqual result is not a Bool");
+		validIfTrue(ValueType.isReal(realIsGreaterOrEqual.getSubject().accept(inputVisitor).getType()),
+				"RealIsGreaterOrEqual subject is not a Real");
+		validIfTrue(ValueType.isReal(realIsGreaterOrEqual.getBasis().accept(inputVisitor).getType()),
+				"RealIsGreaterOrEqual basis is not a Real");
 		return null;
 	}
 
 	@Override
 	public Void visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isComplex(realComposeComplex.getComplex().accept(outputVisitor).getType()),
+				"RealComposeComplex complex is not a Complex");
+		validIfTrue(ValueType.isReal(realComposeComplex.getReal().accept(inputVisitor).getType()),
+				"RealComposeComplex real is not a Real");
+		validIfTrue(ValueType.isReal(realComposeComplex.getImaginary().accept(inputVisitor).getType()),
+				"RealComposeComplex imaginary is not a Real");
 		return null;
 	}
 
