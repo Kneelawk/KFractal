@@ -106,71 +106,154 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitIntAdd(IntAdd intAdd) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intAdd.getSum().accept(outputVisitor).getType()), "IntAdd sum is not an Int");
+		validIfTrue(ValueType.isInt(intAdd.getLeftAddend().accept(inputVisitor).getType()),
+				"IntAdd left addend is not an Int");
+		validIfTrue(ValueType.isInt(intAdd.getRightAddend().accept(inputVisitor).getType()),
+				"IntAdd right addend is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntSubtract(IntSubtract intSubtract) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intSubtract.getDifference().accept(outputVisitor).getType()),
+				"IntSubtract difference is not an Int");
+		validIfTrue(ValueType.isInt(intSubtract.getMinuend().accept(inputVisitor).getType()),
+				"IntSubtract minuend is not an Int");
+		validIfTrue(ValueType.isInt(intSubtract.getSubtrahend().accept(inputVisitor).getType()),
+				"IntSubtract subtrahend is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntMultiply(IntMultiply intMultiply) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intMultiply.getProduct().accept(outputVisitor).getType()),
+				"IntMultiply product is not an Int");
+		validIfTrue(ValueType.isInt(intMultiply.getLeftFactor().accept(inputVisitor).getType()),
+				"IntMultiply left factor is not an Int");
+		validIfTrue(ValueType.isInt(intMultiply.getRightFactor().accept(inputVisitor).getType()),
+				"IntMultiply right factor is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntDivide(IntDivide intDivide) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intDivide.getQuotient().accept(outputVisitor).getType()),
+				"IntDivide quotient is not an Int");
+		validIfTrue(ValueType.isInt(intDivide.getDividend().accept(inputVisitor).getType()),
+				"IntDivide dividend is not an Int");
+		validIfTrue(ValueType.isInt(intDivide.getDivisor().accept(inputVisitor).getType()),
+				"IntDivide divisor is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntModulo(IntModulo intModulo) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intModulo.getResult().accept(outputVisitor).getType()),
+				"IntModulo result is not an Int");
+		validIfTrue(ValueType.isInt(intModulo.getLeft().accept(inputVisitor).getType()),
+				"IntModulo left is not an Int");
+		validIfTrue(ValueType.isInt(intModulo.getRight().accept(inputVisitor).getType()),
+				"IntModulo right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntPower(IntPower intPower) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intPower.getResult().accept(outputVisitor).getType()),
+				"IntPower result is not an Int");
+		validIfTrue(ValueType.isInt(intPower.getBase().accept(inputVisitor).getType()), "IntPower base is not an Int");
+		validIfTrue(ValueType.isInt(intPower.getExponent().accept(inputVisitor).getType()),
+				"IntPower exponent is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntNot(IntNot intNot) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intNot.getOutput().accept(outputVisitor).getType()), "IntNot output is not an Int");
+		validIfTrue(ValueType.isInt(intNot.getInput().accept(inputVisitor).getType()), "IntNot input is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntAnd(IntAnd intAnd) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intAnd.getResult().accept(outputVisitor).getType()), "IntAnd result is not an Int");
+		validIfTrue(ValueType.isInt(intAnd.getLeft().accept(inputVisitor).getType()), "IntAnd left is not an Int");
+		validIfTrue(ValueType.isInt(intAnd.getRight().accept(inputVisitor).getType()), "IntAnd right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntOr(IntOr intOr) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intOr.getResult().accept(outputVisitor).getType()), "IntOr result is not an Int");
+		validIfTrue(ValueType.isInt(intOr.getLeft().accept(inputVisitor).getType()), "IntOr left is not an Int");
+		validIfTrue(ValueType.isInt(intOr.getRight().accept(inputVisitor).getType()), "IntOr right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntXor(IntXor intXor) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isInt(intXor.getResult().accept(outputVisitor).getType()), "IntXor result is not an Int");
+		validIfTrue(ValueType.isInt(intXor.getLeft().accept(inputVisitor).getType()), "IntXor left is not an Int");
+		validIfTrue(ValueType.isInt(intXor.getRight().accept(inputVisitor).getType()), "IntXor right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntIsEqual(IntIsEqual intIsEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(intIsEqual.getResult().accept(outputVisitor).getType()),
+				"IntIsEqual result is not a Bool");
+		validIfTrue(ValueType.isInt(intIsEqual.getLeft().accept(inputVisitor).getType()),
+				"IntIsEqual left is not an Int");
+		validIfTrue(ValueType.isInt(intIsEqual.getRight().accept(inputVisitor).getType()),
+				"IntIsEqual right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(intIsNotEqual.getResult().accept(outputVisitor).getType()),
+				"IntIsNotEqual result is not a Bool");
+		validIfTrue(ValueType.isInt(intIsNotEqual.getLeft().accept(inputVisitor).getType()),
+				"IntIsNotEqual left is not an Int");
+		validIfTrue(ValueType.isInt(intIsNotEqual.getRight().accept(inputVisitor).getType()),
+				"IntIsNotEqual right is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntIsGreater(IntIsGreater intIsGreater) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(intIsGreater.getResult().accept(outputVisitor).getType()),
+				"IntIsGreater result is not a Bool");
+		validIfTrue(ValueType.isInt(intIsGreater.getSubject().accept(inputVisitor).getType()),
+				"IntIsGreater subject is not an Int");
+		validIfTrue(ValueType.isInt(intIsGreater.getBasis().accept(inputVisitor).getType()),
+				"IntIsGreater basis is not an Int");
 		return null;
 	}
 
 	@Override
 	public Void visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(intIsGreaterOrEqual.getResult().accept(outputVisitor).getType()),
+				"IntIsGreaterOrEqual result is not a Bool");
+		validIfTrue(ValueType.isInt(intIsGreaterOrEqual.getSubject().accept(inputVisitor).getType()),
+				"IntIsGreaterOrEqual subject is not an Int");
+		validIfTrue(ValueType.isInt(intIsGreaterOrEqual.getBasis().accept(inputVisitor).getType()),
+				"IntIsGreaterOrEqual is not an Int");
 		return null;
 	}
 
