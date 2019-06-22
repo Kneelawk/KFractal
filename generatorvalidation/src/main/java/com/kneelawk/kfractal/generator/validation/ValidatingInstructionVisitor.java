@@ -5,6 +5,9 @@ import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+
+import java.util.List;
 
 public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	private Program program;
@@ -468,6 +471,38 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitFunctionCall(FunctionCall functionCall) throws FractalIRException {
+		checkState();
+
+		// check the function argument
+		ValueInfo functionArg = functionCall.getFunction().accept(inputVisitor);
+		validIfTrue(ValueType.isFunction(functionArg.getType()), "FunctionCall function argument is not a Function");
+		ValueType.FunctionType functionType = ValueType.toFunction(functionArg.getType());
+
+		// check the return type
+		validIfTrue(functionType.getReturnType().equals(functionCall.getResult().accept(outputVisitor).getType()),
+				"FunctionCall result type is incompatible with the return type of the function being called");
+
+		// check the function's argument types
+		List<ValueType> targetArguments = functionType.getArgumentTypes();
+		List<IInstructionInput> instructionArguments = functionCall.getArguments();
+		int targetArgumentsSize = targetArguments.size();
+		int instructionArgumentsSize = instructionArguments.size();
+		int size = Math.max(targetArgumentsSize, instructionArgumentsSize);
+		for (int i = 0; i < size; i++) {
+			if (i >= targetArgumentsSize) {
+				throw new FractalIRValidationException("FunctionCall has extra arguments: " +
+						instructionArguments.subList(i, instructionArgumentsSize));
+			}
+			if (i >= instructionArgumentsSize) {
+				throw new FractalIRValidationException(
+						"FunctionCall is missing arguments: " + targetArguments.subList(i, targetArgumentsSize));
+			}
+			ValueType targetArgument = targetArguments.get(i);
+			IInstructionInput instructionArgument = instructionArguments.get(i);
+			validIfTrue(targetArgument.equals(instructionArgument.accept(inputVisitor).getType()),
+					"Function defines argument: " + targetArgument + " but FunctionCall instruction supplies: " +
+							instructionArgument);
+		}
 		return null;
 	}
 
