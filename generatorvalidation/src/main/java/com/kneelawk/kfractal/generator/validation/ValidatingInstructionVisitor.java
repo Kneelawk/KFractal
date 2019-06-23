@@ -50,7 +50,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 		returned = true;
 		ValueInfo returnValue = aReturn.getReturnValue().accept(inputVisitor);
-		validIfTrue(function.getReturnType().isAssignableFrom(returnValue.getType()), "Unable to return incompatible type");
+		validIfTrue(function.getReturnType().isAssignableFrom(returnValue.getType()),
+				"Unable to return incompatible type");
 		return null;
 	}
 
@@ -479,7 +480,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		ValueType.FunctionType functionType = ValueType.toFunction(functionArg.getType());
 
 		// check the return type
-		validIfTrue(functionCall.getResult().accept(outputVisitor).getType().isAssignableFrom(functionType.getReturnType()),
+		validIfTrue(
+				functionCall.getResult().accept(outputVisitor).getType().isAssignableFrom(functionType.getReturnType()),
 				"FunctionCall result type is incompatible with the return type of the function being called");
 
 		// check the function's argument types
@@ -508,31 +510,63 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isPointer(pointerAllocate.getPointer().accept(outputVisitor).getType()),
+				"PointerAllocate pointer argument is not a Pointer");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerFree(PointerFree pointerFree) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isPointer(pointerFree.getPointer().accept(inputVisitor).getType()),
+				"PointerFree pointer argument is not a Pointer");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerGet(PointerGet pointerGet) throws FractalIRException {
+		checkState();
+		ValueInfo pointerArg = pointerGet.getPointer().accept(inputVisitor);
+		validIfTrue(ValueType.isPointer(pointerArg.getType()), "PointerGet pointer argument is not a Pointer");
+		ValueType.PointerType pointerType = ValueType.toPointer(pointerArg.getType());
+		validIfTrue(pointerGet.getData().accept(outputVisitor).getType().isAssignableFrom(pointerType.getPointerType()),
+				"PointerGet pointer type and data type are incompatible");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerSet(PointerSet pointerSet) throws FractalIRException {
+		checkState();
+		ValueInfo pointerArg = pointerSet.getPointer().accept(inputVisitor);
+		validIfTrue(ValueType.isPointer(pointerArg.getType()), "PointerSet pointer argument is not a Pointer");
+		ValueType.PointerType pointerType = ValueType.toPointer(pointerArg.getType());
+		validIfTrue(pointerType.getPointerType().isAssignableFrom(pointerSet.getData().accept(inputVisitor).getType()),
+				"PointerSet pointer type and data type are incompatible");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(pointerIsEqual.getResult().accept(outputVisitor).getType()),
+				"PointerIsEqual result is not a Bool");
+		validIfTrue(ValueType.isPointer(pointerIsEqual.getLeft().accept(inputVisitor).getType()),
+				"PointerIsEqual left is not a Pointer");
+		validIfTrue(ValueType.isPointer(pointerIsEqual.getRight().accept(inputVisitor).getType()),
+				"PointerIsEqual right is not a Pointer");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(pointerIsNotEqual.getResult().accept(outputVisitor).getType()),
+				"PointerIsNotEqual result is not a Bool");
+		validIfTrue(ValueType.isPointer(pointerIsNotEqual.getLeft().accept(inputVisitor).getType()),
+				"PointerIsNotEqual left is not a Pointer");
+		validIfTrue(ValueType.isPointer(pointerIsNotEqual.getRight().accept(inputVisitor).getType()),
+				"PointerIsNotEqual right is not a Pointer");
 		return null;
 	}
 
