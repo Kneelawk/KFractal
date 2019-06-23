@@ -1,13 +1,37 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public final class ValueTypes {
 	private ValueTypes() {
 	}
+
+	/* Instance Caches */
+
+	private static final LoadingCache<ValueType, PointerType> pointerCache =
+			CacheBuilder.newBuilder().weakValues().build(
+					new CacheLoader<>() {
+						@Override
+						public PointerType load(ValueType key) {
+							return new PointerType(key);
+						}
+					});
+	private static final LoadingCache<ImmutablePair<ValueType, ImmutableList<ValueType>>, FunctionType> functionCache =
+			CacheBuilder.newBuilder().weakValues().build(
+					new CacheLoader<>() {
+						@Override
+						public FunctionType load(ImmutablePair<ValueType, ImmutableList<ValueType>> key) {
+							return new FunctionType(key.left, key.right);
+						}
+					});
 
 	/* Base type constants */
 
@@ -22,19 +46,34 @@ public final class ValueTypes {
 	public static ValueType FUNCTION(ValueType returnType, List<ValueType> argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
-		return new ValueTypes.FunctionType(returnType, ImmutableList.copyOf(argumentTypes));
+		try {
+			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
+		} catch (ExecutionException e) {
+			// this should never happen
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static ValueType FUNCTION(ValueType returnType, ValueType... argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
-		return new ValueTypes.FunctionType(returnType, ImmutableList.copyOf(argumentTypes));
+		try {
+			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
+		} catch (ExecutionException e) {
+			// this should never happen
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static ValueType POINTER(ValueType pointerType) {
 		if (pointerType == null)
 			throw new NullPointerException();
-		return new ValueTypes.PointerType(pointerType);
+		try {
+			return pointerCache.get(pointerType);
+		} catch (ExecutionException e) {
+			// this should never happen
+			throw new RuntimeException(e);
+		}
 	}
 
 	/* Type check utilities */
