@@ -41,7 +41,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 		ValueInfo dest = assign.getDest().accept(outputVisitor);
 		ValueInfo source = assign.getSource().accept(inputVisitor);
-		validIfTrue(dest.getType().equals(source.getType()), "Unable to assign incompatible types");
+		validIfTrue(dest.getType().isAssignableFrom(source.getType()), "Unable to assign incompatible types");
 		return null;
 	}
 
@@ -50,7 +50,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 		returned = true;
 		ValueInfo returnValue = aReturn.getReturnValue().accept(inputVisitor);
-		validIfTrue(function.getReturnType().equals(returnValue.getType()), "Unable to return incompatible type");
+		validIfTrue(function.getReturnType().isAssignableFrom(returnValue.getType()), "Unable to return incompatible type");
 		return null;
 	}
 
@@ -479,7 +479,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		ValueType.FunctionType functionType = ValueType.toFunction(functionArg.getType());
 
 		// check the return type
-		validIfTrue(functionType.getReturnType().equals(functionCall.getResult().accept(outputVisitor).getType()),
+		validIfTrue(functionCall.getResult().accept(outputVisitor).getType().isAssignableFrom(functionType.getReturnType()),
 				"FunctionCall result type is incompatible with the return type of the function being called");
 
 		// check the function's argument types
@@ -499,7 +499,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 			}
 			ValueType targetArgument = targetArguments.get(i);
 			IInstructionInput instructionArgument = instructionArguments.get(i);
-			validIfTrue(targetArgument.equals(instructionArgument.accept(inputVisitor).getType()),
+			validIfTrue(targetArgument.isAssignableFrom(instructionArgument.accept(inputVisitor).getType()),
 					"Function defines argument: " + targetArgument + " but FunctionCall instruction supplies: " +
 							instructionArgument);
 		}

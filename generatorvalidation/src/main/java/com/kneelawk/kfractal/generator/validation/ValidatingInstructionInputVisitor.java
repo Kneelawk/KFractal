@@ -83,7 +83,7 @@ public class ValidatingInstructionInputVisitor implements IInstructionInputVisit
 			}
 			VariableDeclaration targetVariable = targetContextVariables.get(i);
 			IInstructionInput constantInput = constantContextVariables.get(i);
-			if (!targetVariable.getType().equals(constantInput.accept(this).getType())) {
+			if (!targetVariable.getType().isAssignableFrom(constantInput.accept(this).getType())) {
 				throw new FractalIRValidationException(
 						"Function defines context variable: " + targetVariable + " but constant supplies: " +
 								constantInput);
