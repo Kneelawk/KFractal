@@ -81,6 +81,8 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 	boolean equals(Object other);
 
+	boolean isAssignableFrom(ValueType other);
+
 	int hashCode();
 
 	String name();
@@ -95,9 +97,14 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID)
+			if (isVoid(type))
 				return 0;
 			return -1;
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			return true;
 		}
 
 		@Override
@@ -117,11 +124,16 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID)
+			if (isVoid(type))
 				return 1;
-			if (type == BOOL)
+			if (isBool(type))
 				return 0;
 			return -1;
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			return other == BOOL;
 		}
 
 		@Override
@@ -141,11 +153,16 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL)
+			if (isVoid(type) || isBool(type))
 				return 1;
-			if (type == INT)
+			if (isInt(type))
 				return 0;
 			return -1;
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			return other == INT;
 		}
 
 		@Override
@@ -165,11 +182,16 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == INT)
+			if (isVoid(type) || isBool(type) || isInt(type))
 				return 1;
-			if (type == REAL)
+			if (isReal(type))
 				return 0;
 			return -1;
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			return other == REAL;
 		}
 
 		@Override
@@ -189,11 +211,16 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == INT || type == REAL)
+			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type))
 				return 1;
-			if (type == COMPLEX)
+			if (isComplex(type))
 				return 0;
 			return -1;
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			return other == COMPLEX;
 		}
 
 		@Override
@@ -227,9 +254,9 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == INT || type == REAL || type == COMPLEX)
+			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type))
 				return 1;
-			if (type instanceof FunctionType) {
+			if (isFunction(type)) {
 				FunctionType other = (FunctionType) type;
 				int result = returnType.compareTo(other.returnType);
 				if (result != 0)
@@ -263,6 +290,24 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 		}
 
 		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			if (this == other) return true;
+			if (other == null || getClass() != other.getClass())
+				return false;
+			FunctionType that = (FunctionType) other;
+			if (!returnType.isAssignableFrom(that.returnType))
+				return false;
+			if (argumentTypes.size() != that.argumentTypes.size())
+				return false;
+			int size = argumentTypes.size();
+			for (int i = 0; i < size; i++) {
+				if (!that.argumentTypes.get(i).isAssignableFrom(argumentTypes.get(i)))
+					return false;
+			}
+			return true;
+		}
+
+		@Override
 		public int hashCode() {
 			return Objects.hash(returnType, argumentTypes);
 		}
@@ -291,9 +336,9 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 
 		@Override
 		public int compareTo(ValueType type) {
-			if (type == VOID || type == BOOL || type == INT || type == REAL || type == COMPLEX || type instanceof FunctionType)
+			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type) || isFunction(type))
 				return 1;
-			if (type instanceof PointerType) {
+			if (isPointer(type)) {
 				PointerType other = (PointerType) type;
 				return pointerType.compareTo(other.pointerType);
 			}
@@ -306,6 +351,16 @@ public interface ValueType extends Comparable<ValueType>, Serializable {
 			if (o == null || getClass() != o.getClass()) return false;
 			PointerType that = (PointerType) o;
 			return pointerType.equals(that.pointerType);
+		}
+
+		@Override
+		public boolean isAssignableFrom(ValueType other) {
+			if (this == other)
+				return true;
+			if (other == null || getClass() != other.getClass())
+				return false;
+			PointerType that = (PointerType) other;
+			return isVoid(that.pointerType) || pointerType.isAssignableFrom(that.pointerType);
 		}
 
 		@Override
