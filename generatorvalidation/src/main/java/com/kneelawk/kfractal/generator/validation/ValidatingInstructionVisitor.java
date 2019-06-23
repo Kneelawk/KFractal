@@ -36,6 +36,10 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		}
 	}
 
+	public boolean isReturned() {
+		return returned;
+	}
+
 	@Override
 	public Void visitAssign(Assign assign) throws FractalIRException {
 		checkState();
@@ -582,11 +586,42 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
 	@Override
 	public Void visitIf(If anIf) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(anIf.getCondition().accept(inputVisitor).getType()), "If condition is not a Bool");
+
+		// check the true condition
+		ValidatingInstructionVisitor ifTrueVisitor = new ValidatingInstructionVisitor(program, function);
+		for (IInstruction instruction : anIf.getIfTrue()) {
+			instruction.accept(ifTrueVisitor);
+		}
+
+		// check the false condition
+		ValidatingInstructionVisitor ifFalseVisitor = new ValidatingInstructionVisitor(program, function);
+		for (IInstruction instruction : anIf.getIfFalse()) {
+			instruction.accept(ifFalseVisitor);
+		}
+
+		// if both conditions return, then we return
+		returned = ifTrueVisitor.isReturned() && ifFalseVisitor.isReturned();
+
 		return null;
 	}
 
 	@Override
 	public Void visitWhile(While aWhile) throws FractalIRException {
+		checkState();
+		validIfTrue(ValueType.isBool(aWhile.getCondition().accept(inputVisitor).getType()),
+				"While condition is not a Bool");
+
+		// check the loop instructions
+		ValidatingInstructionVisitor loopVisitor = new ValidatingInstructionVisitor(program, function);
+		for (IInstruction instruction : aWhile.getWhileTrue()) {
+			instruction.accept(loopVisitor);
+		}
+
+		// if the while returned, then we return
+		returned = loopVisitor.isReturned();
+
 		return null;
 	}
 }
