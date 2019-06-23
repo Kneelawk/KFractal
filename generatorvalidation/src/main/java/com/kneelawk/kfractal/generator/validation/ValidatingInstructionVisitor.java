@@ -58,7 +58,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitBoolNot(BoolNot boolNot) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(boolNot.getOutput().accept(outputVisitor).getType()),
+		validIfTrue(boolNot.getOutput().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"BoolNot output is not a bool");
 		validIfTrue(ValueType.isBool(boolNot.getInput().accept(inputVisitor).getType()), "BoolNot input is not a bool");
 		return null;
@@ -67,7 +67,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitBoolAnd(BoolAnd boolAnd) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(boolAnd.getResult().accept(outputVisitor).getType()),
+		validIfTrue(boolAnd.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"BoolAnd result is not a bool");
 		validIfTrue(ValueType.isBool(boolAnd.getLeft().accept(inputVisitor).getType()), "BoolAnd left is not a bool");
 		validIfTrue(ValueType.isBool(boolAnd.getRight().accept(inputVisitor).getType()), "BoolAnd right is not a bool");
@@ -77,7 +77,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitBoolOr(BoolOr boolOr) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(boolOr.getResult().accept(outputVisitor).getType()),
+		validIfTrue(boolOr.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"BoolOr result is not a bool");
 		validIfTrue(ValueType.isBool(boolOr.getLeft().accept(inputVisitor).getType()), "BoolOr left is not a bool");
 		validIfTrue(ValueType.isBool(boolOr.getLeft().accept(inputVisitor).getType()), "BoolOr right is not a bool");
@@ -87,7 +87,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(boolIsEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(boolIsEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"BoolIsEqual result is not a bool");
 		validIfTrue(ValueType.isBool(boolIsEqual.getLeft().accept(inputVisitor).getType()),
 				"BoolIsEqual left is not a bool");
@@ -99,7 +99,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(boolIsNotEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(boolIsNotEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"BoolIsNotEqual result is not a bool");
 		validIfTrue(ValueType.isBool(boolIsNotEqual.getLeft().accept(inputVisitor).getType()),
 				"BoolIsNotEqual left is not a bool");
@@ -111,7 +111,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntAdd(IntAdd intAdd) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intAdd.getSum().accept(outputVisitor).getType()), "IntAdd sum is not an Int");
+		validIfTrue(intAdd.getSum().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
+				"IntAdd sum is not an Int");
 		validIfTrue(ValueType.isInt(intAdd.getLeftAddend().accept(inputVisitor).getType()),
 				"IntAdd left addend is not an Int");
 		validIfTrue(ValueType.isInt(intAdd.getRightAddend().accept(inputVisitor).getType()),
@@ -122,7 +123,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntSubtract(IntSubtract intSubtract) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intSubtract.getDifference().accept(outputVisitor).getType()),
+		validIfTrue(intSubtract.getDifference().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
 				"IntSubtract difference is not an Int");
 		validIfTrue(ValueType.isInt(intSubtract.getMinuend().accept(inputVisitor).getType()),
 				"IntSubtract minuend is not an Int");
@@ -134,7 +135,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntMultiply(IntMultiply intMultiply) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intMultiply.getProduct().accept(outputVisitor).getType()),
+		validIfTrue(intMultiply.getProduct().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
 				"IntMultiply product is not an Int");
 		validIfTrue(ValueType.isInt(intMultiply.getLeftFactor().accept(inputVisitor).getType()),
 				"IntMultiply left factor is not an Int");
@@ -146,7 +147,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntDivide(IntDivide intDivide) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intDivide.getQuotient().accept(outputVisitor).getType()),
+		validIfTrue(intDivide.getQuotient().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
 				"IntDivide quotient is not an Int");
 		validIfTrue(ValueType.isInt(intDivide.getDividend().accept(inputVisitor).getType()),
 				"IntDivide dividend is not an Int");
@@ -158,7 +159,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntModulo(IntModulo intModulo) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intModulo.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intModulo.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
 				"IntModulo result is not an Int");
 		validIfTrue(ValueType.isInt(intModulo.getLeft().accept(inputVisitor).getType()),
 				"IntModulo left is not an Int");
@@ -170,7 +171,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntPower(IntPower intPower) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intPower.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intPower.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
 				"IntPower result is not an Int");
 		validIfTrue(ValueType.isInt(intPower.getBase().accept(inputVisitor).getType()), "IntPower base is not an Int");
 		validIfTrue(ValueType.isInt(intPower.getExponent().accept(inputVisitor).getType()),
@@ -181,7 +182,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntNot(IntNot intNot) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intNot.getOutput().accept(outputVisitor).getType()), "IntNot output is not an Int");
+		validIfTrue(intNot.getOutput().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
+				"IntNot output is not an Int");
 		validIfTrue(ValueType.isInt(intNot.getInput().accept(inputVisitor).getType()), "IntNot input is not an Int");
 		return null;
 	}
@@ -189,7 +191,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntAnd(IntAnd intAnd) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intAnd.getResult().accept(outputVisitor).getType()), "IntAnd result is not an Int");
+		validIfTrue(intAnd.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
+				"IntAnd result is not an Int");
 		validIfTrue(ValueType.isInt(intAnd.getLeft().accept(inputVisitor).getType()), "IntAnd left is not an Int");
 		validIfTrue(ValueType.isInt(intAnd.getRight().accept(inputVisitor).getType()), "IntAnd right is not an Int");
 		return null;
@@ -198,7 +201,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntOr(IntOr intOr) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intOr.getResult().accept(outputVisitor).getType()), "IntOr result is not an Int");
+		validIfTrue(intOr.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
+				"IntOr result is not an Int");
 		validIfTrue(ValueType.isInt(intOr.getLeft().accept(inputVisitor).getType()), "IntOr left is not an Int");
 		validIfTrue(ValueType.isInt(intOr.getRight().accept(inputVisitor).getType()), "IntOr right is not an Int");
 		return null;
@@ -207,7 +211,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntXor(IntXor intXor) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isInt(intXor.getResult().accept(outputVisitor).getType()), "IntXor result is not an Int");
+		validIfTrue(intXor.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.INT),
+				"IntXor result is not an Int");
 		validIfTrue(ValueType.isInt(intXor.getLeft().accept(inputVisitor).getType()), "IntXor left is not an Int");
 		validIfTrue(ValueType.isInt(intXor.getRight().accept(inputVisitor).getType()), "IntXor right is not an Int");
 		return null;
@@ -216,7 +221,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntIsEqual(IntIsEqual intIsEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(intIsEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intIsEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"IntIsEqual result is not a Bool");
 		validIfTrue(ValueType.isInt(intIsEqual.getLeft().accept(inputVisitor).getType()),
 				"IntIsEqual left is not an Int");
@@ -228,7 +233,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(intIsNotEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intIsNotEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"IntIsNotEqual result is not a Bool");
 		validIfTrue(ValueType.isInt(intIsNotEqual.getLeft().accept(inputVisitor).getType()),
 				"IntIsNotEqual left is not an Int");
@@ -240,7 +245,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntIsGreater(IntIsGreater intIsGreater) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(intIsGreater.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intIsGreater.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"IntIsGreater result is not a Bool");
 		validIfTrue(ValueType.isInt(intIsGreater.getSubject().accept(inputVisitor).getType()),
 				"IntIsGreater subject is not an Int");
@@ -252,7 +257,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(intIsGreaterOrEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(intIsGreaterOrEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"IntIsGreaterOrEqual result is not a Bool");
 		validIfTrue(ValueType.isInt(intIsGreaterOrEqual.getSubject().accept(inputVisitor).getType()),
 				"IntIsGreaterOrEqual subject is not an Int");
@@ -264,7 +269,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealAdd(RealAdd realAdd) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(realAdd.getSum().accept(outputVisitor).getType()), "RealAdd sum is not a Real");
+		validIfTrue(realAdd.getSum().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
+				"RealAdd sum is not a Real");
 		validIfTrue(ValueType.isReal(realAdd.getLeftAddend().accept(inputVisitor).getType()),
 				"RealAdd left addend is not a Real");
 		validIfTrue(ValueType.isReal(realAdd.getRightAddend().accept(inputVisitor).getType()),
@@ -275,7 +281,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealSubtract(RealSubtract realSubtract) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(realSubtract.getDifference().accept(outputVisitor).getType()),
+		validIfTrue(realSubtract.getDifference().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"RealSubtract difference is not a Real");
 		validIfTrue(ValueType.isReal(realSubtract.getMinuend().accept(inputVisitor).getType()),
 				"RealSubtract minuend is not a Real");
@@ -287,7 +293,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealMultiply(RealMultiply realMultiply) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(realMultiply.getProduct().accept(outputVisitor).getType()),
+		validIfTrue(realMultiply.getProduct().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"RealMultiply product is not a Real");
 		validIfTrue(ValueType.isReal(realMultiply.getLeftFactor().accept(inputVisitor).getType()),
 				"RealMultiply left factor is not a Real");
@@ -299,7 +305,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealDivide(RealDivide realDivide) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(realDivide.getQuotient().accept(outputVisitor).getType()),
+		validIfTrue(realDivide.getQuotient().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"RealDivide quotient is not a Real");
 		validIfTrue(ValueType.isReal(realDivide.getDividend().accept(inputVisitor).getType()),
 				"RealDivide dividend is not a Real");
@@ -311,7 +317,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealPower(RealPower realPower) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(realPower.getResult().accept(outputVisitor).getType()),
+		validIfTrue(realPower.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"RealPower result is not a Real");
 		validIfTrue(ValueType.isReal(realPower.getBase().accept(inputVisitor).getType()),
 				"RealPower base is not a Real");
@@ -323,7 +329,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealIsEqual(RealIsEqual realIsEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(realIsEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(realIsEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"RealIsEqual result is not a Bool");
 		validIfTrue(ValueType.isReal(realIsEqual.getLeft().accept(inputVisitor).getType()),
 				"RealIsEqual left is not a Real");
@@ -335,7 +341,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(realIsNotEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(realIsNotEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"RealIsNotEqual result is not a Bool");
 		validIfTrue(ValueType.isReal(realIsNotEqual.getLeft().accept(inputVisitor).getType()),
 				"RealIsNotEqual left is not a Real");
@@ -347,7 +353,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealIsGreater(RealIsGreater realIsGreater) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(realIsGreater.getResult().accept(outputVisitor).getType()),
+		validIfTrue(realIsGreater.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"RealIsGreater result is not a Bool");
 		validIfTrue(ValueType.isReal(realIsGreater.getSubject().accept(inputVisitor).getType()),
 				"RealIsGreater subject is not a Real");
@@ -359,7 +365,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(realIsGreaterOrEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(realIsGreaterOrEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"RealIsGreaterOrEqual result is not a Bool");
 		validIfTrue(ValueType.isReal(realIsGreaterOrEqual.getSubject().accept(inputVisitor).getType()),
 				"RealIsGreaterOrEqual subject is not a Real");
@@ -371,7 +377,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(realComposeComplex.getComplex().accept(outputVisitor).getType()),
+		validIfTrue(realComposeComplex.getComplex().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"RealComposeComplex complex is not a Complex");
 		validIfTrue(ValueType.isReal(realComposeComplex.getReal().accept(inputVisitor).getType()),
 				"RealComposeComplex real is not a Real");
@@ -383,7 +389,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexAdd(ComplexAdd complexAdd) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(complexAdd.getSum().accept(outputVisitor).getType()),
+		validIfTrue(complexAdd.getSum().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"ComplexAdd sum is not a Complex");
 		validIfTrue(ValueType.isComplex(complexAdd.getLeftAddend().accept(inputVisitor).getType()),
 				"ComplexAdd left addend is not a Complex");
@@ -395,7 +401,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(complexSubtract.getDifference().accept(outputVisitor).getType()),
+		validIfTrue(complexSubtract.getDifference().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"ComplexSubtract difference is not a Complex");
 		validIfTrue(ValueType.isComplex(complexSubtract.getMinuend().accept(inputVisitor).getType()),
 				"ComplexSubtract minuend is not a Complex");
@@ -407,7 +413,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(complexMultiply.getProduct().accept(outputVisitor).getType()),
+		validIfTrue(complexMultiply.getProduct().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"ComplexMultiply product is not a Complex");
 		validIfTrue(ValueType.isComplex(complexMultiply.getLeftFactor().accept(inputVisitor).getType()),
 				"ComplexMultiply left factor is not a Complex");
@@ -419,7 +425,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexDivide(ComplexDivide complexDivide) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(complexDivide.getQuotient().accept(outputVisitor).getType()),
+		validIfTrue(complexDivide.getQuotient().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"ComplexDivide quotient is not a Complex");
 		validIfTrue(ValueType.isComplex(complexDivide.getDividend().accept(inputVisitor).getType()),
 				"ComplexDivide dividend is not a Complex");
@@ -431,7 +437,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexPower(ComplexPower complexPower) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isComplex(complexPower.getResult().accept(outputVisitor).getType()),
+		validIfTrue(complexPower.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.COMPLEX),
 				"ComplexPower result is not a Complex");
 		validIfTrue(ValueType.isComplex(complexPower.getBase().accept(inputVisitor).getType()),
 				"ComplexPower base is not a Complex");
@@ -443,7 +449,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(complexGetReal.getReal().accept(outputVisitor).getType()),
+		validIfTrue(complexGetReal.getReal().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"ComplexGetReal real is not a Real");
 		validIfTrue(ValueType.isComplex(complexGetReal.getComplex().accept(inputVisitor).getType()),
 				"ComplexGetReal complex is not a complex");
@@ -453,7 +459,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(complexGetImaginary.getImaginary().accept(outputVisitor).getType()),
+		validIfTrue(complexGetImaginary.getImaginary().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"ComplexGetReal imaginary is not a Real");
 		validIfTrue(ValueType.isComplex(complexGetImaginary.getComplex().accept(inputVisitor).getType()),
 				"ComplexGetReal complex is not a complex");
@@ -463,7 +469,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexModulo(ComplexModulo complexModulo) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isReal(complexModulo.getModulus().accept(outputVisitor).getType()),
+		validIfTrue(complexModulo.getModulus().accept(outputVisitor).getType().isAssignableFrom(ValueType.REAL),
 				"ComplexModulo modulus is not a Real");
 		validIfTrue(ValueType.isComplex(complexModulo.getComplex().accept(inputVisitor).getType()),
 				"ComplexGetReal complex is not a complex");
@@ -511,7 +517,9 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isPointer(pointerAllocate.getPointer().accept(outputVisitor).getType()),
+		// this feels mildly hacky to me
+		validIfTrue(pointerAllocate.getPointer().accept(outputVisitor).getType()
+						.isAssignableFrom(ValueType.POINTER(ValueType.VOID)),
 				"PointerAllocate pointer argument is not a Pointer");
 		return null;
 	}
@@ -543,13 +551,15 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		ValueType.PointerType pointerType = ValueType.toPointer(pointerArg.getType());
 		validIfTrue(pointerType.getPointerType().isAssignableFrom(pointerSet.getData().accept(inputVisitor).getType()),
 				"PointerSet pointer type and data type are incompatible");
+		validIfTrue(!ValueType.isVoid(pointerType.getPointerType()),
+				"PointerSet cannot set the value of the null-pointer");
 		return null;
 	}
 
 	@Override
 	public Void visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(pointerIsEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(pointerIsEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"PointerIsEqual result is not a Bool");
 		validIfTrue(ValueType.isPointer(pointerIsEqual.getLeft().accept(inputVisitor).getType()),
 				"PointerIsEqual left is not a Pointer");
@@ -561,7 +571,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueType.isBool(pointerIsNotEqual.getResult().accept(outputVisitor).getType()),
+		validIfTrue(pointerIsNotEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueType.BOOL),
 				"PointerIsNotEqual result is not a Bool");
 		validIfTrue(ValueType.isPointer(pointerIsNotEqual.getLeft().accept(inputVisitor).getType()),
 				"PointerIsNotEqual left is not a Pointer");
