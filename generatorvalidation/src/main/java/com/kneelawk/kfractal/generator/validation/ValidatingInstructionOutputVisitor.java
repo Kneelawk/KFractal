@@ -47,6 +47,6 @@ public class ValidatingInstructionOutputVisitor implements IInstructionOutputVis
 
 	@Override
 	public ValueInfo visitVoid() throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.VOID).build();
+		return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
 	}
 }

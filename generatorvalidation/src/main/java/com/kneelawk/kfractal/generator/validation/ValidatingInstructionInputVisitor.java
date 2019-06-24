@@ -37,22 +37,22 @@ public class ValidatingInstructionInputVisitor implements IInstructionInputVisit
 
 	@Override
 	public ValueInfo visitBoolConstant(BoolConstant constant) throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.BOOL).build();
+		return new ValueInfo.Builder().setType(ValueTypes.BOOL).build();
 	}
 
 	@Override
 	public ValueInfo visitIntConstant(IntConstant constant) throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.INT).build();
+		return new ValueInfo.Builder().setType(ValueTypes.INT).build();
 	}
 
 	@Override
 	public ValueInfo visitRealConstant(RealConstant constant) throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.REAL).build();
+		return new ValueInfo.Builder().setType(ValueTypes.REAL).build();
 	}
 
 	@Override
 	public ValueInfo visitComplexConstant(ComplexConstant constant) throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.COMPLEX).build();
+		return new ValueInfo.Builder().setType(ValueTypes.COMPLEX).build();
 	}
 
 	@Override
@@ -91,18 +91,18 @@ public class ValidatingInstructionInputVisitor implements IInstructionInputVisit
 		}
 
 		// build the function type from the target function details
-		return new ValueInfo.Builder().setType(ValueType.FUNCTION(target.getReturnType(),
+		return new ValueInfo.Builder().setType(ValueTypes.FUNCTION(target.getReturnType(),
 				target.getArgumentList().stream().map(VariableDeclaration::getType).collect(
 						Collectors.toList()))).build();
 	}
 
 	@Override
 	public ValueInfo visitNullPointer() throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.POINTER(ValueType.VOID)).build();
+		return new ValueInfo.Builder().setType(ValueTypes.POINTER(ValueTypes.VOID)).build();
 	}
 
 	@Override
 	public ValueInfo visitVoid() throws FractalIRException {
-		return new ValueInfo.Builder().setType(ValueType.VOID).build();
+		return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
 	}
 }
