@@ -10,17 +10,17 @@ import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 import java.util.function.Supplier;
 
 public interface IProgramEngine {
-	void initialize(Program program);
+	void initialize(Program program) throws FractalEngineException;
 
-	IEngineValueFactory getValueFactory();
+	IEngineValueFactory getValueFactory() throws FractalEngineException;
 
-	ValueType getGlobalValueType(String name);
+	ValueType getGlobalValueType(String name) throws FractalEngineException;
 
-	IEngineValue getGlobalValue(String name);
+	IEngineValue getGlobalValue(String name) throws FractalEngineException;
 
-	void setGlobalValue(String name, IEngineValue value);
+	void setGlobalValue(String name, IEngineValue value) throws FractalEngineException;
 
-	ValueTypes.FunctionType getFunctionSignature(String name);
+	ValueTypes.FunctionType getFunctionSignature(String name) throws FractalEngineException;
 
-	IFunctionValue getFunction(String name, IEngineValue[] contextValues);
+	IFunctionValue getFunction(String name, IEngineValue[] contextValues) throws FractalEngineException;
 }
