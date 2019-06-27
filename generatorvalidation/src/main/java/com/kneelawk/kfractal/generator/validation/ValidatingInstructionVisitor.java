@@ -1,24 +1,33 @@
 package com.kneelawk.kfractal.generator.validation;
 
-import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
+import com.kneelawk.kfractal.generator.api.ir.ValueType;
+import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 
 import java.util.List;
+import java.util.Map;
 
 public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
-	private Program program;
-	private FunctionDefinition function;
+	private Map<String, FunctionDefinition> functions;
+	private Map<String, ValueInfo> variables;
+	private ValueType returnType;
+
 	private ValidatingInstructionInputVisitor inputVisitor;
 	private ValidatingInstructionOutputVisitor outputVisitor;
 
 	private boolean returned = false;
 
-	public ValidatingInstructionVisitor(Program program, FunctionDefinition function) {
-		this.program = program;
-		this.function = function;
-		inputVisitor = new ValidatingInstructionInputVisitor(program, function);
-		outputVisitor = new ValidatingInstructionOutputVisitor(program, function);
+	public ValidatingInstructionVisitor(
+			Map<String, FunctionDefinition> functions,
+			Map<String, ValueInfo> variables, ValueType returnType) {
+		this.functions = functions;
+		this.variables = variables;
+		this.returnType = returnType;
+		inputVisitor = new ValidatingInstructionInputVisitor(functions, variables);
+		outputVisitor = new ValidatingInstructionOutputVisitor(variables);
 	}
 
 	private void checkState() throws FractalIRException {
@@ -51,7 +60,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 		returned = true;
 		ValueInfo returnValue = aReturn.getReturnValue().accept(inputVisitor);
-		validIfTrue(function.getReturnType().isAssignableFrom(returnValue.getType()),
+		validIfTrue(returnType.isAssignableFrom(returnValue.getType()),
 				"Unable to return incompatible type");
 		return null;
 	}
@@ -61,7 +70,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 		validIfTrue(boolNot.getOutput().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.BOOL),
 				"BoolNot output is not a bool");
-		validIfTrue(ValueTypes.isBool(boolNot.getInput().accept(inputVisitor).getType()), "BoolNot input is not a bool");
+		validIfTrue(ValueTypes.isBool(boolNot.getInput().accept(inputVisitor).getType()),
+				"BoolNot input is not a bool");
 		return null;
 	}
 
@@ -71,7 +81,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		validIfTrue(boolAnd.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.BOOL),
 				"BoolAnd result is not a bool");
 		validIfTrue(ValueTypes.isBool(boolAnd.getLeft().accept(inputVisitor).getType()), "BoolAnd left is not a bool");
-		validIfTrue(ValueTypes.isBool(boolAnd.getRight().accept(inputVisitor).getType()), "BoolAnd right is not a bool");
+		validIfTrue(ValueTypes.isBool(boolAnd.getRight().accept(inputVisitor).getType()),
+				"BoolAnd right is not a bool");
 		return null;
 	}
 
@@ -378,7 +389,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalIRException {
 		checkState();
-		validIfTrue(realComposeComplex.getComplex().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.COMPLEX),
+		validIfTrue(
+				realComposeComplex.getComplex().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.COMPLEX),
 				"RealComposeComplex complex is not a Complex");
 		validIfTrue(ValueTypes.isReal(realComposeComplex.getReal().accept(inputVisitor).getType()),
 				"RealComposeComplex real is not a Real");
@@ -402,7 +414,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalIRException {
 		checkState();
-		validIfTrue(complexSubtract.getDifference().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.COMPLEX),
+		validIfTrue(
+				complexSubtract.getDifference().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.COMPLEX),
 				"ComplexSubtract difference is not a Complex");
 		validIfTrue(ValueTypes.isComplex(complexSubtract.getMinuend().accept(inputVisitor).getType()),
 				"ComplexSubtract minuend is not a Complex");
@@ -460,7 +473,8 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalIRException {
 		checkState();
-		validIfTrue(complexGetImaginary.getImaginary().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.REAL),
+		validIfTrue(
+				complexGetImaginary.getImaginary().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.REAL),
 				"ComplexGetReal imaginary is not a Real");
 		validIfTrue(ValueTypes.isComplex(complexGetImaginary.getComplex().accept(inputVisitor).getType()),
 				"ComplexGetReal complex is not a complex");
@@ -584,16 +598,18 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitIf(If anIf) throws FractalIRException {
 		checkState();
-		validIfTrue(ValueTypes.isBool(anIf.getCondition().accept(inputVisitor).getType()), "If condition is not a Bool");
+		validIfTrue(ValueTypes.isBool(anIf.getCondition().accept(inputVisitor).getType()),
+				"If condition is not a Bool");
 
 		// check the true condition
-		ValidatingInstructionVisitor ifTrueVisitor = new ValidatingInstructionVisitor(program, function);
+		ValidatingInstructionVisitor ifTrueVisitor = new ValidatingInstructionVisitor(functions, variables, returnType);
 		for (IInstruction instruction : anIf.getIfTrue()) {
 			instruction.accept(ifTrueVisitor);
 		}
 
 		// check the false condition
-		ValidatingInstructionVisitor ifFalseVisitor = new ValidatingInstructionVisitor(program, function);
+		ValidatingInstructionVisitor ifFalseVisitor =
+				new ValidatingInstructionVisitor(functions, variables, returnType);
 		for (IInstruction instruction : anIf.getIfFalse()) {
 			instruction.accept(ifFalseVisitor);
 		}
@@ -611,7 +627,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 				"While condition is not a Bool");
 
 		// check the loop instructions
-		ValidatingInstructionVisitor loopVisitor = new ValidatingInstructionVisitor(program, function);
+		ValidatingInstructionVisitor loopVisitor = new ValidatingInstructionVisitor(functions, variables, returnType);
 		for (IInstruction instruction : aWhile.getWhileTrue()) {
 			instruction.accept(loopVisitor);
 		}
