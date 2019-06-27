@@ -9,10 +9,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Collection;
 import java.util.List;
 
-public class ValueInfo {
-	private boolean variable;
-	private ValueType type;
-	private List<IAttribute> variableAttributes;
+class ValueInfo {
+	private final boolean variable;
+	private final ValueType type;
+	private final List<IAttribute> variableAttributes;
 
 	private ValueInfo(boolean variable, ValueType type,
 					  List<IAttribute> variableAttributes) {
@@ -21,15 +21,15 @@ public class ValueInfo {
 		this.variableAttributes = variableAttributes;
 	}
 
-	public boolean isVariable() {
+	boolean isVariable() {
 		return variable;
 	}
 
-	public ValueType getType() {
+	ValueType getType() {
 		return type;
 	}
 
-	public List<IAttribute> getVariableAttributes() {
+	List<IAttribute> getVariableAttributes() {
 		return variableAttributes;
 	}
 
@@ -42,55 +42,55 @@ public class ValueInfo {
 				.toString();
 	}
 
-	public static class Builder {
+	static class Builder {
 		private boolean variable = false;
 		private ValueType type;
-		private List<IAttribute> variableAttributes = Lists.newArrayList();
+		private final List<IAttribute> variableAttributes = Lists.newArrayList();
 
-		public Builder() {
+		Builder() {
 		}
 
-		public Builder(boolean variable, ValueType type,
-					   Collection<IAttribute> variableAttributes) {
+		Builder(boolean variable, ValueType type,
+				Collection<IAttribute> variableAttributes) {
 			this.variable = variable;
 			this.type = type;
 			this.variableAttributes.addAll(variableAttributes);
 		}
 
-		public ValueInfo build() {
+		ValueInfo build() {
 			return new ValueInfo(variable, type, variableAttributes);
 		}
 
-		public boolean isVariable() {
+		boolean isVariable() {
 			return variable;
 		}
 
-		public Builder setVariable(boolean variable) {
+		Builder setVariable(boolean variable) {
 			this.variable = variable;
 			return this;
 		}
 
-		public ValueType getType() {
+		ValueType getType() {
 			return type;
 		}
 
-		public Builder setType(ValueType type) {
+		Builder setType(ValueType type) {
 			this.type = type;
 			return this;
 		}
 
-		public List<IAttribute> getVariableAttributes() {
+		List<IAttribute> getVariableAttributes() {
 			return variableAttributes;
 		}
 
-		public Builder setVariableAttributes(
+		Builder setVariableAttributes(
 				Collection<IAttribute> variableAttributes) {
 			this.variableAttributes.clear();
 			this.variableAttributes.addAll(variableAttributes);
 			return this;
 		}
 
-		public Builder addVariableAttribute(IAttribute variableAttribute) {
+		Builder addVariableAttribute(IAttribute variableAttribute) {
 			variableAttributes.add(variableAttribute);
 			return this;
 		}

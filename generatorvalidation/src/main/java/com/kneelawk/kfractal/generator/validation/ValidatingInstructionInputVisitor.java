@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<ValueInfo> {
-	private Map<String, FunctionDefinition> functions;
-	private Map<String, ValueInfo> variables;
+class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<ValueInfo> {
+	private final Map<String, FunctionDefinition> functions;
+	private final Map<String, ValueInfo> variables;
 
-	public ValidatingInstructionInputVisitor(
+	ValidatingInstructionInputVisitor(
 			Map<String, FunctionDefinition> functions,
 			Map<String, ValueInfo> variables) {
 		this.functions = functions;
@@ -32,22 +32,22 @@ public class ValidatingInstructionInputVisitor implements IInstructionInputVisit
 	}
 
 	@Override
-	public ValueInfo visitBoolConstant(BoolConstant constant) throws FractalIRException {
+	public ValueInfo visitBoolConstant(BoolConstant constant) {
 		return new ValueInfo.Builder().setType(ValueTypes.BOOL).build();
 	}
 
 	@Override
-	public ValueInfo visitIntConstant(IntConstant constant) throws FractalIRException {
+	public ValueInfo visitIntConstant(IntConstant constant) {
 		return new ValueInfo.Builder().setType(ValueTypes.INT).build();
 	}
 
 	@Override
-	public ValueInfo visitRealConstant(RealConstant constant) throws FractalIRException {
+	public ValueInfo visitRealConstant(RealConstant constant) {
 		return new ValueInfo.Builder().setType(ValueTypes.REAL).build();
 	}
 
 	@Override
-	public ValueInfo visitComplexConstant(ComplexConstant constant) throws FractalIRException {
+	public ValueInfo visitComplexConstant(ComplexConstant constant) {
 		return new ValueInfo.Builder().setType(ValueTypes.COMPLEX).build();
 	}
 
@@ -93,12 +93,12 @@ public class ValidatingInstructionInputVisitor implements IInstructionInputVisit
 	}
 
 	@Override
-	public ValueInfo visitNullPointer() throws FractalIRException {
+	public ValueInfo visitNullPointer() {
 		return new ValueInfo.Builder().setType(ValueTypes.POINTER(ValueTypes.VOID)).build();
 	}
 
 	@Override
-	public ValueInfo visitVoid() throws FractalIRException {
+	public ValueInfo visitVoid() {
 		return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
 	}
 }

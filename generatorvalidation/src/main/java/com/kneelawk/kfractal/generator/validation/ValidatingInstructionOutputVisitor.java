@@ -8,10 +8,10 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 
 import java.util.Map;
 
-public class ValidatingInstructionOutputVisitor implements IInstructionOutputVisitor<ValueInfo> {
-	private Map<String, ValueInfo> variables;
+class ValidatingInstructionOutputVisitor implements IInstructionOutputVisitor<ValueInfo> {
+	private final Map<String, ValueInfo> variables;
 
-	public ValidatingInstructionOutputVisitor(
+	ValidatingInstructionOutputVisitor(
 			Map<String, ValueInfo> variables) {
 		this.variables = variables;
 	}
@@ -19,7 +19,7 @@ public class ValidatingInstructionOutputVisitor implements IInstructionOutputVis
 	@Override
 	public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
 		// find the variable
-		// This might be appropriate for its own class
+		// This might bes appropriate for its own class
 		String referenceName = reference.getName();
 		ValueInfo valueInfo;
 		if (variables.containsKey(referenceName)) {
@@ -41,7 +41,7 @@ public class ValidatingInstructionOutputVisitor implements IInstructionOutputVis
 	}
 
 	@Override
-	public ValueInfo visitVoid() throws FractalIRException {
+	public ValueInfo visitVoid() {
 		return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
 	}
 }

@@ -10,17 +10,17 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import java.util.List;
 import java.util.Map;
 
-public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
-	private Map<String, FunctionDefinition> functions;
-	private Map<String, ValueInfo> variables;
-	private ValueType returnType;
+class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
+	private final Map<String, FunctionDefinition> functions;
+	private final Map<String, ValueInfo> variables;
+	private final ValueType returnType;
 
-	private ValidatingInstructionInputVisitor inputVisitor;
-	private ValidatingInstructionOutputVisitor outputVisitor;
+	private final ValidatingInstructionInputVisitor inputVisitor;
+	private final ValidatingInstructionOutputVisitor outputVisitor;
 
 	private boolean returned = false;
 
-	public ValidatingInstructionVisitor(
+	ValidatingInstructionVisitor(
 			Map<String, FunctionDefinition> functions,
 			Map<String, ValueInfo> variables, ValueType returnType) {
 		this.functions = functions;
@@ -42,7 +42,7 @@ public class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		}
 	}
 
-	public boolean isReturned() {
+	boolean isReturned() {
 		return returned;
 	}
 
