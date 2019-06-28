@@ -428,7 +428,13 @@ public final class ValueTypes {
 			if (other == null || getClass() != other.getClass())
 				return false;
 			PointerType that = (PointerType) other;
-			return isVoid(that.pointerType) || pointerType.isAssignableFrom(that.pointerType);
+			// everything is assignable from the null pointer
+			if (that.nullPointer)
+				return true;
+			// the null pointer is assignable from nothing
+			if (nullPointer)
+				return false;
+			return pointerType.isAssignableFrom(that.pointerType);
 		}
 
 		@Override
