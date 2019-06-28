@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public final class ValueTypes {
 	public static ValueType FUNCTION(ValueType returnType, List<ValueType> argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
+		if (argumentTypes.contains(VOID))
+			throw new IllegalArgumentException("Cannot have VOID arguments to a function");
 		try {
 			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
 		} catch (ExecutionException e) {
@@ -59,6 +62,8 @@ public final class ValueTypes {
 	public static ValueType FUNCTION(ValueType returnType, ValueType... argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
+		if (ArrayUtils.contains(argumentTypes, VOID))
+			throw new IllegalArgumentException("Cannot have VOID arguments to a function");
 		try {
 			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
 		} catch (ExecutionException e) {
@@ -70,6 +75,8 @@ public final class ValueTypes {
 	public static ValueType POINTER(ValueType pointerType) {
 		if (pointerType == null)
 			throw new NullPointerException();
+		if (isVoid(pointerType))
+			throw new IllegalArgumentException("Cannot have a pointer to VOID");
 		try {
 			return pointerCache.get(pointerType);
 		} catch (ExecutionException e) {
