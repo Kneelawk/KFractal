@@ -541,9 +541,8 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException {
 		checkState();
-		// this feels mildly hacky to me
-		validIfTrue(pointerAllocate.getPointer().accept(outputVisitor).getType()
-						.isAssignableFrom(ValueTypes.POINTER(ValueTypes.VOID)),
+		// this feels somewhat inextensible to me
+		validIfTrue(ValueTypes.isPointer(pointerAllocate.getPointer().accept(outputVisitor).getType()),
 				"PointerAllocate pointer argument is not a Pointer");
 		return null;
 	}
