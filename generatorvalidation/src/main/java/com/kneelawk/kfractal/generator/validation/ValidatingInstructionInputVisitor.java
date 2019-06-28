@@ -93,8 +93,13 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
 	}
 
 	@Override
+	public ValueInfo visitNullFunction() {
+		return new ValueInfo.Builder().setType(ValueTypes.NULL_FUNCTION).build();
+	}
+
+	@Override
 	public ValueInfo visitNullPointer() {
-		return new ValueInfo.Builder().setType(ValueTypes.POINTER(ValueTypes.VOID)).build();
+		return new ValueInfo.Builder().setType(ValueTypes.NULL_POINTER).build();
 	}
 
 	@Override
