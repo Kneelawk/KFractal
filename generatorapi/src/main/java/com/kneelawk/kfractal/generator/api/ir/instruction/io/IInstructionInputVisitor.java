@@ -20,5 +20,7 @@ public interface IInstructionInputVisitor<R> {
 
 	R visitNullPointer() throws FractalIRException;
 
+	R visitNullFunction() throws FractalIRException;
+
 	R visitVoid() throws FractalIRException;
 }

@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.List;
@@ -40,12 +41,16 @@ public final class ValueTypes {
 	public static final ValueType INT = new ValueTypes.IntType();
 	public static final ValueType REAL = new ValueTypes.RealType();
 	public static final ValueType COMPLEX = new ValueTypes.ComplexType();
+	public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of(), true);
+	public static final ValueType NULL_POINTER = new ValueTypes.PointerType(VOID, true);
 
 	/* Derived type constructors */
 
 	public static ValueType FUNCTION(ValueType returnType, List<ValueType> argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
+		if (argumentTypes.contains(VOID))
+			throw new IllegalArgumentException("Cannot have VOID arguments to a function");
 		try {
 			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
 		} catch (ExecutionException e) {
@@ -57,6 +62,8 @@ public final class ValueTypes {
 	public static ValueType FUNCTION(ValueType returnType, ValueType... argumentTypes) {
 		if (returnType == null)
 			throw new NullPointerException();
+		if (ArrayUtils.contains(argumentTypes, VOID))
+			throw new IllegalArgumentException("Cannot have VOID arguments to a function");
 		try {
 			return functionCache.get(ImmutablePair.of(returnType, ImmutableList.copyOf(argumentTypes)));
 		} catch (ExecutionException e) {
@@ -68,6 +75,8 @@ public final class ValueTypes {
 	public static ValueType POINTER(ValueType pointerType) {
 		if (pointerType == null)
 			throw new NullPointerException();
+		if (isVoid(pointerType))
+			throw new IllegalArgumentException("Cannot have a pointer to VOID");
 		try {
 			return pointerCache.get(pointerType);
 		} catch (ExecutionException e) {
@@ -264,11 +273,19 @@ public final class ValueTypes {
 	public static final class FunctionType implements ValueType {
 		private ValueType returnType;
 		private List<ValueType> argumentTypes;
+		private boolean nullFunction;
 
 		private FunctionType(ValueType returnType,
 							 List<ValueType> argumentTypes) {
 			this.returnType = returnType;
 			this.argumentTypes = argumentTypes;
+		}
+
+		private FunctionType(ValueType returnType,
+							 List<ValueType> argumentTypes, boolean nullFunction) {
+			this.returnType = returnType;
+			this.argumentTypes = argumentTypes;
+			this.nullFunction = nullFunction;
 		}
 
 		public ValueType getReturnType() {
@@ -279,15 +296,26 @@ public final class ValueTypes {
 			return argumentTypes;
 		}
 
+		public boolean isNullFunction() {
+			return nullFunction;
+		}
+
 		@Override
 		public int compareTo(ValueType type) {
 			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type))
 				return 1;
 			if (isFunction(type)) {
 				FunctionType other = (FunctionType) type;
+				// compare null-ness
+				if (nullFunction)
+					return other.nullFunction ? 0 : 1;
+
+				// compare return types
 				int result = returnType.compareTo(other.returnType);
 				if (result != 0)
 					return result;
+
+				// compare argument types
 				int mySize = argumentTypes.size();
 				int otherSize = other.argumentTypes.size();
 				int size = Math.max(mySize, otherSize);
@@ -312,7 +340,8 @@ public final class ValueTypes {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			FunctionType that = (FunctionType) o;
-			return returnType.equals(that.returnType) &&
+			return nullFunction == that.nullFunction &&
+					returnType.equals(that.returnType) &&
 					argumentTypes.equals(that.argumentTypes);
 		}
 
@@ -322,6 +351,12 @@ public final class ValueTypes {
 			if (other == null || getClass() != other.getClass())
 				return false;
 			FunctionType that = (FunctionType) other;
+			// everything is assignable from the null function
+			if (that.nullFunction)
+				return true;
+			// the null function is assignable from nothing
+			if (nullFunction)
+				return false;
 			if (!returnType.isAssignableFrom(that.returnType))
 				return false;
 			if (argumentTypes.size() != that.argumentTypes.size())
@@ -336,11 +371,13 @@ public final class ValueTypes {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(returnType, argumentTypes);
+			return Objects.hash(returnType, argumentTypes, nullFunction);
 		}
 
 		@Override
 		public String name() {
+			if (nullFunction)
+				return "NULL_FUNCTION";
 			return "FUNCTION(" + returnType + ", " + argumentTypes.toString() + ')';
 		}
 
@@ -352,13 +389,23 @@ public final class ValueTypes {
 
 	public static final class PointerType implements ValueType {
 		private ValueType pointerType;
+		private boolean nullPointer;
 
 		private PointerType(ValueType pointerType) {
 			this.pointerType = pointerType;
 		}
 
+		public PointerType(ValueType pointerType, boolean nullPointer) {
+			this.pointerType = pointerType;
+			this.nullPointer = nullPointer;
+		}
+
 		public ValueType getPointerType() {
 			return pointerType;
+		}
+
+		public boolean isNullPointer() {
+			return nullPointer;
 		}
 
 		@Override
@@ -367,6 +414,8 @@ public final class ValueTypes {
 				return 1;
 			if (isPointer(type)) {
 				PointerType other = (PointerType) type;
+				if (nullPointer)
+					return other.nullPointer ? 0 : 1;
 				return pointerType.compareTo(other.pointerType);
 			}
 			return -1;
@@ -377,7 +426,8 @@ public final class ValueTypes {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			PointerType that = (PointerType) o;
-			return pointerType.equals(that.pointerType);
+			return nullPointer == that.nullPointer &&
+					pointerType.equals(that.pointerType);
 		}
 
 		@Override
@@ -387,16 +437,24 @@ public final class ValueTypes {
 			if (other == null || getClass() != other.getClass())
 				return false;
 			PointerType that = (PointerType) other;
-			return isVoid(that.pointerType) || pointerType.isAssignableFrom(that.pointerType);
+			// everything is assignable from the null pointer
+			if (that.nullPointer)
+				return true;
+			// the null pointer is assignable from nothing
+			if (nullPointer)
+				return false;
+			return pointerType.isAssignableFrom(that.pointerType);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(pointerType);
+			return Objects.hash(pointerType, nullPointer);
 		}
 
 		@Override
 		public String name() {
+			if (nullPointer)
+				return "NULL_POINTER";
 			return "POINTER(" + pointerType + ')';
 		}
 
