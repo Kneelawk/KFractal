@@ -369,6 +369,8 @@ public final class ValueTypes {
 
 		@Override
 		public String name() {
+			if (nullFunction)
+				return "NULL_FUNCTION";
 			return "FUNCTION(" + returnType + ", " + argumentTypes.toString() + ')';
 		}
 
@@ -444,6 +446,8 @@ public final class ValueTypes {
 
 		@Override
 		public String name() {
+			if (nullPointer)
+				return "NULL_POINTER";
 			return "POINTER(" + pointerType + ')';
 		}
 
