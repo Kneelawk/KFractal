@@ -40,6 +40,7 @@ public final class ValueTypes {
 	public static final ValueType INT = new ValueTypes.IntType();
 	public static final ValueType REAL = new ValueTypes.RealType();
 	public static final ValueType COMPLEX = new ValueTypes.ComplexType();
+	public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of(), true);
 
 	/* Derived type constructors */
 
@@ -264,11 +265,19 @@ public final class ValueTypes {
 	public static final class FunctionType implements ValueType {
 		private ValueType returnType;
 		private List<ValueType> argumentTypes;
+		private boolean nullFunction;
 
 		private FunctionType(ValueType returnType,
 							 List<ValueType> argumentTypes) {
 			this.returnType = returnType;
 			this.argumentTypes = argumentTypes;
+		}
+
+		private FunctionType(ValueType returnType,
+							List<ValueType> argumentTypes, boolean nullFunction) {
+			this.returnType = returnType;
+			this.argumentTypes = argumentTypes;
+			this.nullFunction = nullFunction;
 		}
 
 		public ValueType getReturnType() {
@@ -279,15 +288,26 @@ public final class ValueTypes {
 			return argumentTypes;
 		}
 
+		public boolean isNullFunction() {
+			return nullFunction;
+		}
+
 		@Override
 		public int compareTo(ValueType type) {
 			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type))
 				return 1;
 			if (isFunction(type)) {
 				FunctionType other = (FunctionType) type;
+				// compare null-ness
+				if (nullFunction)
+					return other.nullFunction ? 0 : 1;
+
+				// compare return types
 				int result = returnType.compareTo(other.returnType);
 				if (result != 0)
 					return result;
+
+				// compare argument types
 				int mySize = argumentTypes.size();
 				int otherSize = other.argumentTypes.size();
 				int size = Math.max(mySize, otherSize);
@@ -312,7 +332,8 @@ public final class ValueTypes {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			FunctionType that = (FunctionType) o;
-			return returnType.equals(that.returnType) &&
+			return nullFunction == that.nullFunction &&
+					returnType.equals(that.returnType) &&
 					argumentTypes.equals(that.argumentTypes);
 		}
 
@@ -336,7 +357,7 @@ public final class ValueTypes {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(returnType, argumentTypes);
+			return Objects.hash(returnType, argumentTypes, nullFunction);
 		}
 
 		@Override
