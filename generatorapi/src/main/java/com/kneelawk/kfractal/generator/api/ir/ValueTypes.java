@@ -274,7 +274,7 @@ public final class ValueTypes {
 		}
 
 		private FunctionType(ValueType returnType,
-							List<ValueType> argumentTypes, boolean nullFunction) {
+							 List<ValueType> argumentTypes, boolean nullFunction) {
 			this.returnType = returnType;
 			this.argumentTypes = argumentTypes;
 			this.nullFunction = nullFunction;
@@ -343,6 +343,12 @@ public final class ValueTypes {
 			if (other == null || getClass() != other.getClass())
 				return false;
 			FunctionType that = (FunctionType) other;
+			// everything is assignable from the null function
+			if (that.nullFunction)
+				return true;
+			// the null function is assignable from nothing
+			if (nullFunction)
+				return false;
 			if (!returnType.isAssignableFrom(that.returnType))
 				return false;
 			if (argumentTypes.size() != that.argumentTypes.size())
