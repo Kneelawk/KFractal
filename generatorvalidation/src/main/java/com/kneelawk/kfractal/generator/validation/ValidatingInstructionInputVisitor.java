@@ -59,7 +59,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
 		if (functions.containsKey(functionName)) {
 			target = functions.get(functionName);
 		} else {
-			throw new FractalIRValidationException("Reference to missing function: '" + functionName + '\'');
+			throw new MissingFunctionReferenceException("Reference to missing function: '" + functionName + '\'');
 		}
 
 		// compare context variable types
@@ -70,17 +70,17 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
 		int size = Math.max(targetContextVariablesSize, constantContextVariablesSize);
 		for (int i = 0; i < size; i++) {
 			if (i >= targetContextVariablesSize) {
-				throw new FractalIRValidationException("FunctionContextConstant has extra context variables: " +
+				throw new IncompatibleFunctionContextException("FunctionContextConstant has extra context variables: " +
 						constantContextVariables.subList(i, constantContextVariablesSize));
 			}
 			if (i >= constantContextVariablesSize) {
-				throw new FractalIRValidationException("FunctionContextConstant is missing context variables: " +
+				throw new IncompatibleFunctionContextException("FunctionContextConstant is missing context variables: " +
 						targetContextVariables.subList(i, targetContextVariablesSize));
 			}
 			VariableDeclaration targetVariable = targetContextVariables.get(i);
 			IInstructionInput constantInput = constantContextVariables.get(i);
 			if (!targetVariable.getType().isAssignableFrom(constantInput.accept(this).getType())) {
-				throw new FractalIRValidationException(
+				throw new IncompatibleFunctionContextException(
 						"Function defines context variable: " + targetVariable + " but constant supplies: " +
 								constantInput);
 			}

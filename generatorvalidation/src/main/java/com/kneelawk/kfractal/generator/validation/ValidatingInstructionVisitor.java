@@ -9,6 +9,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	private final Map<String, FunctionDefinition> functions;
@@ -39,6 +40,14 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	private void validIfTrue(boolean condition, String message) throws FractalIRException {
 		if (!condition) {
 			throw new FractalIRValidationException(message);
+		}
+	}
+
+	private void validIfTrue(boolean condition, String message,
+							 Supplier<? extends FractalIRValidationException> exception)
+			throws FractalIRValidationException {
+		if (!condition) {
+			throw exception.get();
 		}
 	}
 
@@ -513,18 +522,18 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		int size = Math.max(targetArgumentsSize, instructionArgumentsSize);
 		for (int i = 0; i < size; i++) {
 			if (i >= targetArgumentsSize) {
-				throw new FractalIRValidationException("FunctionCall has extra arguments: " +
+				throw new IncompatibleFunctionArgumentException("FunctionCall has extra arguments: " +
 						instructionArguments.subList(i, instructionArgumentsSize));
 			}
 			if (i >= instructionArgumentsSize) {
-				throw new FractalIRValidationException(
+				throw new IncompatibleFunctionArgumentException(
 						"FunctionCall is missing arguments: " + targetArguments.subList(i, targetArgumentsSize));
 			}
 			ValueType targetArgument = targetArguments.get(i);
 			IInstructionInput instructionArgument = instructionArguments.get(i);
 			validIfTrue(targetArgument.isAssignableFrom(instructionArgument.accept(inputVisitor).getType()),
 					"Function defines argument: " + targetArgument + " but FunctionCall instruction supplies: " +
-							instructionArgument);
+							instructionArgument, IncompatibleFunctionArgumentException::new);
 		}
 		return null;
 	}
