@@ -41,6 +41,7 @@ public final class ValueTypes {
 	public static final ValueType REAL = new ValueTypes.RealType();
 	public static final ValueType COMPLEX = new ValueTypes.ComplexType();
 	public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of(), true);
+	public static final ValueType NULL_POINTER = new ValueTypes.PointerType(VOID, true);
 
 	/* Derived type constructors */
 
@@ -379,13 +380,23 @@ public final class ValueTypes {
 
 	public static final class PointerType implements ValueType {
 		private ValueType pointerType;
+		private boolean nullPointer;
 
 		private PointerType(ValueType pointerType) {
 			this.pointerType = pointerType;
 		}
 
+		public PointerType(ValueType pointerType, boolean nullPointer) {
+			this.pointerType = pointerType;
+			this.nullPointer = nullPointer;
+		}
+
 		public ValueType getPointerType() {
 			return pointerType;
+		}
+
+		public boolean isNullPointer() {
+			return nullPointer;
 		}
 
 		@Override
@@ -394,6 +405,8 @@ public final class ValueTypes {
 				return 1;
 			if (isPointer(type)) {
 				PointerType other = (PointerType) type;
+				if (nullPointer)
+					return other.nullPointer ? 0 : 1;
 				return pointerType.compareTo(other.pointerType);
 			}
 			return -1;
@@ -404,7 +417,8 @@ public final class ValueTypes {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 			PointerType that = (PointerType) o;
-			return pointerType.equals(that.pointerType);
+			return nullPointer == that.nullPointer &&
+					pointerType.equals(that.pointerType);
 		}
 
 		@Override
@@ -419,7 +433,7 @@ public final class ValueTypes {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(pointerType);
+			return Objects.hash(pointerType, nullPointer);
 		}
 
 		@Override
