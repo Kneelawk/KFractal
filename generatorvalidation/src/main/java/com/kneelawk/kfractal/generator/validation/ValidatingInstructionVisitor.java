@@ -539,6 +539,32 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	}
 
 	@Override
+	public Void visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(functionIsEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.BOOL),
+				"FunctionIsEqual result is not a bool");
+		validIfTrue(ValueTypes.isFunction(functionIsEqual.getLeft().accept(inputVisitor).getType()),
+				"FunctionIsEqual left is not a function");
+		validIfTrue(ValueTypes.isFunction(functionIsEqual.getRight().accept(inputVisitor).getType()),
+				"FunctionIsEqual right is not a function");
+
+		return null;
+	}
+
+	@Override
+	public Void visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalIRException {
+		checkState();
+		validIfTrue(functionIsNotEqual.getResult().accept(outputVisitor).getType().isAssignableFrom(ValueTypes.BOOL),
+				"FunctionIsNotEqual result is not a bool");
+		validIfTrue(ValueTypes.isFunction(functionIsNotEqual.getLeft().accept(inputVisitor).getType()),
+				"FunctionIsNotEqual left is not a function");
+		validIfTrue(ValueTypes.isFunction(functionIsNotEqual.getRight().accept(inputVisitor).getType()),
+				"FunctionIsNotEqual right is not a function");
+
+		return null;
+	}
+
+	@Override
 	public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException {
 		checkState();
 		// this feels somewhat inextensible to me
