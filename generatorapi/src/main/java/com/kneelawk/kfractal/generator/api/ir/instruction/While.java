@@ -7,6 +7,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -59,7 +60,7 @@ public class While implements IInstruction {
 		}
 
 		public Builder(IInstructionInput condition,
-					   List<IInstruction> whileTrue) {
+					   Collection<IInstruction> whileTrue) {
 			this.condition = condition;
 			this.whileTrue.addAll(whileTrue);
 		}
@@ -82,7 +83,7 @@ public class While implements IInstruction {
 		}
 
 		public Builder setWhileTrue(
-				List<IInstruction> whileTrue) {
+				Collection<IInstruction> whileTrue) {
 			this.whileTrue.clear();
 			this.whileTrue.addAll(whileTrue);
 			return this;
@@ -90,6 +91,11 @@ public class While implements IInstruction {
 
 		public Builder addWhileTrue(IInstruction instruction) {
 			whileTrue.add(instruction);
+			return this;
+		}
+
+		public Builder addWhileTrue(Collection<IInstruction> instructions) {
+			whileTrue.addAll(instructions);
 			return this;
 		}
 	}
