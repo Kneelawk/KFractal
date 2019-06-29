@@ -47,6 +47,8 @@ The Fractal IR Instructions are:
     * [`ComplexModulo`](#complexmodulo)
 * [Function Instructions](#function-instructions)
     * [`FunctionCall`](#functioncall)
+    * [`FunctionIsEqual`](#functionisequal)
+    * [`FunctionIsNotEqual`](#functionisnotequal)
 * [Pointer Instructions](#pointer-instructions)
     * [`PointerAllocate`](#pointerallocate)
     * [`PointerFree`](#pointerfree)
@@ -295,6 +297,18 @@ variable that the return value is stored in must be of the same type as the func
 arguments in the specified argument list must be the same types as the arguments in the function.
 
 `FunctionCall(* result, Function(*, [ ** ]) function, [ ** arguments ])`
+
+### FunctionIsEqual
+Checks to see if the last two function arguments reference the same function and hold the same context variable 
+values and stores the result in the variable referenced by the first argument.
+
+`FunctionIsEqual(Bool result, Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
+
+### FunctionIsNotEqual
+Checks to see if the last two function arguments reference different functions or hold different context variable 
+values and stores the result in the variable referenced by the first argument.
+
+`FunctionIsNotEqual(Bool result, Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
 
 ## Pointer Instructions
 
