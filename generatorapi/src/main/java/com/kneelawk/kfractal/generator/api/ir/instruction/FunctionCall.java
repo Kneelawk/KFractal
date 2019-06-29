@@ -8,6 +8,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -74,7 +75,7 @@ public class FunctionCall implements IInstruction {
 
 		public Builder(IInstructionOutput result,
 					   IInstructionInput function,
-					   List<IInstructionInput> arguments) {
+					   Collection<IInstructionInput> arguments) {
 			this.result = result;
 			this.function = function;
 			this.arguments.addAll(arguments);
@@ -107,7 +108,7 @@ public class FunctionCall implements IInstruction {
 		}
 
 		public Builder setArguments(
-				List<IInstructionInput> arguments) {
+				Collection<IInstructionInput> arguments) {
 			this.arguments.clear();
 			this.arguments.addAll(arguments);
 			return this;
@@ -115,6 +116,11 @@ public class FunctionCall implements IInstruction {
 
 		public Builder addArgument(IInstructionInput argument) {
 			this.arguments.add(argument);
+			return this;
+		}
+
+		public Builder addArguments(Collection<IInstructionInput> arguments) {
+			this.arguments.addAll(arguments);
 			return this;
 		}
 	}
