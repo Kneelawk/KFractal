@@ -98,6 +98,10 @@ public interface IInstructionVisitor<R> {
 
 	R visitFunctionCall(FunctionCall functionCall) throws FractalIRException;
 
+	R visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalIRException;
+
+	R visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalIRException;
+
 	/* Pointer Operations */
 
 	R visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException;
