@@ -49,6 +49,10 @@ public class ProgramValidator {
 			for (IInstruction instruction : function.getBody()) {
 				instruction.accept(visitor);
 			}
+
+			if (!visitor.isReturned()) {
+				throw new FractalIRValidationException("Function is lacking a return statement");
+			}
 		}
 	}
 
