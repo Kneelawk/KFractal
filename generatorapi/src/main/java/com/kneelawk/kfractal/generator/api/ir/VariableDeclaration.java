@@ -15,7 +15,7 @@ public class VariableDeclaration {
 	private Set<IAttribute> attributes;
 
 	private VariableDeclaration(ValueType type, String name,
-							   Set<IAttribute> attributes) {
+								Set<IAttribute> attributes) {
 		this.type = type;
 		this.name = name;
 		this.attributes = attributes;
@@ -40,6 +40,14 @@ public class VariableDeclaration {
 				.append("name", name)
 				.append("attributes", attributes)
 				.toString();
+	}
+
+	public static VariableDeclaration create(ValueType type, String name) {
+		return new VariableDeclaration(type, name, ImmutableSet.of());
+	}
+
+	public static VariableDeclaration create(ValueType type, String name, Iterable<IAttribute> attributes) {
+		return new VariableDeclaration(type, name, ImmutableSet.copyOf(attributes));
 	}
 
 	public static class Builder {

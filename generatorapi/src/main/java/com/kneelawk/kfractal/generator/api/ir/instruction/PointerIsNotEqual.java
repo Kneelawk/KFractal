@@ -51,6 +51,13 @@ public class PointerIsNotEqual implements IInstruction {
 				.toString();
 	}
 
+	public static PointerIsNotEqual create(
+			IInstructionOutput result,
+			IInstructionInput left,
+			IInstructionInput right) {
+		return new PointerIsNotEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

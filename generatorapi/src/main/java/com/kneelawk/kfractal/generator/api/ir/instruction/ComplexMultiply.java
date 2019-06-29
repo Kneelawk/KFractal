@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * ComplexMultiply - Instruction. Multiplies the last two complex numbers, and stores the product in the first.
- *
+ * <p>
  * ComplexMultiply(Complex product, Complex a, Complex b)
  */
 public class ComplexMultiply implements IInstruction {
@@ -46,6 +46,13 @@ public class ComplexMultiply implements IInstruction {
 				.append("leftFactor", leftFactor)
 				.append("rightFactor", rightFactor)
 				.toString();
+	}
+
+	public static ComplexMultiply create(
+			IInstructionOutput product,
+			IInstructionInput leftFactor,
+			IInstructionInput rightFactor) {
+		return new ComplexMultiply(product, leftFactor, rightFactor);
 	}
 
 	public static class Builder {

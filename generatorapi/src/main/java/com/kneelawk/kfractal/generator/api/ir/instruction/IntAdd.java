@@ -18,8 +18,8 @@ public class IntAdd implements IInstruction {
 	private IInstructionInput rightAddend;
 
 	private IntAdd(IInstructionOutput sum,
-				  IInstructionInput leftAddend,
-				  IInstructionInput rightAddend) {
+				   IInstructionInput leftAddend,
+				   IInstructionInput rightAddend) {
 		this.sum = sum;
 		this.leftAddend = leftAddend;
 		this.rightAddend = rightAddend;
@@ -49,6 +49,12 @@ public class IntAdd implements IInstruction {
 				.append("leftAddend", leftAddend)
 				.append("rightAddend", rightAddend)
 				.toString();
+	}
+
+	public static IntAdd create(IInstructionOutput sum,
+								IInstructionInput leftAddend,
+								IInstructionInput rightAddend) {
+		return new IntAdd(sum, leftAddend, rightAddend);
 	}
 
 	public static class Builder {

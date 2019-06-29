@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * ComplexAdd - Instruction. Adds the last two complex numbers and stores the sum in the variable referenced by the
  * first argument.
- *
+ * <p>
  * ComplexAdd(Complex sum, Complex leftAddend, Complex rightAddend)
  */
 public class ComplexAdd implements IInstruction {
@@ -47,6 +47,12 @@ public class ComplexAdd implements IInstruction {
 				.append("leftAddend", leftAddend)
 				.append("rightAddend", rightAddend)
 				.toString();
+	}
+
+	public static ComplexAdd create(IInstructionOutput sum,
+									IInstructionInput leftAddend,
+									IInstructionInput rightAddend) {
+		return new ComplexAdd(sum, leftAddend, rightAddend);
 	}
 
 	public static class Builder {

@@ -51,6 +51,12 @@ public class RealIsNotEqual implements IInstruction {
 				.toString();
 	}
 
+	public static RealIsNotEqual create(IInstructionOutput result,
+										IInstructionInput left,
+										IInstructionInput right) {
+		return new RealIsNotEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

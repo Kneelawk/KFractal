@@ -18,8 +18,8 @@ public class RealMultiply implements IInstruction {
 	private IInstructionInput rightFactor;
 
 	private RealMultiply(IInstructionOutput product,
-						IInstructionInput leftFactor,
-						IInstructionInput rightFactor) {
+						 IInstructionInput leftFactor,
+						 IInstructionInput rightFactor) {
 		this.product = product;
 		this.leftFactor = leftFactor;
 		this.rightFactor = rightFactor;
@@ -49,6 +49,12 @@ public class RealMultiply implements IInstruction {
 				.append("leftFactor", leftFactor)
 				.append("rightFactor", rightFactor)
 				.toString();
+	}
+
+	public static RealMultiply create(IInstructionOutput product,
+									  IInstructionInput leftFactor,
+									  IInstructionInput rightFactor) {
+		return new RealMultiply(product, leftFactor, rightFactor);
 	}
 
 	public static class Builder {

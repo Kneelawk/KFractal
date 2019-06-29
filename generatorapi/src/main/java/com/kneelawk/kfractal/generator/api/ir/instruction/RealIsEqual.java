@@ -18,8 +18,8 @@ public class RealIsEqual implements IInstruction {
 	private IInstructionInput right;
 
 	private RealIsEqual(IInstructionOutput result,
-					   IInstructionInput left,
-					   IInstructionInput right) {
+						IInstructionInput left,
+						IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -49,6 +49,12 @@ public class RealIsEqual implements IInstruction {
 				.append("left", left)
 				.append("right", right)
 				.toString();
+	}
+
+	public static RealIsEqual create(IInstructionOutput result,
+									 IInstructionInput left,
+									 IInstructionInput right) {
+		return new RealIsEqual(result, left, right);
 	}
 
 	public static class Builder {

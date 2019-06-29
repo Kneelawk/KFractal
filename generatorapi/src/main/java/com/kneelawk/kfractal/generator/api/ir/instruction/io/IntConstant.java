@@ -27,6 +27,10 @@ public class IntConstant implements IInstructionInput {
 				.toString();
 	}
 
+	public static IntConstant create(int value) {
+		return new IntConstant(value);
+	}
+
 	public static class Builder {
 		private int value;
 

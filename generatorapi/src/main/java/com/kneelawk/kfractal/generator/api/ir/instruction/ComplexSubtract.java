@@ -49,6 +49,13 @@ public class ComplexSubtract implements IInstruction {
 				.toString();
 	}
 
+	public static ComplexSubtract create(
+			IInstructionOutput difference,
+			IInstructionInput minuend,
+			IInstructionInput subtrahend) {
+		return new ComplexSubtract(difference, minuend, subtrahend);
+	}
+
 	public static class Builder {
 		private IInstructionOutput difference;
 		private IInstructionInput minuend;

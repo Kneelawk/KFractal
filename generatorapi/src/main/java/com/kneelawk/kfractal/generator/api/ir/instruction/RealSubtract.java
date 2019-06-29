@@ -51,6 +51,13 @@ public class RealSubtract implements IInstruction {
 				.toString();
 	}
 
+	public static RealSubtract create(
+			IInstructionOutput difference,
+			IInstructionInput minuend,
+			IInstructionInput subtrahend) {
+		return new RealSubtract(difference, minuend, subtrahend);
+	}
+
 	public static class Builder {
 		private IInstructionOutput difference;
 		private IInstructionInput minuend;

@@ -49,6 +49,13 @@ public class ComplexDivide implements IInstruction {
 				.toString();
 	}
 
+	public static ComplexDivide create(
+			IInstructionOutput quotient,
+			IInstructionInput dividend,
+			IInstructionInput divisor) {
+		return new ComplexDivide(quotient, dividend, divisor);
+	}
+
 	public static class Builder {
 		private IInstructionOutput quotient;
 		private IInstructionInput dividend;

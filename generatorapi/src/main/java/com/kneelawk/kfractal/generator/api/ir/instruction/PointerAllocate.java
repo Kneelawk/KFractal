@@ -34,6 +34,11 @@ public class PointerAllocate implements IInstruction {
 				.toString();
 	}
 
+	public static PointerAllocate create(
+			IInstructionOutput pointer) {
+		return new PointerAllocate(pointer);
+	}
+
 	public static class Builder {
 		private IInstructionOutput pointer;
 

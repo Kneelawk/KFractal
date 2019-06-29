@@ -18,8 +18,8 @@ public class IntDivide implements IInstruction {
 	private IInstructionInput divisor;
 
 	private IntDivide(IInstructionOutput quotient,
-					 IInstructionInput dividend,
-					 IInstructionInput divisor) {
+					  IInstructionInput dividend,
+					  IInstructionInput divisor) {
 		this.quotient = quotient;
 		this.dividend = dividend;
 		this.divisor = divisor;
@@ -49,6 +49,12 @@ public class IntDivide implements IInstruction {
 				.append("dividend", dividend)
 				.append("divisor", divisor)
 				.toString();
+	}
+
+	public static IntDivide create(IInstructionOutput quotient,
+								   IInstructionInput dividend,
+								   IInstructionInput divisor) {
+		return new IntDivide(quotient, dividend, divisor);
 	}
 
 	public static class Builder {

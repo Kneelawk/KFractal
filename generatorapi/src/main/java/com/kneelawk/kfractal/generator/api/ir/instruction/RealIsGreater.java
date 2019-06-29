@@ -51,6 +51,12 @@ public class RealIsGreater implements IInstruction {
 				.toString();
 	}
 
+	public static RealIsGreater create(IInstructionOutput result,
+									   IInstructionInput subject,
+									   IInstructionInput basis) {
+		return new RealIsGreater(result, subject, basis);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput subject;

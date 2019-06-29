@@ -52,6 +52,13 @@ public class RealIsGreaterOrEqual implements IInstruction {
 				.toString();
 	}
 
+	public static RealIsGreaterOrEqual create(
+			IInstructionOutput result,
+			IInstructionInput subject,
+			IInstructionInput basis) {
+		return new RealIsGreaterOrEqual(result, subject, basis);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput subject;

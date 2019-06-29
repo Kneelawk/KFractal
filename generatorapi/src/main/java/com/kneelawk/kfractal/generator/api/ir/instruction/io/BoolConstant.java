@@ -30,6 +30,10 @@ public class BoolConstant implements IInstructionInput {
 				.toString();
 	}
 
+	public static BoolConstant create(boolean value) {
+		return new BoolConstant(value);
+	}
+
 	public static class Builder {
 		private boolean value;
 

@@ -38,6 +38,10 @@ public class FunctionContextConstant implements IInstructionInput {
 				.toString();
 	}
 
+	public static FunctionContextConstant create(String functionName, Iterable<IInstructionInput> contextVariables) {
+		return new FunctionContextConstant(functionName, ImmutableList.copyOf(contextVariables));
+	}
+
 	public static class Builder {
 		private String functionName;
 		private List<IInstructionInput> contextVariables = Lists.newArrayList();

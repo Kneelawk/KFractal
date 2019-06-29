@@ -18,8 +18,8 @@ public class RealPower implements IInstruction {
 	private IInstructionInput exponent;
 
 	private RealPower(IInstructionOutput result,
-					 IInstructionInput base,
-					 IInstructionInput exponent) {
+					  IInstructionInput base,
+					  IInstructionInput exponent) {
 		this.result = result;
 		this.base = base;
 		this.exponent = exponent;
@@ -49,6 +49,12 @@ public class RealPower implements IInstruction {
 				.append("base", base)
 				.append("exponent", exponent)
 				.toString();
+	}
+
+	public static RealPower create(IInstructionOutput result,
+								   IInstructionInput base,
+								   IInstructionInput exponent) {
+		return new RealPower(result, base, exponent);
 	}
 
 	public static class Builder {

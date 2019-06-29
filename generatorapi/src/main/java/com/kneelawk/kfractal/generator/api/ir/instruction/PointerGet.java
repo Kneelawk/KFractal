@@ -43,6 +43,11 @@ public class PointerGet implements IInstruction {
 				.toString();
 	}
 
+	public static PointerGet create(IInstructionOutput data,
+									IInstructionInput pointer) {
+		return new PointerGet(data, pointer);
+	}
+
 	public static class Builder {
 		private IInstructionOutput data;
 		private IInstructionInput pointer;

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * ComplexPower - Instruction. Raises the second to last argument to the power of the last argument and stores the
  * result in the variable referenced by the first argument.
- *
+ * <p>
  * ComplexPower(Complex result, Complex base, Complex exponent)
  */
 public class ComplexPower implements IInstruction {
@@ -49,6 +49,12 @@ public class ComplexPower implements IInstruction {
 				.append("base", base)
 				.append("exponent", exponent)
 				.toString();
+	}
+
+	public static ComplexPower create(IInstructionOutput result,
+									  IInstructionInput base,
+									  IInstructionInput exponent) {
+		return new ComplexPower(result, base, exponent);
 	}
 
 	public static class Builder {

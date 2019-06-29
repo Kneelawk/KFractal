@@ -34,6 +34,10 @@ public class PointerFree implements IInstruction {
 				.toString();
 	}
 
+	public static PointerFree create(IInstructionInput pointer) {
+		return new PointerFree(pointer);
+	}
+
 	public static class Builder {
 		private IInstructionInput pointer;
 

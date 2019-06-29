@@ -46,6 +46,11 @@ public class While implements IInstruction {
 				.toString();
 	}
 
+	public static While create(IInstructionInput condition,
+							   Iterable<IInstruction> whileTrue) {
+		return new While(condition, ImmutableList.copyOf(whileTrue));
+	}
+
 	public static class Builder {
 		private IInstructionInput condition;
 		private List<IInstruction> whileTrue = Lists.newArrayList();

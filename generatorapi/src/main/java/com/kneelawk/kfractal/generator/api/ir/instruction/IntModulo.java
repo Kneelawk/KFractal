@@ -18,7 +18,7 @@ public class IntModulo implements IInstruction {
 	private IInstructionInput right;
 
 	private IntModulo(IInstructionOutput result,
-					 IInstructionInput left, IInstructionInput right) {
+					  IInstructionInput left, IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -48,6 +48,12 @@ public class IntModulo implements IInstruction {
 				.append("left", left)
 				.append("right", right)
 				.toString();
+	}
+
+	public static IntModulo create(IInstructionOutput result,
+								   IInstructionInput left,
+								   IInstructionInput right) {
+		return new IntModulo(result, left, right);
 	}
 
 	public static class Builder {

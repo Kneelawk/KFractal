@@ -35,6 +35,10 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
 				.toString();
 	}
 
+	public static VariableReference create(String name) {
+		return new VariableReference(name);
+	}
+
 	public static class Builder {
 		private String name;
 
