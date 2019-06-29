@@ -62,7 +62,7 @@ public class ProgramValidator {
 
 			// check variable attributes
 			if (attributes.contains(IAttribute.PREALLOCATED)) {
-				throw new FractalIRValidationException("Illegal argument attribute: PREALLOCATED");
+				throw new IllegalVariableAttributeException("Illegal argument attribute: PREALLOCATED");
 			}
 		}
 	}
@@ -79,26 +79,26 @@ public class ProgramValidator {
 			// check variable attributes
 			if (!ValueTypes.isPointer(type)) {
 				if (attributes.contains(IAttribute.PREALLOCATED)) {
-					throw new FractalIRValidationException("Illegal variable attribute: PREALLOCATED");
+					throw new IllegalVariableAttributeException("Illegal variable attribute: PREALLOCATED");
 				}
 			}
 
 			if (attributes.containsAll(ImmutableSet.of(IAttribute.CONSTANT, IAttribute.PREALLOCATED))) {
-				throw new FractalIRValidationException("Redundant variable attributes: CONSTANT and PREALLOCATED");
+				throw new IllegalVariableAttributeException("Redundant variable attributes: CONSTANT and PREALLOCATED");
 			}
 		}
 	}
 
 	private static void checkVariableType(ValueType type) throws FractalIRValidationException {
 		if (ValueTypes.isVoid(type)) {
-			throw new FractalIRValidationException("Illegal variable type: VOID");
+			throw new IllegalVariableTypeException("Illegal variable type: VOID");
 		} else if (ValueTypes.isFunction(type)) {
 			if (ValueTypes.toFunction(type).isNullFunction()) {
-				throw new FractalIRValidationException("Illegal variable type: NULL_FUNCTION");
+				throw new IllegalVariableTypeException("Illegal variable type: NULL_FUNCTION");
 			}
 		} else if (ValueTypes.isPointer(type)) {
 			if (ValueTypes.toPointer(type).isNullPointer()) {
-				throw new FractalIRValidationException("Illegal variable type: NULL_POINTER");
+				throw new IllegalVariableTypeException("Illegal variable type: NULL_POINTER");
 			}
 		}
 	}
