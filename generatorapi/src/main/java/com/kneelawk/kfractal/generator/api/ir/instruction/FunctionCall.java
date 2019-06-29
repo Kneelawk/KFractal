@@ -58,6 +58,12 @@ public class FunctionCall implements IInstruction {
 				.toString();
 	}
 
+	public static FunctionCall create(IInstructionOutput result,
+									  IInstructionInput function,
+									  Iterable<IInstructionInput> arguments) {
+		return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput function;

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * BoolAnd - Ands the last two arguments together and stores it in the first argument.
- *
+ * <p>
  * BoolAnd(Bool result, Bool left, Bool right)
  */
 public class BoolAnd implements IInstruction {
@@ -46,6 +46,10 @@ public class BoolAnd implements IInstruction {
 				.append("left", left)
 				.append("right", right)
 				.toString();
+	}
+
+	public static BoolAnd create(IInstructionOutput result, IInstructionInput left, IInstructionInput right) {
+		return new BoolAnd(result, left, right);
 	}
 
 	public static class Builder {

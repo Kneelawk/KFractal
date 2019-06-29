@@ -33,6 +33,10 @@ public class Return implements IInstruction {
 				.toString();
 	}
 
+	public static Return create(IInstructionInput returnValue) {
+		return new Return(returnValue);
+	}
+
 	public static class Builder {
 		private IInstructionInput returnValue;
 

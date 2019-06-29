@@ -51,6 +51,13 @@ public class RealComposeComplex implements IInstruction {
 				.toString();
 	}
 
+	public static RealComposeComplex create(
+			IInstructionOutput complex,
+			IInstructionInput real,
+			IInstructionInput imaginary) {
+		return new RealComposeComplex(complex, real, imaginary);
+	}
+
 	public static class Builder {
 		private IInstructionOutput complex;
 		private IInstructionInput real;

@@ -50,6 +50,12 @@ public class IntXor implements IInstruction {
 				.toString();
 	}
 
+	public static IntXor create(IInstructionOutput result,
+								IInstructionInput left,
+								IInstructionInput right) {
+		return new IntXor(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

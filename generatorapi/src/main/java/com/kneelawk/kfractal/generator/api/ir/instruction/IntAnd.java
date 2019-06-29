@@ -18,7 +18,7 @@ public class IntAnd implements IInstruction {
 	private IInstructionInput right;
 
 	private IntAnd(IInstructionOutput result, IInstructionInput left,
-				  IInstructionInput right) {
+				   IInstructionInput right) {
 		this.result = result;
 		this.left = left;
 		this.right = right;
@@ -48,6 +48,12 @@ public class IntAnd implements IInstruction {
 				.append("left", left)
 				.append("right", right)
 				.toString();
+	}
+
+	public static IntAnd create(IInstructionOutput result,
+								IInstructionInput left,
+								IInstructionInput right) {
+		return new IntAnd(result, left, right);
 	}
 
 	public static class Builder {

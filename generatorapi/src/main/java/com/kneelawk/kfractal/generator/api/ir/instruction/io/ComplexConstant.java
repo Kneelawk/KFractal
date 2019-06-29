@@ -31,6 +31,10 @@ public class ComplexConstant implements IInstructionInput {
 				.toString();
 	}
 
+	public static ComplexConstant create(Complex value) {
+		return new ComplexConstant(value);
+	}
+
 	public static class Builder {
 		private Complex value;
 

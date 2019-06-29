@@ -17,7 +17,7 @@ public class ComplexGetImaginary implements IInstruction {
 	private IInstructionInput complex;
 
 	private ComplexGetImaginary(IInstructionOutput imaginary,
-							   IInstructionInput complex) {
+								IInstructionInput complex) {
 		this.imaginary = imaginary;
 		this.complex = complex;
 	}
@@ -41,6 +41,12 @@ public class ComplexGetImaginary implements IInstruction {
 				.append("imaginary", imaginary)
 				.append("complex", complex)
 				.toString();
+	}
+
+	public static ComplexGetImaginary create(
+			IInstructionOutput imaginary,
+			IInstructionInput complex) {
+		return new ComplexGetImaginary(imaginary, complex);
 	}
 
 	public static class Builder {

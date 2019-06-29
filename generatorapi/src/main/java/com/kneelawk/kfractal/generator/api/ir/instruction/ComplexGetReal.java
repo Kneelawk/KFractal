@@ -43,6 +43,11 @@ public class ComplexGetReal implements IInstruction {
 				.toString();
 	}
 
+	public static ComplexGetReal create(IInstructionOutput real,
+										IInstructionInput complex) {
+		return new ComplexGetReal(real, complex);
+	}
+
 	public static class Builder {
 		private IInstructionOutput real;
 		private IInstructionInput complex;

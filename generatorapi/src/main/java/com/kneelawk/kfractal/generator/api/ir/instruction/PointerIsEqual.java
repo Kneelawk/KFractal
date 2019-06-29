@@ -51,6 +51,12 @@ public class PointerIsEqual implements IInstruction {
 				.toString();
 	}
 
+	public static PointerIsEqual create(IInstructionOutput result,
+										IInstructionInput left,
+										IInstructionInput right) {
+		return new PointerIsEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

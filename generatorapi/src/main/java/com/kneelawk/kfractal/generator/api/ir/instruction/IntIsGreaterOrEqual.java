@@ -51,6 +51,13 @@ public class IntIsGreaterOrEqual implements IInstruction {
 				.toString();
 	}
 
+	public static IntIsGreaterOrEqual create(
+			IInstructionOutput result,
+			IInstructionInput subject,
+			IInstructionInput basis) {
+		return new IntIsGreaterOrEqual(result, subject, basis);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput subject;

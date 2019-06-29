@@ -1,13 +1,10 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +35,21 @@ public class Program {
 				.append("globalVariables", globalVariables)
 				.append("functions", functions)
 				.toString();
+	}
+
+	public static Program create(Iterable<VariableDeclaration> globalVariables,
+								 Iterable<FunctionDefinition> functions) {
+		ImmutableMap.Builder<String, VariableDeclaration> globalVariablesBuilder = ImmutableMap.builder();
+		for (VariableDeclaration v : globalVariables) {
+			globalVariablesBuilder.put(v.getName(), v);
+		}
+
+		ImmutableMap.Builder<String, FunctionDefinition> functionsBuilder = ImmutableMap.builder();
+		for (FunctionDefinition f : functions) {
+			functionsBuilder.put(f.getName(), f);
+		}
+
+		return new Program(globalVariablesBuilder.build(), functionsBuilder.build());
 	}
 
 	public static class Builder {

@@ -51,6 +51,12 @@ public class BoolIsNotEqual implements IInstruction {
 				.toString();
 	}
 
+	public static BoolIsNotEqual create(IInstructionOutput result,
+										IInstructionInput left,
+										IInstructionInput right) {
+		return new BoolIsNotEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

@@ -51,6 +51,12 @@ public class RealDivide implements IInstruction {
 				.toString();
 	}
 
+	public static RealDivide create(IInstructionOutput quotient,
+									IInstructionInput dividend,
+									IInstructionInput divisor) {
+		return new RealDivide(quotient, dividend, divisor);
+	}
+
 	public static class Builder {
 		private IInstructionOutput quotient;
 		private IInstructionInput dividend;

@@ -42,6 +42,11 @@ public class PointerSet implements IInstruction {
 				.toString();
 	}
 
+	public static PointerSet create(IInstructionInput pointer,
+									IInstructionInput data) {
+		return new PointerSet(pointer, data);
+	}
+
 	public static class Builder {
 		private IInstructionInput pointer;
 		private IInstructionInput data;
