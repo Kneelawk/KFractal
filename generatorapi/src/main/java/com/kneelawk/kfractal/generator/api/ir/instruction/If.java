@@ -53,6 +53,12 @@ public class If implements IInstruction {
 				.toString();
 	}
 
+	public static If create(IInstructionInput condition,
+							Iterable<IInstruction> ifTrue,
+							Iterable<IInstruction> ifFalse) {
+		return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
+	}
+
 	public static class Builder {
 		private IInstructionInput condition;
 		private List<IInstruction> ifTrue = Lists.newArrayList();

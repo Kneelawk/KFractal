@@ -51,6 +51,12 @@ public class IntIsGreater implements IInstruction {
 				.toString();
 	}
 
+	public static IntIsGreater create(IInstructionOutput result,
+									  IInstructionInput subject,
+									  IInstructionInput basis) {
+		return new IntIsGreater(result, subject, basis);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput subject;

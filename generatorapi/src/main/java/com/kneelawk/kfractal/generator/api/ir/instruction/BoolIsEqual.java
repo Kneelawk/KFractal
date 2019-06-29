@@ -50,6 +50,12 @@ public class BoolIsEqual implements IInstruction {
 				.toString();
 	}
 
+	public static BoolIsEqual create(IInstructionOutput result,
+									 IInstructionInput left,
+									 IInstructionInput right) {
+		return new BoolIsEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

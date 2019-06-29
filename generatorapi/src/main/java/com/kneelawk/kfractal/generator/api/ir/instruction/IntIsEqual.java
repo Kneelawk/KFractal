@@ -50,6 +50,12 @@ public class IntIsEqual implements IInstruction {
 				.toString();
 	}
 
+	public static IntIsEqual create(IInstructionOutput result,
+									IInstructionInput left,
+									IInstructionInput right) {
+		return new IntIsEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

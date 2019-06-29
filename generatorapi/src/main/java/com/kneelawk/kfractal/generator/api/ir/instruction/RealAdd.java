@@ -18,8 +18,8 @@ public class RealAdd implements IInstruction {
 	private IInstructionInput rightAddend;
 
 	private RealAdd(IInstructionOutput sum,
-				   IInstructionInput leftAddend,
-				   IInstructionInput rightAddend) {
+					IInstructionInput leftAddend,
+					IInstructionInput rightAddend) {
 		this.sum = sum;
 		this.leftAddend = leftAddend;
 		this.rightAddend = rightAddend;
@@ -49,6 +49,12 @@ public class RealAdd implements IInstruction {
 				.append("leftAddend", leftAddend)
 				.append("rightAddend", rightAddend)
 				.toString();
+	}
+
+	public static RealAdd create(IInstructionOutput sum,
+								 IInstructionInput leftAddend,
+								 IInstructionInput rightAddend) {
+		return new RealAdd(sum, leftAddend, rightAddend);
 	}
 
 	public static class Builder {

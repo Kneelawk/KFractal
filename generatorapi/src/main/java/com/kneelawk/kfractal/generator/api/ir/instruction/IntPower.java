@@ -50,6 +50,12 @@ public class IntPower implements IInstruction {
 				.toString();
 	}
 
+	public static IntPower create(IInstructionOutput result,
+								  IInstructionInput base,
+								  IInstructionInput exponent) {
+		return new IntPower(result, base, exponent);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput base;

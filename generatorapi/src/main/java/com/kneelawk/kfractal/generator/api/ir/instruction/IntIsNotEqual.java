@@ -51,6 +51,12 @@ public class IntIsNotEqual implements IInstruction {
 				.toString();
 	}
 
+	public static IntIsNotEqual create(IInstructionOutput result,
+									   IInstructionInput left,
+									   IInstructionInput right) {
+		return new IntIsNotEqual(result, left, right);
+	}
+
 	public static class Builder {
 		private IInstructionOutput result;
 		private IInstructionInput left;

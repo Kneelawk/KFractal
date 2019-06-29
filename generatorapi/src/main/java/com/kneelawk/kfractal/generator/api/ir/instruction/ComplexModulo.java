@@ -18,7 +18,7 @@ public class ComplexModulo implements IInstruction {
 	private IInstructionInput complex;
 
 	private ComplexModulo(IInstructionOutput modulus,
-						 IInstructionInput complex) {
+						  IInstructionInput complex) {
 		this.modulus = modulus;
 		this.complex = complex;
 	}
@@ -42,6 +42,11 @@ public class ComplexModulo implements IInstruction {
 				.append("modulus", modulus)
 				.append("complex", complex)
 				.toString();
+	}
+
+	public static ComplexModulo create(IInstructionOutput modulus,
+									   IInstructionInput complex) {
+		return new ComplexModulo(modulus, complex);
 	}
 
 	public static class Builder {

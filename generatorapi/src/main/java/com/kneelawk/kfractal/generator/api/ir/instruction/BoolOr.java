@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * BoolOr - Instruction. Ors the last two arguments together and stores it in the first argument.
- *
+ * <p>
  * BoolOr(Bool result, Bool left, Bool right)
  */
 public class BoolOr implements IInstruction {
@@ -46,6 +46,12 @@ public class BoolOr implements IInstruction {
 				.append("left", left)
 				.append("right", right)
 				.toString();
+	}
+
+	public static BoolOr create(IInstructionOutput result,
+								IInstructionInput left,
+								IInstructionInput right) {
+		return new BoolOr(result, left, right);
 	}
 
 	public static class Builder {

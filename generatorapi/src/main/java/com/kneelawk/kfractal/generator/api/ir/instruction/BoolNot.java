@@ -42,6 +42,11 @@ public class BoolNot implements IInstruction {
 				.toString();
 	}
 
+	public static BoolNot create(IInstructionOutput output,
+								 IInstructionInput input) {
+		return new BoolNot(output, input);
+	}
+
 	public static class Builder {
 		private IInstructionOutput output;
 		private IInstructionInput input;

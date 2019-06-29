@@ -42,6 +42,11 @@ public class IntNot implements IInstruction {
 				.toString();
 	}
 
+	public static IntNot create(IInstructionOutput output,
+								IInstructionInput input) {
+		return new IntNot(output, input);
+	}
+
 	public static class Builder {
 		private IInstructionOutput output;
 		private IInstructionInput input;

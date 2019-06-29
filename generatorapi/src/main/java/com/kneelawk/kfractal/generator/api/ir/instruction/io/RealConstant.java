@@ -27,6 +27,10 @@ public class RealConstant implements IInstructionInput {
 				.toString();
 	}
 
+	public static RealConstant create(double value) {
+		return new RealConstant(value);
+	}
+
 	public static class Builder {
 		private double value;
 

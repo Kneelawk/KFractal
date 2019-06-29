@@ -51,6 +51,13 @@ public class IntSubtract implements IInstruction {
 				.toString();
 	}
 
+	public static IntSubtract create(
+			IInstructionOutput difference,
+			IInstructionInput minuend,
+			IInstructionInput subtrahend) {
+		return new IntSubtract(difference, minuend, subtrahend);
+	}
+
 	public static class Builder {
 		private IInstructionOutput difference;
 		private IInstructionInput minuend;
