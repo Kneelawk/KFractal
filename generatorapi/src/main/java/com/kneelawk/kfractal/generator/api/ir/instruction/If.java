@@ -7,6 +7,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -68,8 +69,8 @@ public class If implements IInstruction {
 		}
 
 		public Builder(IInstructionInput condition,
-					   List<IInstruction> ifTrue,
-					   List<IInstruction> ifFalse) {
+					   Collection<IInstruction> ifTrue,
+					   Collection<IInstruction> ifFalse) {
 			this.condition = condition;
 			this.ifTrue.addAll(ifTrue);
 			this.ifFalse.addAll(ifFalse);
@@ -93,7 +94,7 @@ public class If implements IInstruction {
 		}
 
 		public Builder setIfTrue(
-				List<IInstruction> ifTrue) {
+				Collection<IInstruction> ifTrue) {
 			this.ifTrue.clear();
 			this.ifTrue.addAll(ifTrue);
 			return this;
@@ -104,12 +105,17 @@ public class If implements IInstruction {
 			return this;
 		}
 
+		public Builder addIfTrue(Collection<IInstruction> instructions) {
+			ifTrue.addAll(instructions);
+			return this;
+		}
+
 		public List<IInstruction> getIfFalse() {
 			return ifFalse;
 		}
 
 		public Builder setIfFalse(
-				List<IInstruction> ifFalse) {
+				Collection<IInstruction> ifFalse) {
 			this.ifFalse.clear();
 			this.ifFalse.addAll(ifFalse);
 			return this;
@@ -117,6 +123,11 @@ public class If implements IInstruction {
 
 		public Builder addIfFalse(IInstruction instruction) {
 			ifFalse.add(instruction);
+			return this;
+		}
+
+		public Builder addIfFalse(Collection<IInstruction> instructions) {
+			ifFalse.addAll(instructions);
 			return this;
 		}
 	}

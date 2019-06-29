@@ -6,6 +6,7 @@ import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Collection;
 import java.util.List;
 
 public class FunctionContextConstant implements IInstructionInput {
@@ -49,7 +50,7 @@ public class FunctionContextConstant implements IInstructionInput {
 		public Builder() {
 		}
 
-		public Builder(String functionName, List<IInstructionInput> contextVariables) {
+		public Builder(String functionName, Collection<IInstructionInput> contextVariables) {
 			this.functionName = functionName;
 			this.contextVariables.addAll(contextVariables);
 		}
@@ -71,7 +72,7 @@ public class FunctionContextConstant implements IInstructionInput {
 			return contextVariables;
 		}
 
-		public Builder setContextVariables(List<IInstructionInput> contextVariables) {
+		public Builder setContextVariables(Collection<IInstructionInput> contextVariables) {
 			this.contextVariables.clear();
 			this.contextVariables.addAll(contextVariables);
 			return this;
@@ -79,6 +80,11 @@ public class FunctionContextConstant implements IInstructionInput {
 
 		public Builder addContextVariable(IInstructionInput contextVariable) {
 			contextVariables.add(contextVariable);
+			return this;
+		}
+
+		public Builder addContextVariables(Collection<IInstructionInput> contextVariables) {
+			this.contextVariables.addAll(contextVariables);
 			return this;
 		}
 	}

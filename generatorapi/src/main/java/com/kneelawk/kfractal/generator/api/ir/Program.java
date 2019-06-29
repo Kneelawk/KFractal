@@ -61,23 +61,29 @@ public class Program {
 		}
 
 		public Builder(
-				Map<String, VariableDeclaration> globalVariables,
-				Map<String, FunctionDefinition> functions) {
-			this.globalVariables.putAll(globalVariables);
-			this.functions.putAll(functions);
+				Iterable<VariableDeclaration> globalVariables,
+				Iterable<FunctionDefinition> functions) {
+			for (VariableDeclaration variable : globalVariables) {
+				this.globalVariables.put(variable.getName(), variable);
+			}
+			for (FunctionDefinition function : functions) {
+				this.functions.put(function.getName(), function);
+			}
 		}
 
 		public Program build() {
-			return new Program(globalVariables, functions);
+			return new Program(ImmutableMap.copyOf(globalVariables), ImmutableMap.copyOf(functions));
 		}
 
 		public Map<String, VariableDeclaration> getGlobalVariables() {
 			return globalVariables;
 		}
 
-		public Builder setGlobalVariables(
-				Map<String, VariableDeclaration> globalVariables) {
-			this.globalVariables = globalVariables;
+		public Builder setGlobalVariables(Iterable<VariableDeclaration> globalVariables) {
+			this.globalVariables.clear();
+			for (VariableDeclaration variable : globalVariables) {
+				this.globalVariables.put(variable.getName(), variable);
+			}
 			return this;
 		}
 
@@ -86,18 +92,34 @@ public class Program {
 			return this;
 		}
 
+		public Builder addGlobalVariables(Iterable<VariableDeclaration> globalVariables) {
+			for (VariableDeclaration variable : globalVariables) {
+				this.globalVariables.put(variable.getName(), variable);
+			}
+			return this;
+		}
+
 		public Map<String, FunctionDefinition> getFunctions() {
 			return functions;
 		}
 
-		public Builder setFunctions(
-				Map<String, FunctionDefinition> functions) {
-			this.functions = functions;
+		public Builder setFunctions(Iterable<FunctionDefinition> functions) {
+			this.functions.clear();
+			for (FunctionDefinition function : functions) {
+				this.functions.put(function.getName(), function);
+			}
 			return this;
 		}
 
 		public Builder addFunction(FunctionDefinition function) {
 			functions.put(function.getName(), function);
+			return this;
+		}
+
+		public Builder addFunctions(Iterable<FunctionDefinition> functions) {
+			for (FunctionDefinition function : functions) {
+				this.functions.put(function.getName(), function);
+			}
 			return this;
 		}
 	}

@@ -8,6 +8,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -94,14 +95,20 @@ public class FunctionDefinition {
 		}
 
 		public Builder(String name,
-					   Map<String, VariableDeclaration> contextVariables,
-					   Map<String, VariableDeclaration> arguments,
-					   Map<String, VariableDeclaration> localVariables,
-					   List<IInstruction> body) {
+					   Iterable<VariableDeclaration> contextVariables,
+					   Iterable<VariableDeclaration> arguments,
+					   Iterable<VariableDeclaration> localVariables,
+					   Collection<IInstruction> body) {
 			this.name = name;
-			this.contextVariables.putAll(contextVariables);
-			this.arguments.putAll(arguments);
-			this.localVariables.putAll(localVariables);
+			for (VariableDeclaration variable : contextVariables) {
+				this.contextVariables.put(variable.getName(), variable);
+			}
+			for (VariableDeclaration argument : arguments) {
+				this.arguments.put(argument.getName(), argument);
+			}
+			for (VariableDeclaration variable : localVariables) {
+				this.localVariables.put(variable.getName(), variable);
+			}
 			this.body.addAll(body);
 		}
 
@@ -134,10 +141,11 @@ public class FunctionDefinition {
 			return contextVariables;
 		}
 
-		public Builder setContextVariables(
-				Map<String, VariableDeclaration> contextVariables) {
+		public Builder setContextVariables(Iterable<VariableDeclaration> contextVariables) {
 			this.contextVariables.clear();
-			this.contextVariables.putAll(contextVariables);
+			for (VariableDeclaration variable : contextVariables) {
+				this.contextVariables.put(variable.getName(), variable);
+			}
 			return this;
 		}
 
@@ -146,14 +154,22 @@ public class FunctionDefinition {
 			return this;
 		}
 
+		public Builder addContextVariables(Iterable<VariableDeclaration> contextVariables) {
+			for (VariableDeclaration variable : contextVariables) {
+				this.contextVariables.put(variable.getName(), variable);
+			}
+			return this;
+		}
+
 		public Map<String, VariableDeclaration> getArguments() {
 			return arguments;
 		}
 
-		public Builder setArguments(
-				Map<String, VariableDeclaration> arguments) {
+		public Builder setArguments(Iterable<VariableDeclaration> arguments) {
 			this.arguments.clear();
-			this.arguments.putAll(arguments);
+			for (VariableDeclaration arg : arguments) {
+				this.arguments.put(arg.getName(), arg);
+			}
 			return this;
 		}
 
@@ -162,14 +178,22 @@ public class FunctionDefinition {
 			return this;
 		}
 
+		public Builder addArguments(Iterable<VariableDeclaration> arguments) {
+			for (VariableDeclaration arg : arguments) {
+				this.arguments.put(arg.getName(), arg);
+			}
+			return this;
+		}
+
 		public Map<String, VariableDeclaration> getLocalVariables() {
 			return localVariables;
 		}
 
-		public Builder setLocalVariables(
-				Map<String, VariableDeclaration> localVariables) {
+		public Builder setLocalVariables(Iterable<VariableDeclaration> localVariables) {
 			this.localVariables.clear();
-			this.localVariables.putAll(localVariables);
+			for (VariableDeclaration variable : localVariables) {
+				this.localVariables.put(variable.getName(), variable);
+			}
 			return this;
 		}
 
@@ -178,11 +202,18 @@ public class FunctionDefinition {
 			return this;
 		}
 
+		public Builder addLocalVariables(Iterable<VariableDeclaration> localVariables) {
+			for (VariableDeclaration variable : localVariables) {
+				this.localVariables.put(variable.getName(), variable);
+			}
+			return this;
+		}
+
 		public List<IInstruction> getBody() {
 			return body;
 		}
 
-		public Builder setBody(List<IInstruction> body) {
+		public Builder setBody(Collection<IInstruction> body) {
 			this.body.clear();
 			this.body.addAll(body);
 			return this;
@@ -190,6 +221,11 @@ public class FunctionDefinition {
 
 		public Builder addStatement(IInstruction statement) {
 			body.add(statement);
+			return this;
+		}
+
+		public Builder addStatements(Collection<IInstruction> statements) {
+			body.addAll(statements);
 			return this;
 		}
 	}
