@@ -529,10 +529,12 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		checkState();
 
 		// check the function argument
-		ValueInfo functionArg = functionCall.getFunction().accept(inputVisitor);
-		validValueTypeIfTrue(ValueTypes.isFunction(functionArg.getType()),
+		ValueType functionArg = functionCall.getFunction().accept(inputVisitor).getType();
+		validValueTypeIfTrue(ValueTypes.isFunction(functionArg),
 				"FunctionCall function argument is not a Function");
-		ValueTypes.FunctionType functionType = ValueTypes.toFunction(functionArg.getType());
+		validValueTypeIfTrue(!ValueTypes.isNullFunction(functionArg),
+				"FunctionCall cannot call the null-function");
+		ValueTypes.FunctionType functionType = ValueTypes.toFunction(functionArg);
 
 		// check the return type
 		validValueTypeIfTrue(
@@ -603,8 +605,11 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 	@Override
 	public Void visitPointerFree(PointerFree pointerFree) throws FractalIRException {
 		checkState();
-		validValueTypeIfTrue(ValueTypes.isPointer(pointerFree.getPointer().accept(inputVisitor).getType()),
+		ValueType pointerType = pointerFree.getPointer().accept(inputVisitor).getType();
+		validValueTypeIfTrue(ValueTypes.isPointer(pointerType),
 				"PointerFree pointer argument is not a Pointer");
+		validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
+				"PointerFree cannot free the null-pointer");
 		return null;
 	}
 
@@ -615,6 +620,8 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		validValueTypeIfTrue(ValueTypes.isPointer(pointerArg.getType()),
 				"PointerGet pointer argument is not a Pointer");
 		ValueTypes.PointerType pointerType = ValueTypes.toPointer(pointerArg.getType());
+		validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
+				"PointerGet cannot get the value of the null-pointer");
 		validValueTypeIfTrue(
 				pointerGet.getData().accept(outputVisitor).getType().isAssignableFrom(pointerType.getPointerType()),
 				"PointerGet pointer type and data type are incompatible");
@@ -628,11 +635,11 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		validValueTypeIfTrue(ValueTypes.isPointer(pointerArg.getType()),
 				"PointerSet pointer argument is not a Pointer");
 		ValueTypes.PointerType pointerType = ValueTypes.toPointer(pointerArg.getType());
+		validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
+				"PointerSet cannot set the value of the null-pointer");
 		validValueTypeIfTrue(
 				pointerType.getPointerType().isAssignableFrom(pointerSet.getData().accept(inputVisitor).getType()),
 				"PointerSet pointer type and data type are incompatible");
-		validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
-				"PointerSet cannot set the value of the null-pointer");
 		return null;
 	}
 

@@ -8,6 +8,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionIsEqual;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionIsNotEqual;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.FunctionContextConstant;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.NullFunction;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
@@ -163,6 +164,22 @@ public class InstructionValidationFunctionTests {
 		function.addStatement(FunctionCall
 				.create(VariableReference.create("ret"), FunctionContextConstant.create("g", ImmutableList.of()),
 						ImmutableList.of()));
+		function.addStatement(Return.create(VoidConstant.INSTANCE));
+		programBuilder.addFunction(function.build());
+
+		Program program = programBuilder.build();
+
+		assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
+				() -> ProgramPrinter.printProgram(program));
+	}
+
+	@Test
+	void testIncompatibleFunctionCallNullFunctionType() {
+		Program.Builder programBuilder = new Program.Builder();
+		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+		function.setName("f");
+		function.setReturnType(ValueTypes.VOID);
+		function.addStatement(FunctionCall.create(VoidConstant.INSTANCE, NullFunction.INSTANCE, ImmutableList.of()));
 		function.addStatement(Return.create(VoidConstant.INSTANCE));
 		programBuilder.addFunction(function.build());
 

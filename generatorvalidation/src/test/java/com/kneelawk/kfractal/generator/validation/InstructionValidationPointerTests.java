@@ -9,6 +9,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -123,6 +124,22 @@ public class InstructionValidationPointerTests {
 		function.setReturnType(ValueTypes.VOID);
 		function.addLocalVariable(VariableDeclaration.create(valueType, "p"));
 		function.addStatement(PointerFree.create(VariableReference.create("p")));
+		function.addStatement(Return.create(VoidConstant.INSTANCE));
+		programBuilder.addFunction(function.build());
+
+		Program program = programBuilder.build();
+
+		assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
+				() -> ProgramPrinter.printProgram(program));
+	}
+
+	@Test
+	void testIncompatiblePointerFreeNullPointerType() {
+		Program.Builder programBuilder = new Program.Builder();
+		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+		function.setName("f");
+		function.setReturnType(ValueTypes.VOID);
+		function.addStatement(PointerFree.create(NullPointer.INSTANCE));
 		function.addStatement(Return.create(VoidConstant.INSTANCE));
 		programBuilder.addFunction(function.build());
 
