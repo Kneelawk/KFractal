@@ -13,74 +13,74 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * PointerGet(* data, Pointer(*) pointer)
  */
 public class PointerGet implements IInstruction {
-	private IInstructionOutput data;
-	private IInstructionInput pointer;
+    private IInstructionOutput data;
+    private IInstructionInput pointer;
 
-	private PointerGet(IInstructionOutput data,
-					   IInstructionInput pointer) {
-		this.data = data;
-		this.pointer = pointer;
-	}
+    private PointerGet(IInstructionOutput data,
+                       IInstructionInput pointer) {
+        this.data = data;
+        this.pointer = pointer;
+    }
 
-	public IInstructionOutput getData() {
-		return data;
-	}
+    public IInstructionOutput getData() {
+        return data;
+    }
 
-	public IInstructionInput getPointer() {
-		return pointer;
-	}
+    public IInstructionInput getPointer() {
+        return pointer;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitPointerGet(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitPointerGet(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("data", data)
-				.append("pointer", pointer)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("data", data)
+                .append("pointer", pointer)
+                .toString();
+    }
 
-	public static PointerGet create(IInstructionOutput data,
-									IInstructionInput pointer) {
-		return new PointerGet(data, pointer);
-	}
+    public static PointerGet create(IInstructionOutput data,
+                                    IInstructionInput pointer) {
+        return new PointerGet(data, pointer);
+    }
 
-	public static class Builder {
-		private IInstructionOutput data;
-		private IInstructionInput pointer;
+    public static class Builder {
+        private IInstructionOutput data;
+        private IInstructionInput pointer;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput data,
-					   IInstructionInput pointer) {
-			this.data = data;
-			this.pointer = pointer;
-		}
+        public Builder(IInstructionOutput data,
+                       IInstructionInput pointer) {
+            this.data = data;
+            this.pointer = pointer;
+        }
 
-		public PointerGet build() {
-			return new PointerGet(data, pointer);
-		}
+        public PointerGet build() {
+            return new PointerGet(data, pointer);
+        }
 
-		public IInstructionOutput getData() {
-			return data;
-		}
+        public IInstructionOutput getData() {
+            return data;
+        }
 
-		public Builder setData(IInstructionOutput data) {
-			this.data = data;
-			return this;
-		}
+        public Builder setData(IInstructionOutput data) {
+            this.data = data;
+            return this;
+        }
 
-		public IInstructionInput getPointer() {
-			return pointer;
-		}
+        public IInstructionInput getPointer() {
+            return pointer;
+        }
 
-		public Builder setPointer(IInstructionInput pointer) {
-			this.pointer = pointer;
-			return this;
-		}
-	}
+        public Builder setPointer(IInstructionInput pointer) {
+            this.pointer = pointer;
+            return this;
+        }
+    }
 }

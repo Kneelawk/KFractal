@@ -14,74 +14,74 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * ComplexModulo(Real modulus, Complex complex)
  */
 public class ComplexModulo implements IInstruction {
-	private IInstructionOutput modulus;
-	private IInstructionInput complex;
+    private IInstructionOutput modulus;
+    private IInstructionInput complex;
 
-	private ComplexModulo(IInstructionOutput modulus,
-						  IInstructionInput complex) {
-		this.modulus = modulus;
-		this.complex = complex;
-	}
+    private ComplexModulo(IInstructionOutput modulus,
+                          IInstructionInput complex) {
+        this.modulus = modulus;
+        this.complex = complex;
+    }
 
-	public IInstructionOutput getModulus() {
-		return modulus;
-	}
+    public IInstructionOutput getModulus() {
+        return modulus;
+    }
 
-	public IInstructionInput getComplex() {
-		return complex;
-	}
+    public IInstructionInput getComplex() {
+        return complex;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitComplexModulo(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitComplexModulo(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("modulus", modulus)
-				.append("complex", complex)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("modulus", modulus)
+                .append("complex", complex)
+                .toString();
+    }
 
-	public static ComplexModulo create(IInstructionOutput modulus,
-									   IInstructionInput complex) {
-		return new ComplexModulo(modulus, complex);
-	}
+    public static ComplexModulo create(IInstructionOutput modulus,
+                                       IInstructionInput complex) {
+        return new ComplexModulo(modulus, complex);
+    }
 
-	public static class Builder {
-		private IInstructionOutput modulus;
-		private IInstructionInput complex;
+    public static class Builder {
+        private IInstructionOutput modulus;
+        private IInstructionInput complex;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput modulus,
-					   IInstructionInput complex) {
-			this.modulus = modulus;
-			this.complex = complex;
-		}
+        public Builder(IInstructionOutput modulus,
+                       IInstructionInput complex) {
+            this.modulus = modulus;
+            this.complex = complex;
+        }
 
-		public ComplexModulo build() {
-			return new ComplexModulo(modulus, complex);
-		}
+        public ComplexModulo build() {
+            return new ComplexModulo(modulus, complex);
+        }
 
-		public IInstructionOutput getModulus() {
-			return modulus;
-		}
+        public IInstructionOutput getModulus() {
+            return modulus;
+        }
 
-		public Builder setModulus(IInstructionOutput modulus) {
-			this.modulus = modulus;
-			return this;
-		}
+        public Builder setModulus(IInstructionOutput modulus) {
+            this.modulus = modulus;
+            return this;
+        }
 
-		public IInstructionInput getComplex() {
-			return complex;
-		}
+        public IInstructionInput getComplex() {
+            return complex;
+        }
 
-		public Builder setComplex(IInstructionInput complex) {
-			this.complex = complex;
-			return this;
-		}
-	}
+        public Builder setComplex(IInstructionInput complex) {
+            this.complex = complex;
+            return this;
+        }
+    }
 }

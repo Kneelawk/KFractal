@@ -13,76 +13,76 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * ComplexGetImaginary(Real imaginary, Complex complex)
  */
 public class ComplexGetImaginary implements IInstruction {
-	private IInstructionOutput imaginary;
-	private IInstructionInput complex;
+    private IInstructionOutput imaginary;
+    private IInstructionInput complex;
 
-	private ComplexGetImaginary(IInstructionOutput imaginary,
-								IInstructionInput complex) {
-		this.imaginary = imaginary;
-		this.complex = complex;
-	}
+    private ComplexGetImaginary(IInstructionOutput imaginary,
+                                IInstructionInput complex) {
+        this.imaginary = imaginary;
+        this.complex = complex;
+    }
 
-	public IInstructionOutput getImaginary() {
-		return imaginary;
-	}
+    public IInstructionOutput getImaginary() {
+        return imaginary;
+    }
 
-	public IInstructionInput getComplex() {
-		return complex;
-	}
+    public IInstructionInput getComplex() {
+        return complex;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitComplexGetImaginary(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitComplexGetImaginary(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("imaginary", imaginary)
-				.append("complex", complex)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("imaginary", imaginary)
+                .append("complex", complex)
+                .toString();
+    }
 
-	public static ComplexGetImaginary create(
-			IInstructionOutput imaginary,
-			IInstructionInput complex) {
-		return new ComplexGetImaginary(imaginary, complex);
-	}
+    public static ComplexGetImaginary create(
+            IInstructionOutput imaginary,
+            IInstructionInput complex) {
+        return new ComplexGetImaginary(imaginary, complex);
+    }
 
-	public static class Builder {
-		private IInstructionOutput imaginary;
-		private IInstructionInput complex;
+    public static class Builder {
+        private IInstructionOutput imaginary;
+        private IInstructionInput complex;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput imaginary,
-					   IInstructionInput complex) {
-			this.imaginary = imaginary;
-			this.complex = complex;
-		}
+        public Builder(IInstructionOutput imaginary,
+                       IInstructionInput complex) {
+            this.imaginary = imaginary;
+            this.complex = complex;
+        }
 
-		public ComplexGetImaginary build() {
-			return new ComplexGetImaginary(imaginary, complex);
-		}
+        public ComplexGetImaginary build() {
+            return new ComplexGetImaginary(imaginary, complex);
+        }
 
-		public IInstructionOutput getImaginary() {
-			return imaginary;
-		}
+        public IInstructionOutput getImaginary() {
+            return imaginary;
+        }
 
-		public Builder setImaginary(
-				IInstructionOutput imaginary) {
-			this.imaginary = imaginary;
-			return this;
-		}
+        public Builder setImaginary(
+                IInstructionOutput imaginary) {
+            this.imaginary = imaginary;
+            return this;
+        }
 
-		public IInstructionInput getComplex() {
-			return complex;
-		}
+        public IInstructionInput getComplex() {
+            return complex;
+        }
 
-		public Builder setComplex(IInstructionInput complex) {
-			this.complex = complex;
-			return this;
-		}
-	}
+        public Builder setComplex(IInstructionInput complex) {
+            this.complex = complex;
+            return this;
+        }
+    }
 }

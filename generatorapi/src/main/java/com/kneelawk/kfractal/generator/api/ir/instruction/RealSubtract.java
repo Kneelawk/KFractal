@@ -13,98 +13,98 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * RealSubtract(Real difference, Real minuend, Real subtrahend)
  */
 public class RealSubtract implements IInstruction {
-	private IInstructionOutput difference;
-	private IInstructionInput minuend;
-	private IInstructionInput subtrahend;
+    private IInstructionOutput difference;
+    private IInstructionInput minuend;
+    private IInstructionInput subtrahend;
 
-	private RealSubtract(IInstructionOutput difference,
-						 IInstructionInput minuend,
-						 IInstructionInput subtrahend) {
-		this.difference = difference;
-		this.minuend = minuend;
-		this.subtrahend = subtrahend;
-	}
+    private RealSubtract(IInstructionOutput difference,
+                         IInstructionInput minuend,
+                         IInstructionInput subtrahend) {
+        this.difference = difference;
+        this.minuend = minuend;
+        this.subtrahend = subtrahend;
+    }
 
-	public IInstructionOutput getDifference() {
-		return difference;
-	}
+    public IInstructionOutput getDifference() {
+        return difference;
+    }
 
-	public IInstructionInput getMinuend() {
-		return minuend;
-	}
+    public IInstructionInput getMinuend() {
+        return minuend;
+    }
 
-	public IInstructionInput getSubtrahend() {
-		return subtrahend;
-	}
+    public IInstructionInput getSubtrahend() {
+        return subtrahend;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitRealSubtract(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitRealSubtract(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("difference", difference)
-				.append("minuend", minuend)
-				.append("subtrahend", subtrahend)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("difference", difference)
+                .append("minuend", minuend)
+                .append("subtrahend", subtrahend)
+                .toString();
+    }
 
-	public static RealSubtract create(
-			IInstructionOutput difference,
-			IInstructionInput minuend,
-			IInstructionInput subtrahend) {
-		return new RealSubtract(difference, minuend, subtrahend);
-	}
+    public static RealSubtract create(
+            IInstructionOutput difference,
+            IInstructionInput minuend,
+            IInstructionInput subtrahend) {
+        return new RealSubtract(difference, minuend, subtrahend);
+    }
 
-	public static class Builder {
-		private IInstructionOutput difference;
-		private IInstructionInput minuend;
-		private IInstructionInput subtrahend;
+    public static class Builder {
+        private IInstructionOutput difference;
+        private IInstructionInput minuend;
+        private IInstructionInput subtrahend;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput difference,
-					   IInstructionInput minuend,
-					   IInstructionInput subtrahend) {
-			this.difference = difference;
-			this.minuend = minuend;
-			this.subtrahend = subtrahend;
-		}
+        public Builder(IInstructionOutput difference,
+                       IInstructionInput minuend,
+                       IInstructionInput subtrahend) {
+            this.difference = difference;
+            this.minuend = minuend;
+            this.subtrahend = subtrahend;
+        }
 
-		public RealSubtract build() {
-			return new RealSubtract(difference, minuend, subtrahend);
-		}
+        public RealSubtract build() {
+            return new RealSubtract(difference, minuend, subtrahend);
+        }
 
-		public IInstructionOutput getDifference() {
-			return difference;
-		}
+        public IInstructionOutput getDifference() {
+            return difference;
+        }
 
-		public Builder setDifference(
-				IInstructionOutput difference) {
-			this.difference = difference;
-			return this;
-		}
+        public Builder setDifference(
+                IInstructionOutput difference) {
+            this.difference = difference;
+            return this;
+        }
 
-		public IInstructionInput getMinuend() {
-			return minuend;
-		}
+        public IInstructionInput getMinuend() {
+            return minuend;
+        }
 
-		public Builder setMinuend(IInstructionInput minuend) {
-			this.minuend = minuend;
-			return this;
-		}
+        public Builder setMinuend(IInstructionInput minuend) {
+            this.minuend = minuend;
+            return this;
+        }
 
-		public IInstructionInput getSubtrahend() {
-			return subtrahend;
-		}
+        public IInstructionInput getSubtrahend() {
+            return subtrahend;
+        }
 
-		public Builder setSubtrahend(
-				IInstructionInput subtrahend) {
-			this.subtrahend = subtrahend;
-			return this;
-		}
-	}
+        public Builder setSubtrahend(
+                IInstructionInput subtrahend) {
+            this.subtrahend = subtrahend;
+            return this;
+        }
+    }
 }

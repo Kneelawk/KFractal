@@ -15,34 +15,34 @@ import static com.kneelawk.kfractal.generator.validation.ValueTypeUtils.createCo
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FunctionValidationTests {
-	@Test
-	void testIllegalMissingReturnType() {
-		Program.Builder programBuilder = new Program.Builder();
-		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-		function.setName("f");
-		function.setReturnType(ValueTypes.VOID);
-		programBuilder.addFunction(function.build());
+    @Test
+    void testIllegalMissingReturnType() {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setName("f");
+        function.setReturnType(ValueTypes.VOID);
+        programBuilder.addFunction(function.build());
 
-		Program program = programBuilder.build();
+        Program program = programBuilder.build();
 
-		assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
-				() -> ProgramPrinter
-						.printProgram(program));
-	}
+        assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter
+                        .printProgram(program));
+    }
 
-	@ParameterizedTest(name = "testIncompatibleFunctionReturnType({arguments})")
-	@ArgumentsSource(IncompatibleValueTypesProvider.class)
-	void testIncompatibleFunctionReturnType(ImmutablePair<ValueType, ValueType> valueTypes) {
-		Program.Builder programBuilder = new Program.Builder();
-		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-		function.setName("f");
-		function.setReturnType(valueTypes.left);
-		function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.right)));
-		programBuilder.addFunction(function.build());
+    @ParameterizedTest(name = "testIncompatibleFunctionReturnType({arguments})")
+    @ArgumentsSource(IncompatibleValueTypesProvider.class)
+    void testIncompatibleFunctionReturnType(ImmutablePair<ValueType, ValueType> valueTypes) {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setName("f");
+        function.setReturnType(valueTypes.left);
+        function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.right)));
+        programBuilder.addFunction(function.build());
 
-		Program program = programBuilder.build();
+        Program program = programBuilder.build();
 
-		assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
-				() -> ProgramPrinter.printProgram(program));
-	}
+        assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter.printProgram(program));
+    }
 }

@@ -3,15 +3,15 @@ package com.kneelawk.kfractal.generator.api.ir;
 import java.io.Serializable;
 
 public interface ValueType extends Comparable<ValueType>, Serializable {
-	int compareTo(ValueType type);
+    int compareTo(ValueType type);
 
-	boolean equals(Object other);
+    boolean equals(Object other);
 
-	boolean isAssignableFrom(ValueType other);
+    boolean isAssignableFrom(ValueType other);
 
-	int hashCode();
+    int hashCode();
 
-	String name();
+    String name();
 
-	String toString();
+    String toString();
 }

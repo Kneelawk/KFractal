@@ -16,119 +16,119 @@ import java.util.List;
  * If(Bool condition, [ Instruction* ifTrue ], [ Instruction* ifFalse ])
  */
 public class If implements IInstruction {
-	private IInstructionInput condition;
-	private List<IInstruction> ifTrue;
-	private List<IInstruction> ifFalse;
+    private IInstructionInput condition;
+    private List<IInstruction> ifTrue;
+    private List<IInstruction> ifFalse;
 
-	private If(IInstructionInput condition,
-			   List<IInstruction> ifTrue,
-			   List<IInstruction> ifFalse) {
-		this.condition = condition;
-		this.ifTrue = ifTrue;
-		this.ifFalse = ifFalse;
-	}
+    private If(IInstructionInput condition,
+               List<IInstruction> ifTrue,
+               List<IInstruction> ifFalse) {
+        this.condition = condition;
+        this.ifTrue = ifTrue;
+        this.ifFalse = ifFalse;
+    }
 
-	public IInstructionInput getCondition() {
-		return condition;
-	}
+    public IInstructionInput getCondition() {
+        return condition;
+    }
 
-	public List<IInstruction> getIfTrue() {
-		return ifTrue;
-	}
+    public List<IInstruction> getIfTrue() {
+        return ifTrue;
+    }
 
-	public List<IInstruction> getIfFalse() {
-		return ifFalse;
-	}
+    public List<IInstruction> getIfFalse() {
+        return ifFalse;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitIf(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitIf(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("condition", condition)
-				.append("ifTrue", ifTrue)
-				.append("ifFalse", ifFalse)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("condition", condition)
+                .append("ifTrue", ifTrue)
+                .append("ifFalse", ifFalse)
+                .toString();
+    }
 
-	public static If create(IInstructionInput condition,
-							Iterable<IInstruction> ifTrue,
-							Iterable<IInstruction> ifFalse) {
-		return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
-	}
+    public static If create(IInstructionInput condition,
+                            Iterable<IInstruction> ifTrue,
+                            Iterable<IInstruction> ifFalse) {
+        return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
+    }
 
-	public static class Builder {
-		private IInstructionInput condition;
-		private List<IInstruction> ifTrue = Lists.newArrayList();
-		private List<IInstruction> ifFalse = Lists.newArrayList();
+    public static class Builder {
+        private IInstructionInput condition;
+        private List<IInstruction> ifTrue = Lists.newArrayList();
+        private List<IInstruction> ifFalse = Lists.newArrayList();
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionInput condition,
-					   Collection<IInstruction> ifTrue,
-					   Collection<IInstruction> ifFalse) {
-			this.condition = condition;
-			this.ifTrue.addAll(ifTrue);
-			this.ifFalse.addAll(ifFalse);
-		}
+        public Builder(IInstructionInput condition,
+                       Collection<IInstruction> ifTrue,
+                       Collection<IInstruction> ifFalse) {
+            this.condition = condition;
+            this.ifTrue.addAll(ifTrue);
+            this.ifFalse.addAll(ifFalse);
+        }
 
-		public If build() {
-			return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
-		}
+        public If build() {
+            return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
+        }
 
-		public IInstructionInput getCondition() {
-			return condition;
-		}
+        public IInstructionInput getCondition() {
+            return condition;
+        }
 
-		public Builder setCondition(IInstructionInput condition) {
-			this.condition = condition;
-			return this;
-		}
+        public Builder setCondition(IInstructionInput condition) {
+            this.condition = condition;
+            return this;
+        }
 
-		public List<IInstruction> getIfTrue() {
-			return ifTrue;
-		}
+        public List<IInstruction> getIfTrue() {
+            return ifTrue;
+        }
 
-		public Builder setIfTrue(
-				Collection<IInstruction> ifTrue) {
-			this.ifTrue.clear();
-			this.ifTrue.addAll(ifTrue);
-			return this;
-		}
+        public Builder setIfTrue(
+                Collection<IInstruction> ifTrue) {
+            this.ifTrue.clear();
+            this.ifTrue.addAll(ifTrue);
+            return this;
+        }
 
-		public Builder addIfTrue(IInstruction instruction) {
-			ifTrue.add(instruction);
-			return this;
-		}
+        public Builder addIfTrue(IInstruction instruction) {
+            ifTrue.add(instruction);
+            return this;
+        }
 
-		public Builder addIfTrue(Collection<IInstruction> instructions) {
-			ifTrue.addAll(instructions);
-			return this;
-		}
+        public Builder addIfTrue(Collection<IInstruction> instructions) {
+            ifTrue.addAll(instructions);
+            return this;
+        }
 
-		public List<IInstruction> getIfFalse() {
-			return ifFalse;
-		}
+        public List<IInstruction> getIfFalse() {
+            return ifFalse;
+        }
 
-		public Builder setIfFalse(
-				Collection<IInstruction> ifFalse) {
-			this.ifFalse.clear();
-			this.ifFalse.addAll(ifFalse);
-			return this;
-		}
+        public Builder setIfFalse(
+                Collection<IInstruction> ifFalse) {
+            this.ifFalse.clear();
+            this.ifFalse.addAll(ifFalse);
+            return this;
+        }
 
-		public Builder addIfFalse(IInstruction instruction) {
-			ifFalse.add(instruction);
-			return this;
-		}
+        public Builder addIfFalse(IInstruction instruction) {
+            ifFalse.add(instruction);
+            return this;
+        }
 
-		public Builder addIfFalse(Collection<IInstruction> instructions) {
-			ifFalse.addAll(instructions);
-			return this;
-		}
-	}
+        public Builder addIfFalse(Collection<IInstruction> instructions) {
+            ifFalse.addAll(instructions);
+            return this;
+        }
+    }
 }

@@ -8,58 +8,58 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Created by Kneelawk on 5/26/19.
  */
 public class VariableReference implements IInstructionInput, IInstructionOutput {
-	private String name;
+    private String name;
 
-	private VariableReference(String name) {
-		this.name = name;
-	}
+    private VariableReference(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitVariableReference(this);
-	}
+    @Override
+    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitVariableReference(this);
+    }
 
-	@Override
-	public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitVariableReference(this);
-	}
+    @Override
+    public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitVariableReference(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("name", name)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("name", name)
+                .toString();
+    }
 
-	public static VariableReference create(String name) {
-		return new VariableReference(name);
-	}
+    public static VariableReference create(String name) {
+        return new VariableReference(name);
+    }
 
-	public static class Builder {
-		private String name;
+    public static class Builder {
+        private String name;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(String name) {
-			this.name = name;
-		}
+        public Builder(String name) {
+            this.name = name;
+        }
 
-		public VariableReference build() {
-			return new VariableReference(name);
-		}
+        public VariableReference build() {
+            return new VariableReference(name);
+        }
 
-		public String getName() {
-			return name;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public Builder setName(String name) {
-			this.name = name;
-			return this;
-		}
-	}
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+    }
 }

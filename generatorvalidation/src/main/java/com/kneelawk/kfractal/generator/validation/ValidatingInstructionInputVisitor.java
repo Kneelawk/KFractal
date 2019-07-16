@@ -11,99 +11,100 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<ValueInfo> {
-	private final Map<String, FunctionDefinition> functions;
-	private final Map<String, ValueInfo> variables;
+    private final Map<String, FunctionDefinition> functions;
+    private final Map<String, ValueInfo> variables;
 
-	ValidatingInstructionInputVisitor(
-			Map<String, FunctionDefinition> functions,
-			Map<String, ValueInfo> variables) {
-		this.functions = functions;
-		this.variables = variables;
-	}
+    ValidatingInstructionInputVisitor(
+            Map<String, FunctionDefinition> functions,
+            Map<String, ValueInfo> variables) {
+        this.functions = functions;
+        this.variables = variables;
+    }
 
-	@Override
-	public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
-		String referenceName = reference.getName();
-		if (variables.containsKey(referenceName)) {
-			return variables.get(referenceName);
-		} else {
-			throw new MissingVariableReferenceException("Reference to missing variable: '" + referenceName + '\'');
-		}
-	}
+    @Override
+    public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
+        String referenceName = reference.getName();
+        if (variables.containsKey(referenceName)) {
+            return variables.get(referenceName);
+        } else {
+            throw new MissingVariableReferenceException("Reference to missing variable: '" + referenceName + '\'');
+        }
+    }
 
-	@Override
-	public ValueInfo visitBoolConstant(BoolConstant constant) {
-		return new ValueInfo.Builder().setType(ValueTypes.BOOL).build();
-	}
+    @Override
+    public ValueInfo visitBoolConstant(BoolConstant constant) {
+        return new ValueInfo.Builder().setType(ValueTypes.BOOL).build();
+    }
 
-	@Override
-	public ValueInfo visitIntConstant(IntConstant constant) {
-		return new ValueInfo.Builder().setType(ValueTypes.INT).build();
-	}
+    @Override
+    public ValueInfo visitIntConstant(IntConstant constant) {
+        return new ValueInfo.Builder().setType(ValueTypes.INT).build();
+    }
 
-	@Override
-	public ValueInfo visitRealConstant(RealConstant constant) {
-		return new ValueInfo.Builder().setType(ValueTypes.REAL).build();
-	}
+    @Override
+    public ValueInfo visitRealConstant(RealConstant constant) {
+        return new ValueInfo.Builder().setType(ValueTypes.REAL).build();
+    }
 
-	@Override
-	public ValueInfo visitComplexConstant(ComplexConstant constant) {
-		return new ValueInfo.Builder().setType(ValueTypes.COMPLEX).build();
-	}
+    @Override
+    public ValueInfo visitComplexConstant(ComplexConstant constant) {
+        return new ValueInfo.Builder().setType(ValueTypes.COMPLEX).build();
+    }
 
-	@Override
-	public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalIRException {
-		// find the function
-		FunctionDefinition target;
-		String functionName = contextConstant.getFunctionName();
-		if (functions.containsKey(functionName)) {
-			target = functions.get(functionName);
-		} else {
-			throw new MissingFunctionReferenceException("Reference to missing function: '" + functionName + '\'');
-		}
+    @Override
+    public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalIRException {
+        // find the function
+        FunctionDefinition target;
+        String functionName = contextConstant.getFunctionName();
+        if (functions.containsKey(functionName)) {
+            target = functions.get(functionName);
+        } else {
+            throw new MissingFunctionReferenceException("Reference to missing function: '" + functionName + '\'');
+        }
 
-		// compare context variable types
-		List<VariableDeclaration> targetContextVariables = target.getContextVariableList();
-		List<IInstructionInput> constantContextVariables = contextConstant.getContextVariables();
-		int targetContextVariablesSize = targetContextVariables.size();
-		int constantContextVariablesSize = constantContextVariables.size();
-		int size = Math.max(targetContextVariablesSize, constantContextVariablesSize);
-		for (int i = 0; i < size; i++) {
-			if (i >= targetContextVariablesSize) {
-				throw new IncompatibleFunctionContextException("FunctionContextConstant has extra context variables: " +
-						constantContextVariables.subList(i, constantContextVariablesSize));
-			}
-			if (i >= constantContextVariablesSize) {
-				throw new IncompatibleFunctionContextException("FunctionContextConstant is missing context variables: " +
-						targetContextVariables.subList(i, targetContextVariablesSize));
-			}
-			VariableDeclaration targetVariable = targetContextVariables.get(i);
-			IInstructionInput constantInput = constantContextVariables.get(i);
-			if (!targetVariable.getType().isAssignableFrom(constantInput.accept(this).getType())) {
-				throw new IncompatibleFunctionContextException(
-						"Function defines context variable: " + targetVariable + " but constant supplies: " +
-								constantInput);
-			}
-		}
+        // compare context variable types
+        List<VariableDeclaration> targetContextVariables = target.getContextVariableList();
+        List<IInstructionInput> constantContextVariables = contextConstant.getContextVariables();
+        int targetContextVariablesSize = targetContextVariables.size();
+        int constantContextVariablesSize = constantContextVariables.size();
+        int size = Math.max(targetContextVariablesSize, constantContextVariablesSize);
+        for (int i = 0; i < size; i++) {
+            if (i >= targetContextVariablesSize) {
+                throw new IncompatibleFunctionContextException("FunctionContextConstant has extra context variables: " +
+                        constantContextVariables.subList(i, constantContextVariablesSize));
+            }
+            if (i >= constantContextVariablesSize) {
+                throw new IncompatibleFunctionContextException(
+                        "FunctionContextConstant is missing context variables: " +
+                                targetContextVariables.subList(i, targetContextVariablesSize));
+            }
+            VariableDeclaration targetVariable = targetContextVariables.get(i);
+            IInstructionInput constantInput = constantContextVariables.get(i);
+            if (!targetVariable.getType().isAssignableFrom(constantInput.accept(this).getType())) {
+                throw new IncompatibleFunctionContextException(
+                        "Function defines context variable: " + targetVariable + " but constant supplies: " +
+                                constantInput);
+            }
+        }
 
-		// build the function type from the target function details
-		return new ValueInfo.Builder().setType(ValueTypes.FUNCTION(target.getReturnType(),
-				target.getArgumentList().stream().map(VariableDeclaration::getType).collect(
-						Collectors.toList()))).build();
-	}
+        // build the function type from the target function details
+        return new ValueInfo.Builder().setType(ValueTypes.FUNCTION(target.getReturnType(),
+                target.getArgumentList().stream().map(VariableDeclaration::getType).collect(
+                        Collectors.toList()))).build();
+    }
 
-	@Override
-	public ValueInfo visitNullFunction() {
-		return new ValueInfo.Builder().setType(ValueTypes.NULL_FUNCTION).build();
-	}
+    @Override
+    public ValueInfo visitNullFunction() {
+        return new ValueInfo.Builder().setType(ValueTypes.NULL_FUNCTION).build();
+    }
 
-	@Override
-	public ValueInfo visitNullPointer() {
-		return new ValueInfo.Builder().setType(ValueTypes.NULL_POINTER).build();
-	}
+    @Override
+    public ValueInfo visitNullPointer() {
+        return new ValueInfo.Builder().setType(ValueTypes.NULL_POINTER).build();
+    }
 
-	@Override
-	public ValueInfo visitVoid() {
-		return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
-	}
+    @Override
+    public ValueInfo visitVoid() {
+        return new ValueInfo.Builder().setType(ValueTypes.VOID).build();
+    }
 }

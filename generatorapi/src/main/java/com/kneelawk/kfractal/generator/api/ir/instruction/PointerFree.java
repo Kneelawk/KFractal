@@ -12,53 +12,53 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * PointerFree(Pointer(*) pointer)
  */
 public class PointerFree implements IInstruction {
-	private IInstructionInput pointer;
+    private IInstructionInput pointer;
 
-	private PointerFree(IInstructionInput pointer) {
-		this.pointer = pointer;
-	}
+    private PointerFree(IInstructionInput pointer) {
+        this.pointer = pointer;
+    }
 
-	public IInstructionInput getPointer() {
-		return pointer;
-	}
+    public IInstructionInput getPointer() {
+        return pointer;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitPointerFree(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitPointerFree(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("pointer", pointer)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("pointer", pointer)
+                .toString();
+    }
 
-	public static PointerFree create(IInstructionInput pointer) {
-		return new PointerFree(pointer);
-	}
+    public static PointerFree create(IInstructionInput pointer) {
+        return new PointerFree(pointer);
+    }
 
-	public static class Builder {
-		private IInstructionInput pointer;
+    public static class Builder {
+        private IInstructionInput pointer;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionInput pointer) {
-			this.pointer = pointer;
-		}
+        public Builder(IInstructionInput pointer) {
+            this.pointer = pointer;
+        }
 
-		public PointerFree build() {
-			return new PointerFree(pointer);
-		}
+        public PointerFree build() {
+            return new PointerFree(pointer);
+        }
 
-		public IInstructionInput getPointer() {
-			return pointer;
-		}
+        public IInstructionInput getPointer() {
+            return pointer;
+        }
 
-		public Builder setPointer(IInstructionInput pointer) {
-			this.pointer = pointer;
-			return this;
-		}
-	}
+        public Builder setPointer(IInstructionInput pointer) {
+            this.pointer = pointer;
+            return this;
+        }
+    }
 }

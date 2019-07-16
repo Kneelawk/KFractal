@@ -21,107 +21,107 @@ import java.util.List;
  * FunctionCall(* result, Function(*, [ ** ]) function, [ ** arguments ])
  */
 public class FunctionCall implements IInstruction {
-	private IInstructionOutput result;
-	private IInstructionInput function;
-	private List<IInstructionInput> arguments;
+    private IInstructionOutput result;
+    private IInstructionInput function;
+    private List<IInstructionInput> arguments;
 
-	private FunctionCall(IInstructionOutput result,
-						 IInstructionInput function,
-						 List<IInstructionInput> arguments) {
-		this.result = result;
-		this.function = function;
-		this.arguments = arguments;
-	}
+    private FunctionCall(IInstructionOutput result,
+                         IInstructionInput function,
+                         List<IInstructionInput> arguments) {
+        this.result = result;
+        this.function = function;
+        this.arguments = arguments;
+    }
 
-	public IInstructionOutput getResult() {
-		return result;
-	}
+    public IInstructionOutput getResult() {
+        return result;
+    }
 
-	public IInstructionInput getFunction() {
-		return function;
-	}
+    public IInstructionInput getFunction() {
+        return function;
+    }
 
-	public List<IInstructionInput> getArguments() {
-		return arguments;
-	}
+    public List<IInstructionInput> getArguments() {
+        return arguments;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitFunctionCall(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitFunctionCall(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("result", result)
-				.append("function", function)
-				.append("arguments", arguments)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("result", result)
+                .append("function", function)
+                .append("arguments", arguments)
+                .toString();
+    }
 
-	public static FunctionCall create(IInstructionOutput result,
-									  IInstructionInput function,
-									  Iterable<IInstructionInput> arguments) {
-		return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
-	}
+    public static FunctionCall create(IInstructionOutput result,
+                                      IInstructionInput function,
+                                      Iterable<IInstructionInput> arguments) {
+        return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
+    }
 
-	public static class Builder {
-		private IInstructionOutput result;
-		private IInstructionInput function;
-		private List<IInstructionInput> arguments = Lists.newArrayList();
+    public static class Builder {
+        private IInstructionOutput result;
+        private IInstructionInput function;
+        private List<IInstructionInput> arguments = Lists.newArrayList();
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput result,
-					   IInstructionInput function,
-					   Collection<IInstructionInput> arguments) {
-			this.result = result;
-			this.function = function;
-			this.arguments.addAll(arguments);
-		}
+        public Builder(IInstructionOutput result,
+                       IInstructionInput function,
+                       Collection<IInstructionInput> arguments) {
+            this.result = result;
+            this.function = function;
+            this.arguments.addAll(arguments);
+        }
 
-		public FunctionCall build() {
-			return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
-		}
+        public FunctionCall build() {
+            return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
+        }
 
-		public IInstructionOutput getResult() {
-			return result;
-		}
+        public IInstructionOutput getResult() {
+            return result;
+        }
 
-		public Builder setResult(IInstructionOutput result) {
-			this.result = result;
-			return this;
-		}
+        public Builder setResult(IInstructionOutput result) {
+            this.result = result;
+            return this;
+        }
 
-		public IInstructionInput getFunction() {
-			return function;
-		}
+        public IInstructionInput getFunction() {
+            return function;
+        }
 
-		public Builder setFunction(IInstructionInput function) {
-			this.function = function;
-			return this;
-		}
+        public Builder setFunction(IInstructionInput function) {
+            this.function = function;
+            return this;
+        }
 
-		public List<IInstructionInput> getArguments() {
-			return arguments;
-		}
+        public List<IInstructionInput> getArguments() {
+            return arguments;
+        }
 
-		public Builder setArguments(
-				Collection<IInstructionInput> arguments) {
-			this.arguments.clear();
-			this.arguments.addAll(arguments);
-			return this;
-		}
+        public Builder setArguments(
+                Collection<IInstructionInput> arguments) {
+            this.arguments.clear();
+            this.arguments.addAll(arguments);
+            return this;
+        }
 
-		public Builder addArgument(IInstructionInput argument) {
-			this.arguments.add(argument);
-			return this;
-		}
+        public Builder addArgument(IInstructionInput argument) {
+            this.arguments.add(argument);
+            return this;
+        }
 
-		public Builder addArguments(Collection<IInstructionInput> arguments) {
-			this.arguments.addAll(arguments);
-			return this;
-		}
-	}
+        public Builder addArguments(Collection<IInstructionInput> arguments) {
+            this.arguments.addAll(arguments);
+            return this;
+        }
+    }
 }

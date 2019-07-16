@@ -14,96 +14,96 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * RealIsGreaterOrEqual(Bool result, Real subject, Real basis)
  */
 public class RealIsGreaterOrEqual implements IInstruction {
-	private IInstructionOutput result;
-	private IInstructionInput subject;
-	private IInstructionInput basis;
+    private IInstructionOutput result;
+    private IInstructionInput subject;
+    private IInstructionInput basis;
 
-	private RealIsGreaterOrEqual(IInstructionOutput result,
-								 IInstructionInput subject,
-								 IInstructionInput basis) {
-		this.result = result;
-		this.subject = subject;
-		this.basis = basis;
-	}
+    private RealIsGreaterOrEqual(IInstructionOutput result,
+                                 IInstructionInput subject,
+                                 IInstructionInput basis) {
+        this.result = result;
+        this.subject = subject;
+        this.basis = basis;
+    }
 
-	public IInstructionOutput getResult() {
-		return result;
-	}
+    public IInstructionOutput getResult() {
+        return result;
+    }
 
-	public IInstructionInput getSubject() {
-		return subject;
-	}
+    public IInstructionInput getSubject() {
+        return subject;
+    }
 
-	public IInstructionInput getBasis() {
-		return basis;
-	}
+    public IInstructionInput getBasis() {
+        return basis;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitRealIsGreaterOrEqual(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitRealIsGreaterOrEqual(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("result", result)
-				.append("subject", subject)
-				.append("basis", basis)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("result", result)
+                .append("subject", subject)
+                .append("basis", basis)
+                .toString();
+    }
 
-	public static RealIsGreaterOrEqual create(
-			IInstructionOutput result,
-			IInstructionInput subject,
-			IInstructionInput basis) {
-		return new RealIsGreaterOrEqual(result, subject, basis);
-	}
+    public static RealIsGreaterOrEqual create(
+            IInstructionOutput result,
+            IInstructionInput subject,
+            IInstructionInput basis) {
+        return new RealIsGreaterOrEqual(result, subject, basis);
+    }
 
-	public static class Builder {
-		private IInstructionOutput result;
-		private IInstructionInput subject;
-		private IInstructionInput basis;
+    public static class Builder {
+        private IInstructionOutput result;
+        private IInstructionInput subject;
+        private IInstructionInput basis;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput result,
-					   IInstructionInput subject,
-					   IInstructionInput basis) {
-			this.result = result;
-			this.subject = subject;
-			this.basis = basis;
-		}
+        public Builder(IInstructionOutput result,
+                       IInstructionInput subject,
+                       IInstructionInput basis) {
+            this.result = result;
+            this.subject = subject;
+            this.basis = basis;
+        }
 
-		public RealIsGreaterOrEqual build() {
-			return new RealIsGreaterOrEqual(result, subject, basis);
-		}
+        public RealIsGreaterOrEqual build() {
+            return new RealIsGreaterOrEqual(result, subject, basis);
+        }
 
-		public IInstructionOutput getResult() {
-			return result;
-		}
+        public IInstructionOutput getResult() {
+            return result;
+        }
 
-		public Builder setResult(IInstructionOutput result) {
-			this.result = result;
-			return this;
-		}
+        public Builder setResult(IInstructionOutput result) {
+            this.result = result;
+            return this;
+        }
 
-		public IInstructionInput getSubject() {
-			return subject;
-		}
+        public IInstructionInput getSubject() {
+            return subject;
+        }
 
-		public Builder setSubject(IInstructionInput subject) {
-			this.subject = subject;
-			return this;
-		}
+        public Builder setSubject(IInstructionInput subject) {
+            this.subject = subject;
+            return this;
+        }
 
-		public IInstructionInput getBasis() {
-			return basis;
-		}
+        public IInstructionInput getBasis() {
+            return basis;
+        }
 
-		public Builder setBasis(IInstructionInput basis) {
-			this.basis = basis;
-			return this;
-		}
-	}
+        public Builder setBasis(IInstructionInput basis) {
+            this.basis = basis;
+            return this;
+        }
+    }
 }

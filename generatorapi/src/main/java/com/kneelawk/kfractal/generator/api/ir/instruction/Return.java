@@ -11,54 +11,54 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Return(* returnValue)
  */
 public class Return implements IInstruction {
-	private IInstructionInput returnValue;
+    private IInstructionInput returnValue;
 
-	private Return(IInstructionInput returnValue) {
-		this.returnValue = returnValue;
-	}
+    private Return(IInstructionInput returnValue) {
+        this.returnValue = returnValue;
+    }
 
-	public IInstructionInput getReturnValue() {
-		return returnValue;
-	}
+    public IInstructionInput getReturnValue() {
+        return returnValue;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitReturn(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitReturn(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("returnValue", returnValue)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("returnValue", returnValue)
+                .toString();
+    }
 
-	public static Return create(IInstructionInput returnValue) {
-		return new Return(returnValue);
-	}
+    public static Return create(IInstructionInput returnValue) {
+        return new Return(returnValue);
+    }
 
-	public static class Builder {
-		private IInstructionInput returnValue;
+    public static class Builder {
+        private IInstructionInput returnValue;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionInput returnValue) {
-			this.returnValue = returnValue;
-		}
+        public Builder(IInstructionInput returnValue) {
+            this.returnValue = returnValue;
+        }
 
-		public Return build() {
-			return new Return(returnValue);
-		}
+        public Return build() {
+            return new Return(returnValue);
+        }
 
-		public IInstructionInput getReturnValue() {
-			return returnValue;
-		}
+        public IInstructionInput getReturnValue() {
+            return returnValue;
+        }
 
-		public Builder setReturnValue(
-				IInstructionInput returnValue) {
-			this.returnValue = returnValue;
-			return this;
-		}
-	}
+        public Builder setReturnValue(
+                IInstructionInput returnValue) {
+            this.returnValue = returnValue;
+            return this;
+        }
+    }
 }

@@ -5,5 +5,5 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 
 public interface InstructionCreator2 {
-	IInstruction create(IInstructionOutput output, IInstructionInput input);
+    IInstruction create(IInstructionOutput output, IInstructionInput input);
 }

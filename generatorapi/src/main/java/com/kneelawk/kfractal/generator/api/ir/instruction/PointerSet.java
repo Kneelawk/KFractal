@@ -12,74 +12,74 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * PointerSet(Pointer(*) pointer, * data)
  */
 public class PointerSet implements IInstruction {
-	private IInstructionInput pointer;
-	private IInstructionInput data;
+    private IInstructionInput pointer;
+    private IInstructionInput data;
 
-	private PointerSet(IInstructionInput pointer,
-					   IInstructionInput data) {
-		this.pointer = pointer;
-		this.data = data;
-	}
+    private PointerSet(IInstructionInput pointer,
+                       IInstructionInput data) {
+        this.pointer = pointer;
+        this.data = data;
+    }
 
-	public IInstructionInput getPointer() {
-		return pointer;
-	}
+    public IInstructionInput getPointer() {
+        return pointer;
+    }
 
-	public IInstructionInput getData() {
-		return data;
-	}
+    public IInstructionInput getData() {
+        return data;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitPointerSet(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitPointerSet(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("pointer", pointer)
-				.append("data", data)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("pointer", pointer)
+                .append("data", data)
+                .toString();
+    }
 
-	public static PointerSet create(IInstructionInput pointer,
-									IInstructionInput data) {
-		return new PointerSet(pointer, data);
-	}
+    public static PointerSet create(IInstructionInput pointer,
+                                    IInstructionInput data) {
+        return new PointerSet(pointer, data);
+    }
 
-	public static class Builder {
-		private IInstructionInput pointer;
-		private IInstructionInput data;
+    public static class Builder {
+        private IInstructionInput pointer;
+        private IInstructionInput data;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionInput pointer,
-					   IInstructionInput data) {
-			this.pointer = pointer;
-			this.data = data;
-		}
+        public Builder(IInstructionInput pointer,
+                       IInstructionInput data) {
+            this.pointer = pointer;
+            this.data = data;
+        }
 
-		public PointerSet build() {
-			return new PointerSet(pointer, data);
-		}
+        public PointerSet build() {
+            return new PointerSet(pointer, data);
+        }
 
-		public IInstructionInput getPointer() {
-			return pointer;
-		}
+        public IInstructionInput getPointer() {
+            return pointer;
+        }
 
-		public Builder setPointer(IInstructionInput pointer) {
-			this.pointer = pointer;
-			return this;
-		}
+        public Builder setPointer(IInstructionInput pointer) {
+            this.pointer = pointer;
+            return this;
+        }
 
-		public IInstructionInput getData() {
-			return data;
-		}
+        public IInstructionInput getData() {
+            return data;
+        }
 
-		public Builder setData(IInstructionInput data) {
-			this.data = data;
-			return this;
-		}
-	}
+        public Builder setData(IInstructionInput data) {
+            this.data = data;
+            return this;
+        }
+    }
 }

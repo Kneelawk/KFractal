@@ -5,53 +5,53 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class IntConstant implements IInstructionInput {
-	private int value;
+    private int value;
 
-	private IntConstant(int value) {
-		this.value = value;
-	}
+    private IntConstant(int value) {
+        this.value = value;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public int getValue() {
+        return value;
+    }
 
-	@Override
-	public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitIntConstant(this);
-	}
+    @Override
+    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitIntConstant(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("value", value)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("value", value)
+                .toString();
+    }
 
-	public static IntConstant create(int value) {
-		return new IntConstant(value);
-	}
+    public static IntConstant create(int value) {
+        return new IntConstant(value);
+    }
 
-	public static class Builder {
-		private int value;
+    public static class Builder {
+        private int value;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(int value) {
-			this.value = value;
-		}
+        public Builder(int value) {
+            this.value = value;
+        }
 
-		public IntConstant build() {
-			return new IntConstant(value);
-		}
+        public IntConstant build() {
+            return new IntConstant(value);
+        }
 
-		public int getValue() {
-			return value;
-		}
+        public int getValue() {
+            return value;
+        }
 
-		public Builder setValue(int value) {
-			this.value = value;
-			return this;
-		}
-	}
+        public Builder setValue(int value) {
+            this.value = value;
+            return this;
+        }
+    }
 }

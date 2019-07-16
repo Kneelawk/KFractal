@@ -6,13 +6,13 @@ package com.kneelawk.kfractal.generator.api.ir.attribute;
  * this variable. When a preallocated pointer goes out of scope, its memory is released.
  */
 public class Preallocated implements IAttribute {
-	static final Preallocated INSTANCE = new Preallocated();
+    static final Preallocated INSTANCE = new Preallocated();
 
-	private Preallocated() {
-	}
+    private Preallocated() {
+    }
 
-	@Override
-	public void accept(IAttributeVisitor visitor) {
-		visitor.visitPreallocated();
-	}
+    @Override
+    public void accept(IAttributeVisitor visitor) {
+        visitor.visitPreallocated();
+    }
 }

@@ -12,54 +12,54 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * PointerAllocate(Pointer(*) pointer)
  */
 public class PointerAllocate implements IInstruction {
-	private IInstructionOutput pointer;
+    private IInstructionOutput pointer;
 
-	private PointerAllocate(IInstructionOutput pointer) {
-		this.pointer = pointer;
-	}
+    private PointerAllocate(IInstructionOutput pointer) {
+        this.pointer = pointer;
+    }
 
-	public IInstructionOutput getPointer() {
-		return pointer;
-	}
+    public IInstructionOutput getPointer() {
+        return pointer;
+    }
 
-	@Override
-	public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
-		return visitor.visitPointerAllocate(this);
-	}
+    @Override
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+        return visitor.visitPointerAllocate(this);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-				.append("pointer", pointer)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
+                .append("pointer", pointer)
+                .toString();
+    }
 
-	public static PointerAllocate create(
-			IInstructionOutput pointer) {
-		return new PointerAllocate(pointer);
-	}
+    public static PointerAllocate create(
+            IInstructionOutput pointer) {
+        return new PointerAllocate(pointer);
+    }
 
-	public static class Builder {
-		private IInstructionOutput pointer;
+    public static class Builder {
+        private IInstructionOutput pointer;
 
-		public Builder() {
-		}
+        public Builder() {
+        }
 
-		public Builder(IInstructionOutput pointer) {
-			this.pointer = pointer;
-		}
+        public Builder(IInstructionOutput pointer) {
+            this.pointer = pointer;
+        }
 
-		public PointerAllocate build() {
-			return new PointerAllocate(pointer);
-		}
+        public PointerAllocate build() {
+            return new PointerAllocate(pointer);
+        }
 
-		public IInstructionOutput getPointer() {
-			return pointer;
-		}
+        public IInstructionOutput getPointer() {
+            return pointer;
+        }
 
-		public Builder setPointer(IInstructionOutput pointer) {
-			this.pointer = pointer;
-			return this;
-		}
-	}
+        public Builder setPointer(IInstructionOutput pointer) {
+            this.pointer = pointer;
+            return this;
+        }
+    }
 }

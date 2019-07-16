@@ -17,48 +17,48 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InstructionValidationReturnTests {
-	@ParameterizedTest(name = "testIncompatibleReturnTypes({arguments})")
-	@ArgumentsSource(IncompatibleValueTypesProvider.class)
-	void testIncompatibleReturnTypes(Pair<ValueType, ValueType> valueTypes) {
-		Program.Builder programBuilder = new Program.Builder();
-		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-		function.setName("f");
-		function.setReturnType(valueTypes.getLeft());
-		function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.getRight())));
-		programBuilder.addFunction(function.build());
+    @ParameterizedTest(name = "testIncompatibleReturnTypes({arguments})")
+    @ArgumentsSource(IncompatibleValueTypesProvider.class)
+    void testIncompatibleReturnTypes(Pair<ValueType, ValueType> valueTypes) {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setName("f");
+        function.setReturnType(valueTypes.getLeft());
+        function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.getRight())));
+        programBuilder.addFunction(function.build());
 
-		Program program = programBuilder.build();
+        Program program = programBuilder.build();
 
-		assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
-				() -> ProgramPrinter.printProgram(program));
-	}
+        assertThrows(IncompatibleValueTypeException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter.printProgram(program));
+    }
 
-	@ParameterizedTest(name = "testReturnTypes({arguments})")
-	@ArgumentsSource(VariableValueTypesProvider.class)
-	void testReturnTypes(ValueType valueType) {
-		Program.Builder programBuilder = new Program.Builder();
-		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-		function.setName("f");
-		function.setReturnType(valueType);
-		function.addStatement(Return.create(createConstant(programBuilder, function, valueType)));
-		programBuilder.addFunction(function.build());
+    @ParameterizedTest(name = "testReturnTypes({arguments})")
+    @ArgumentsSource(VariableValueTypesProvider.class)
+    void testReturnTypes(ValueType valueType) {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setName("f");
+        function.setReturnType(valueType);
+        function.addStatement(Return.create(createConstant(programBuilder, function, valueType)));
+        programBuilder.addFunction(function.build());
 
-		Program program = programBuilder.build();
+        Program program = programBuilder.build();
 
-		assertDoesNotThrow(() -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
-	}
+        assertDoesNotThrow(() -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
+    }
 
-	@Test
-	void testVoidReturnType() {
-		Program.Builder programBuilder = new Program.Builder();
-		FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-		function.setName("f");
-		function.setReturnType(ValueTypes.VOID);
-		function.addStatement(Return.create(VoidConstant.INSTANCE));
-		programBuilder.addFunction(function.build());
+    @Test
+    void testVoidReturnType() {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setName("f");
+        function.setReturnType(ValueTypes.VOID);
+        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        programBuilder.addFunction(function.build());
 
-		Program program = programBuilder.build();
+        Program program = programBuilder.build();
 
-		assertDoesNotThrow(() -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
-	}
+        assertDoesNotThrow(() -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
+    }
 }

@@ -4,9 +4,9 @@ import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 
 public interface IPointerValue extends IEngineValue {
-	ValueType getDataType() throws FractalEngineException;
+    ValueType getDataType() throws FractalEngineException;
 
-	IEngineValue getReferencedData() throws FractalEngineException;
+    IEngineValue getReferencedData() throws FractalEngineException;
 
-	void setReferencedData(IEngineValue data) throws FractalEngineException;
+    void setReferencedData(IEngineValue data) throws FractalEngineException;
 }
