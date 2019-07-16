@@ -84,7 +84,7 @@ public class ValueTypeUtils {
 		} else if (ValueTypes.isComplex(type)) {
 			return ComplexConstant.create(new Complex(0.0, 0.0));
 		} else if (ValueTypes.isFunction(type)) {
-			if (ValueTypes.toFunction(type).isNullFunction()) {
+			if (ValueTypes.isNullFunction(type)) {
 				return NullFunction.INSTANCE;
 			} else {
 				ValueTypes.FunctionType functionType = ValueTypes.toFunction(type);
@@ -109,7 +109,7 @@ public class ValueTypeUtils {
 				return FunctionContextConstant.create(functionName, ImmutableList.of());
 			}
 		} else if (ValueTypes.isPointer(type)) {
-			if (ValueTypes.toPointer(type).isNullPointer()) {
+			if (ValueTypes.isNullPointer(type)) {
 				return NullPointer.INSTANCE;
 			} else {
 				String variableName = generateVariableName(getAllVariables(programBuilder, functionBuilder, extraVariables));

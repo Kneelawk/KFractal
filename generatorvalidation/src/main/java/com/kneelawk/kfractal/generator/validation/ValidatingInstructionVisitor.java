@@ -631,7 +631,7 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 		validValueTypeIfTrue(
 				pointerType.getPointerType().isAssignableFrom(pointerSet.getData().accept(inputVisitor).getType()),
 				"PointerSet pointer type and data type are incompatible");
-		validValueTypeIfTrue(!ValueTypes.isVoid(pointerType.getPointerType()),
+		validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
 				"PointerSet cannot set the value of the null-pointer");
 		return null;
 	}

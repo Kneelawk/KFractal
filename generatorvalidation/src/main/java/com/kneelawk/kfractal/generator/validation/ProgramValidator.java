@@ -97,11 +97,11 @@ public class ProgramValidator {
 		if (ValueTypes.isVoid(type)) {
 			throw new IllegalVariableTypeException("Illegal variable type: VOID");
 		} else if (ValueTypes.isFunction(type)) {
-			if (ValueTypes.toFunction(type).isNullFunction()) {
+			if (ValueTypes.isNullFunction(type)) {
 				throw new IllegalVariableTypeException("Illegal variable type: NULL_FUNCTION");
 			}
 		} else if (ValueTypes.isPointer(type)) {
-			if (ValueTypes.toPointer(type).isNullPointer()) {
+			if (ValueTypes.isNullPointer(type)) {
 				throw new IllegalVariableTypeException("Illegal variable type: NULL_POINTER");
 			}
 		}
