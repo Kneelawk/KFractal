@@ -1,4 +1,4 @@
-module com.kneelwak.kfractal.generator.api {
+module com.kneelawk.kfractal.generator.api {
     exports com.kneelawk.kfractal.generator.api;
     exports com.kneelawk.kfractal.generator.api.engine;
     exports com.kneelawk.kfractal.generator.api.engine.value;
