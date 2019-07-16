@@ -103,7 +103,7 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 				"BoolOr result is not a bool");
 		validValueTypeIfTrue(ValueTypes.isBool(boolOr.getLeft().accept(inputVisitor).getType()),
 				"BoolOr left is not a bool");
-		validValueTypeIfTrue(ValueTypes.isBool(boolOr.getLeft().accept(inputVisitor).getType()),
+		validValueTypeIfTrue(ValueTypes.isBool(boolOr.getRight().accept(inputVisitor).getType()),
 				"BoolOr right is not a bool");
 		return null;
 	}
