@@ -41,8 +41,8 @@ public final class ValueTypes {
 	public static final ValueType INT = new ValueTypes.IntType();
 	public static final ValueType REAL = new ValueTypes.RealType();
 	public static final ValueType COMPLEX = new ValueTypes.ComplexType();
-	public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of(), true);
-	public static final ValueType NULL_POINTER = new ValueTypes.PointerType(VOID, true);
+	public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of());
+	public static final ValueType NULL_POINTER = new ValueTypes.PointerType(VOID);
 
 	/* Derived type constructors */
 
@@ -111,8 +111,16 @@ public final class ValueTypes {
 		return type instanceof ValueTypes.FunctionType;
 	}
 
+	public static boolean isNullFunction(ValueType type) {
+		return type == NULL_FUNCTION;
+	}
+
 	public static boolean isPointer(ValueType type) {
 		return type instanceof ValueTypes.PointerType;
+	}
+
+	public static boolean isNullPointer(ValueType type) {
+		return type == NULL_POINTER;
 	}
 
 	/* Type converter utilities */
@@ -273,19 +281,11 @@ public final class ValueTypes {
 	public static final class FunctionType implements ValueType {
 		private ValueType returnType;
 		private List<ValueType> argumentTypes;
-		private boolean nullFunction;
 
 		private FunctionType(ValueType returnType,
 							 List<ValueType> argumentTypes) {
 			this.returnType = returnType;
 			this.argumentTypes = argumentTypes;
-		}
-
-		private FunctionType(ValueType returnType,
-							 List<ValueType> argumentTypes, boolean nullFunction) {
-			this.returnType = returnType;
-			this.argumentTypes = argumentTypes;
-			this.nullFunction = nullFunction;
 		}
 
 		public ValueType getReturnType() {
@@ -296,19 +296,17 @@ public final class ValueTypes {
 			return argumentTypes;
 		}
 
-		public boolean isNullFunction() {
-			return nullFunction;
-		}
-
 		@Override
 		public int compareTo(ValueType type) {
+			if (this == type)
+				return 0;
 			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type))
 				return 1;
 			if (isFunction(type)) {
 				FunctionType other = (FunctionType) type;
 				// compare null-ness
-				if (nullFunction)
-					return other.nullFunction ? 0 : 1;
+				if (ValueTypes.isNullFunction(this))
+					return 1;
 
 				// compare return types
 				int result = returnType.compareTo(other.returnType);
@@ -330,19 +328,9 @@ public final class ValueTypes {
 							return result;
 					}
 				}
-				return 0;
+				throw new RuntimeException("Duplicate instance encountered");
 			}
 			return -1;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			FunctionType that = (FunctionType) o;
-			return nullFunction == that.nullFunction &&
-					returnType.equals(that.returnType) &&
-					argumentTypes.equals(that.argumentTypes);
 		}
 
 		@Override
@@ -352,10 +340,10 @@ public final class ValueTypes {
 				return false;
 			FunctionType that = (FunctionType) other;
 			// everything is assignable from the null function
-			if (that.nullFunction)
+			if (ValueTypes.isNullFunction(that))
 				return true;
 			// the null function is assignable from nothing
-			if (nullFunction)
+			if (ValueTypes.isNullFunction(this))
 				return false;
 			if (!returnType.isAssignableFrom(that.returnType))
 				return false;
@@ -370,13 +358,8 @@ public final class ValueTypes {
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(returnType, argumentTypes, nullFunction);
-		}
-
-		@Override
 		public String name() {
-			if (nullFunction)
+			if (ValueTypes.isNullFunction(this))
 				return "NULL_FUNCTION";
 			return "FUNCTION(" + returnType + ", " + argumentTypes.toString() + ')';
 		}
@@ -389,45 +372,28 @@ public final class ValueTypes {
 
 	public static final class PointerType implements ValueType {
 		private ValueType pointerType;
-		private boolean nullPointer;
 
 		private PointerType(ValueType pointerType) {
 			this.pointerType = pointerType;
-		}
-
-		public PointerType(ValueType pointerType, boolean nullPointer) {
-			this.pointerType = pointerType;
-			this.nullPointer = nullPointer;
 		}
 
 		public ValueType getPointerType() {
 			return pointerType;
 		}
 
-		public boolean isNullPointer() {
-			return nullPointer;
-		}
-
 		@Override
 		public int compareTo(ValueType type) {
+			if (this == type)
+				return 0;
 			if (isVoid(type) || isBool(type) || isInt(type) || isReal(type) || isComplex(type) || isFunction(type))
 				return 1;
 			if (isPointer(type)) {
 				PointerType other = (PointerType) type;
-				if (nullPointer)
-					return other.nullPointer ? 0 : 1;
+				if (ValueTypes.isNullPointer(this))
+					return 1;
 				return pointerType.compareTo(other.pointerType);
 			}
 			return -1;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			PointerType that = (PointerType) o;
-			return nullPointer == that.nullPointer &&
-					pointerType.equals(that.pointerType);
 		}
 
 		@Override
@@ -438,22 +404,17 @@ public final class ValueTypes {
 				return false;
 			PointerType that = (PointerType) other;
 			// everything is assignable from the null pointer
-			if (that.nullPointer)
+			if (ValueTypes.isNullPointer(that))
 				return true;
 			// the null pointer is assignable from nothing
-			if (nullPointer)
+			if (ValueTypes.isNullPointer(this))
 				return false;
 			return pointerType.isAssignableFrom(that.pointerType);
 		}
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(pointerType, nullPointer);
-		}
-
-		@Override
 		public String name() {
-			if (nullPointer)
+			if (ValueTypes.isNullPointer(this))
 				return "NULL_POINTER";
 			return "POINTER(" + pointerType + ')';
 		}

@@ -7,8 +7,6 @@ import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
-import java.util.function.Supplier;
-
 public interface IProgramEngine {
 	void initialize(Program program) throws FractalEngineException;
 
