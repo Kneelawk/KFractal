@@ -17,9 +17,9 @@ public class ComplexPower implements IInstruction {
 	private IInstructionInput base;
 	private IInstructionInput exponent;
 
-	public ComplexPower(IInstructionOutput result,
-						IInstructionInput base,
-						IInstructionInput exponent) {
+	private ComplexPower(IInstructionOutput result,
+						 IInstructionInput base,
+						 IInstructionInput exponent) {
 		this.result = result;
 		this.base = base;
 		this.exponent = exponent;
