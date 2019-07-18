@@ -17,3 +17,7 @@ gradle-app.setting
 # Idea project files
 /.idea/
 /*.ipr
+
+# Idea output files
+/out/
+/*/out/
