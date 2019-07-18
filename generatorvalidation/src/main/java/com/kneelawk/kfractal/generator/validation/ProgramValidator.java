@@ -86,10 +86,6 @@ public class ProgramValidator {
                     throw new IllegalVariableAttributeException("Illegal variable attribute: PREALLOCATED");
                 }
             }
-
-            if (attributes.containsAll(ImmutableSet.of(IAttribute.CONSTANT, IAttribute.PREALLOCATED))) {
-                throw new IllegalVariableAttributeException("Redundant variable attributes: CONSTANT and PREALLOCATED");
-            }
         }
     }
 

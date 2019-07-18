@@ -10,11 +10,6 @@ class AttributePrinter implements IAttributeVisitor {
     }
 
     @Override
-    public void visitConstant() {
-        builder.append("Constant");
-    }
-
-    @Override
     public void visitPreallocated() {
         builder.append("Preallocated");
     }

@@ -29,10 +29,7 @@ class ValidatingInstructionOutputVisitor implements IInstructionOutputVisitor<Va
         }
 
         // check for illegal output variable attributes (constant, or preallocated)
-        if (valueInfo.getVariableAttributes().contains(IAttribute.CONSTANT)) {
-            throw new IncompatibleVariableAttributeException(
-                    "Variable: '" + referenceName + "' has illegal output attribute CONSTANT");
-        } else if (valueInfo.getVariableAttributes().contains(IAttribute.PREALLOCATED)) {
+        if (valueInfo.getVariableAttributes().contains(IAttribute.PREALLOCATED)) {
             throw new IncompatibleVariableAttributeException(
                     "Variable: '" + referenceName + "' has illegal output attribute PREALLOCATED");
         }
