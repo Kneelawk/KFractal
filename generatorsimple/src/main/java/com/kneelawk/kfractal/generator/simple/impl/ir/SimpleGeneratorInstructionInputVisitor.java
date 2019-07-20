@@ -1,5 +1,7 @@
 package com.kneelawk.kfractal.generator.simple.impl.ir;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
@@ -51,13 +53,12 @@ public class SimpleGeneratorInstructionInputVisitor implements IInstructionInput
     public IEngineValue visitFunctionContextConstant(FunctionContextConstant contextConstant)
             throws FractalIRException {
         List<IInstructionInput> contextVariables = contextConstant.getContextVariables();
-        int contextVariablesCount = contextVariables.size();
-        IEngineValue[] values = new IEngineValue[contextVariablesCount];
-        for (int i = 0; i < contextVariablesCount; i++) {
-            values[i] = contextVariables.get(i).accept(this);
+        ImmutableList.Builder<IEngineValue> valueBuilder = ImmutableList.builder();
+        for (IInstructionInput input : contextVariables) {
+            valueBuilder.add(input.accept(this));
         }
         try {
-            return engine.getFunction(contextConstant.getFunctionName(), values);
+            return engine.getFunction(contextConstant.getFunctionName(), valueBuilder.build());
         } catch (FractalEngineException e) {
             throw new FractalIRException("FractalEngineException", e);
         }

@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.simple;
 
+import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
 import com.kneelawk.kfractal.generator.api.engine.value.*;
@@ -43,10 +44,10 @@ class SimpleGeneratorTests {
         IEngineValueFactory valueFactory = engine.getValueFactory();
 
         // get the function
-        IFunctionValue f = engine.getFunction("f", new IEngineValue[0]);
+        IFunctionValue f = engine.getFunction("f", ImmutableList.of());
 
         // invoke the function
-        IEngineValue result = f.invoke(new IEngineValue[]{ valueFactory.newComplex(new Complex(1, 1)) });
+        IEngineValue result = f.invoke(ImmutableList.of(valueFactory.newComplex(new Complex(1, 1))));
 
         // test the results
         assertTrue(result instanceof IComplexValue, "Result should be a complex");
@@ -129,11 +130,11 @@ class SimpleGeneratorTests {
         IEngineValueFactory valueFactory = engine.getValueFactory();
 
         // get the function
-        IFunctionValue f = engine.getFunction("f", new IEngineValue[0]);
+        IFunctionValue f = engine.getFunction("f", ImmutableList.of());
 
         // invoke the function
-        IEngineValue result = f.invoke(new IEngineValue[]{ valueFactory.newComplex(new Complex(0, 0)),
-                valueFactory.newComplex(new Complex(0.7288, -0.532)) });
+        IEngineValue result = f.invoke(ImmutableList.of(valueFactory.newComplex(new Complex(0, 0)),
+                valueFactory.newComplex(new Complex(0.7288, -0.532))));
 
         // test the results
         assertTrue(result instanceof IIntValue, "Result should be an int");

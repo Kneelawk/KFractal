@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.simple.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
@@ -95,36 +96,36 @@ public class SimpleProgramEngine implements IProgramEngine {
     }
 
     @Override
-    public IFunctionValue getFunction(String name, IEngineValue[] contextValues) throws FractalEngineException {
+    public IFunctionValue getFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException {
         if (program.getFunctions().containsKey(name)) {
-            return new SimpleFunctionValue(this, name, contextValues);
+            return new SimpleFunctionValue(this, name, ImmutableList.copyOf(contextValues));
         } else {
             throw new FractalEngineException("Unable to find function: " + name);
         }
     }
 
-    IEngineValue invokeFunction(String name, IEngineValue[] contextVariables, IEngineValue[] arguments)
+    IEngineValue invokeFunction(String name, List<IEngineValue> contextVariables, List<IEngineValue> arguments)
             throws FractalEngineException {
         FunctionDefinition definition = program.getFunctions().get(name);
         List<VariableDeclaration> contextVariableList = definition.getContextVariableList();
         List<VariableDeclaration> argumentList = definition.getArgumentList();
 
         // check arguments
-        if (contextVariables.length != contextVariableList.size())
+        if (contextVariables.size() != contextVariableList.size())
             throw new FractalEngineException("Incompatible number of context variables");
-        if (arguments.length != argumentList.size())
+        if (arguments.size() != argumentList.size())
             throw new FractalEngineException("Incompatible number of arguments");
 
         // setup scope
         ImmutableMap.Builder<String, ValueContainer> functionScope = ImmutableMap.builder();
         functionScope.putAll(globalScope);
-        for (int i = 0; i < contextVariables.length; i++) {
+        for (int i = 0; i < contextVariables.size(); i++) {
             functionScope.put(contextVariableList.get(i).getName(),
-                    new ValueContainer(contextVariableList.get(i).getType(), contextVariables[i]));
+                    new ValueContainer(contextVariableList.get(i).getType(), contextVariables.get(i)));
         }
-        for (int i = 0; i < arguments.length; i++) {
+        for (int i = 0; i < arguments.size(); i++) {
             functionScope.put(argumentList.get(i).getName(),
-                    new ValueContainer(argumentList.get(i).getType(), arguments[i]));
+                    new ValueContainer(argumentList.get(i).getType(), arguments.get(i)));
         }
         addVariablesToScope(functionScope, definition.getLocalVariables().values());
 

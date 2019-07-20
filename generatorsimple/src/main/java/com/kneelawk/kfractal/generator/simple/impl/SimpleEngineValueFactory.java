@@ -4,6 +4,8 @@ import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.value.*;
 import org.apache.commons.math3.complex.Complex;
 
+import java.util.List;
+
 /**
  * Created by Kneelawk on 7/18/19.
  */
@@ -35,7 +37,7 @@ public class SimpleEngineValueFactory implements IEngineValueFactory {
     }
 
     @Override
-    public IFunctionValue newFunction(String name, IEngineValue[] contextValues) throws FractalEngineException {
+    public IFunctionValue newFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException {
         return engine.getFunction(name, contextValues);
     }
 

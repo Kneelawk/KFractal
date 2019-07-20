@@ -6,6 +6,8 @@ import com.kneelawk.kfractal.generator.api.engine.value.IFunctionValue;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
+import java.util.List;
+
 /**
  * Created by Kneelawk on 7/18/19.
  */
@@ -21,7 +23,7 @@ public class SimpleNullFunctionValue implements IFunctionValue {
     }
 
     @Override
-    public IEngineValue invoke(IEngineValue[] arguments) throws FractalEngineException {
+    public IEngineValue invoke(List<IEngineValue> arguments) throws FractalEngineException {
         throw new FractalEngineException("The null function cannot be invoked");
     }
 

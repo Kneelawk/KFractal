@@ -7,6 +7,7 @@ import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -15,10 +16,10 @@ import java.util.Objects;
 public class SimpleFunctionValue implements IFunctionValue {
     private final SimpleProgramEngine engine;
     private final String name;
-    private final IEngineValue[] contextVariables;
+    private final List<IEngineValue> contextVariables;
 
     public SimpleFunctionValue(SimpleProgramEngine engine, String name,
-                               IEngineValue[] contextVariables) {
+                               List<IEngineValue> contextVariables) {
         this.engine = engine;
         this.name = name;
         this.contextVariables = contextVariables;
@@ -30,7 +31,7 @@ public class SimpleFunctionValue implements IFunctionValue {
     }
 
     @Override
-    public IEngineValue invoke(IEngineValue[] arguments) throws FractalEngineException {
+    public IEngineValue invoke(List<IEngineValue> arguments) throws FractalEngineException {
         return engine.invokeFunction(name, contextVariables, arguments);
     }
 
@@ -45,13 +46,11 @@ public class SimpleFunctionValue implements IFunctionValue {
         if (o == null || getClass() != o.getClass()) return false;
         SimpleFunctionValue that = (SimpleFunctionValue) o;
         return name.equals(that.name) &&
-                Arrays.equals(contextVariables, that.contextVariables);
+                contextVariables.equals(that.contextVariables);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(name);
-        result = 31 * result + Arrays.hashCode(contextVariables);
-        return result;
+        return Objects.hash(name, contextVariables);
     }
 }
