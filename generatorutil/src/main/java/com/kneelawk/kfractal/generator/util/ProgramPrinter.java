@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.util;
 
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
@@ -127,7 +127,7 @@ public class ProgramPrinter {
             StringUtils.indent(builder, 3);
             try {
                 instruction.accept(printer);
-            } catch (FractalIRException e) {
+            } catch (FractalException e) {
                 e.printStackTrace();
             }
             first = false;

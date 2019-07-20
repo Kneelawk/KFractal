@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.validation;
 
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
@@ -52,7 +53,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     }
 
     @Override
-    public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalIRException {
+    public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalException {
         // find the function
         FunctionDefinition target;
         String functionName = contextConstant.getFunctionName();

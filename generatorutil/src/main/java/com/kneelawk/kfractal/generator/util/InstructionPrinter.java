@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.util;
 
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.StringUtils;
@@ -21,7 +21,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitAssign(Assign assign) throws FractalIRException {
+    public Void visitAssign(Assign assign) throws FractalException {
         builder.append("Assign(");
         assign.getDest().accept(outputPrinter);
         builder.append(", ");
@@ -31,7 +31,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitReturn(Return aReturn) throws FractalIRException {
+    public Void visitReturn(Return aReturn) throws FractalException {
         builder.append("Return(");
         aReturn.getReturnValue().accept(inputPrinter);
         builder.append(")");
@@ -39,7 +39,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitBoolNot(BoolNot boolNot) throws FractalIRException {
+    public Void visitBoolNot(BoolNot boolNot) throws FractalException {
         builder.append("BoolNot(");
         boolNot.getOutput().accept(outputPrinter);
         builder.append(", ");
@@ -49,7 +49,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitBoolAnd(BoolAnd boolAnd) throws FractalIRException {
+    public Void visitBoolAnd(BoolAnd boolAnd) throws FractalException {
         builder.append("BoolAnd(");
         boolAnd.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -61,7 +61,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitBoolOr(BoolOr boolOr) throws FractalIRException {
+    public Void visitBoolOr(BoolOr boolOr) throws FractalException {
         builder.append("BoolOr(");
         boolOr.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -73,7 +73,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalIRException {
+    public Void visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalException {
         builder.append("BoolIsEqual(");
         boolIsEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -85,7 +85,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalIRException {
+    public Void visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalException {
         builder.append("BoolIsNotEqual(");
         boolIsNotEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -97,7 +97,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntAdd(IntAdd intAdd) throws FractalIRException {
+    public Void visitIntAdd(IntAdd intAdd) throws FractalException {
         builder.append("IntAdd(");
         intAdd.getSum().accept(outputPrinter);
         builder.append(", ");
@@ -109,7 +109,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntSubtract(IntSubtract intSubtract) throws FractalIRException {
+    public Void visitIntSubtract(IntSubtract intSubtract) throws FractalException {
         builder.append("IntSubtract(");
         intSubtract.getDifference().accept(outputPrinter);
         builder.append(", ");
@@ -121,7 +121,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntMultiply(IntMultiply intMultiply) throws FractalIRException {
+    public Void visitIntMultiply(IntMultiply intMultiply) throws FractalException {
         builder.append("IntMultiply(");
         intMultiply.getProduct().accept(outputPrinter);
         builder.append(", ");
@@ -133,7 +133,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntDivide(IntDivide intDivide) throws FractalIRException {
+    public Void visitIntDivide(IntDivide intDivide) throws FractalException {
         builder.append("IntDivide(");
         intDivide.getQuotient().accept(outputPrinter);
         builder.append(", ");
@@ -145,7 +145,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntModulo(IntModulo intModulo) throws FractalIRException {
+    public Void visitIntModulo(IntModulo intModulo) throws FractalException {
         builder.append("IntModulo(");
         intModulo.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -157,7 +157,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntPower(IntPower intPower) throws FractalIRException {
+    public Void visitIntPower(IntPower intPower) throws FractalException {
         builder.append("IntPower(");
         intPower.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -169,7 +169,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntNot(IntNot intNot) throws FractalIRException {
+    public Void visitIntNot(IntNot intNot) throws FractalException {
         builder.append("IntNot(");
         intNot.getOutput().accept(outputPrinter);
         builder.append(", ");
@@ -179,7 +179,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntAnd(IntAnd intAnd) throws FractalIRException {
+    public Void visitIntAnd(IntAnd intAnd) throws FractalException {
         builder.append("IntAnd(");
         intAnd.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -191,7 +191,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntOr(IntOr intOr) throws FractalIRException {
+    public Void visitIntOr(IntOr intOr) throws FractalException {
         builder.append("IntOr(");
         intOr.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -203,7 +203,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntXor(IntXor intXor) throws FractalIRException {
+    public Void visitIntXor(IntXor intXor) throws FractalException {
         builder.append("IntXor(");
         intXor.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -215,7 +215,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntIsEqual(IntIsEqual intIsEqual) throws FractalIRException {
+    public Void visitIntIsEqual(IntIsEqual intIsEqual) throws FractalException {
         builder.append("IntIsEqual(");
         intIsEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -227,7 +227,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalIRException {
+    public Void visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalException {
         builder.append("IntIsNotEqual(");
         intIsNotEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -239,7 +239,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntIsGreater(IntIsGreater intIsGreater) throws FractalIRException {
+    public Void visitIntIsGreater(IntIsGreater intIsGreater) throws FractalException {
         builder.append("IntIsGreater(");
         intIsGreater.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -251,7 +251,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalIRException {
+    public Void visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalException {
         builder.append("IntIsGreaterOrEqual(");
         intIsGreaterOrEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -263,7 +263,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealAdd(RealAdd realAdd) throws FractalIRException {
+    public Void visitRealAdd(RealAdd realAdd) throws FractalException {
         builder.append("RealAdd(");
         realAdd.getSum().accept(outputPrinter);
         builder.append(", ");
@@ -275,7 +275,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealSubtract(RealSubtract realSubtract) throws FractalIRException {
+    public Void visitRealSubtract(RealSubtract realSubtract) throws FractalException {
         builder.append("RealSubtract(");
         realSubtract.getDifference().accept(outputPrinter);
         builder.append(", ");
@@ -287,7 +287,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealMultiply(RealMultiply realMultiply) throws FractalIRException {
+    public Void visitRealMultiply(RealMultiply realMultiply) throws FractalException {
         builder.append("RealMultiply(");
         realMultiply.getProduct().accept(outputPrinter);
         builder.append(", ");
@@ -299,7 +299,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealDivide(RealDivide realDivide) throws FractalIRException {
+    public Void visitRealDivide(RealDivide realDivide) throws FractalException {
         builder.append("RealDivide(");
         realDivide.getQuotient().accept(outputPrinter);
         builder.append(", ");
@@ -311,7 +311,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealPower(RealPower realPower) throws FractalIRException {
+    public Void visitRealPower(RealPower realPower) throws FractalException {
         builder.append("RealPower(");
         realPower.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -323,7 +323,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealIsEqual(RealIsEqual realIsEqual) throws FractalIRException {
+    public Void visitRealIsEqual(RealIsEqual realIsEqual) throws FractalException {
         builder.append("RealIsEqual(");
         realIsEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -335,7 +335,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalIRException {
+    public Void visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalException {
         builder.append("RealIsNotEqual(");
         realIsNotEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -347,7 +347,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealIsGreater(RealIsGreater realIsGreater) throws FractalIRException {
+    public Void visitRealIsGreater(RealIsGreater realIsGreater) throws FractalException {
         builder.append("RealIsGreater(");
         realIsGreater.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -359,7 +359,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalIRException {
+    public Void visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalException {
         builder.append("RealIsGreaterOrEqual(");
         realIsGreaterOrEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -371,7 +371,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalIRException {
+    public Void visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalException {
         builder.append("RealComposeComplex(");
         realComposeComplex.getComplex().accept(outputPrinter);
         builder.append(", ");
@@ -383,7 +383,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexAdd(ComplexAdd complexAdd) throws FractalIRException {
+    public Void visitComplexAdd(ComplexAdd complexAdd) throws FractalException {
         builder.append("ComplexAdd(");
         complexAdd.getSum().accept(outputPrinter);
         builder.append(", ");
@@ -395,7 +395,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalIRException {
+    public Void visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalException {
         builder.append("ComplexSubtract(");
         complexSubtract.getDifference().accept(outputPrinter);
         builder.append(", ");
@@ -407,7 +407,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalIRException {
+    public Void visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalException {
         builder.append("ComplexMultiply(");
         complexMultiply.getProduct().accept(outputPrinter);
         builder.append(", ");
@@ -419,7 +419,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexDivide(ComplexDivide complexDivide) throws FractalIRException {
+    public Void visitComplexDivide(ComplexDivide complexDivide) throws FractalException {
         builder.append("ComplexDivide(");
         complexDivide.getQuotient().accept(outputPrinter);
         builder.append(", ");
@@ -431,7 +431,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexPower(ComplexPower complexPower) throws FractalIRException {
+    public Void visitComplexPower(ComplexPower complexPower) throws FractalException {
         builder.append("ComplexPower(");
         complexPower.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -443,7 +443,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalIRException {
+    public Void visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalException {
         builder.append("ComplexGetReal(");
         complexGetReal.getReal().accept(outputPrinter);
         builder.append(", ");
@@ -453,7 +453,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalIRException {
+    public Void visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalException {
         builder.append("ComplexGetImaginary(");
         complexGetImaginary.getImaginary().accept(outputPrinter);
         builder.append(", ");
@@ -463,7 +463,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitComplexModulo(ComplexModulo complexModulo) throws FractalIRException {
+    public Void visitComplexModulo(ComplexModulo complexModulo) throws FractalException {
         builder.append("ComplexModulo(");
         complexModulo.getModulus().accept(outputPrinter);
         builder.append(", ");
@@ -473,7 +473,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitFunctionCall(FunctionCall functionCall) throws FractalIRException {
+    public Void visitFunctionCall(FunctionCall functionCall) throws FractalException {
         builder.append("FunctionCall(");
         functionCall.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -491,7 +491,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalIRException {
+    public Void visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalException {
         builder.append("FunctionIsEqual(");
         functionIsEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -503,7 +503,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalIRException {
+    public Void visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalException {
         builder.append("FunctionIsNotEqual(");
         functionIsNotEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -515,7 +515,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException {
+    public Void visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalException {
         builder.append("PointerAllocate(");
         pointerAllocate.getPointer().accept(outputPrinter);
         builder.append(")");
@@ -523,7 +523,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerFree(PointerFree pointerFree) throws FractalIRException {
+    public Void visitPointerFree(PointerFree pointerFree) throws FractalException {
         builder.append("PointerFree(");
         pointerFree.getPointer().accept(inputPrinter);
         builder.append(")");
@@ -531,7 +531,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerGet(PointerGet pointerGet) throws FractalIRException {
+    public Void visitPointerGet(PointerGet pointerGet) throws FractalException {
         builder.append("PointerGet(");
         pointerGet.getData().accept(outputPrinter);
         builder.append(", ");
@@ -541,7 +541,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerSet(PointerSet pointerSet) throws FractalIRException {
+    public Void visitPointerSet(PointerSet pointerSet) throws FractalException {
         builder.append("PointerSet(");
         pointerSet.getPointer().accept(inputPrinter);
         builder.append(", ");
@@ -551,7 +551,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException {
+    public Void visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException {
         builder.append("PointerIsEqual(");
         pointerIsEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -563,7 +563,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException {
+    public Void visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalException {
         builder.append("PointerIsNotEqual(");
         pointerIsNotEqual.getResult().accept(outputPrinter);
         builder.append(", ");
@@ -575,7 +575,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitIf(If anIf) throws FractalIRException {
+    public Void visitIf(If anIf) throws FractalException {
         InstructionPrinter internalPrinter = new InstructionPrinter(builder, indent + 1);
 
         builder.append("If(");
@@ -621,7 +621,7 @@ class InstructionPrinter implements IInstructionVisitor<Void> {
     }
 
     @Override
-    public Void visitWhile(While aWhile) throws FractalIRException {
+    public Void visitWhile(While aWhile) throws FractalException {
         InstructionPrinter internalPrinter = new InstructionPrinter(builder, indent + 1);
 
         builder.append("While(");
