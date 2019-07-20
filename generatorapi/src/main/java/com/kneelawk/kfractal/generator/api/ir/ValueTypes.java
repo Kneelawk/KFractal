@@ -35,17 +35,17 @@ public final class ValueTypes {
 
     /* Base type constants */
 
-    public static final ValueType VOID = new ValueTypes.VoidType();
-    public static final ValueType BOOL = new ValueTypes.BoolType();
-    public static final ValueType INT = new ValueTypes.IntType();
-    public static final ValueType REAL = new ValueTypes.RealType();
-    public static final ValueType COMPLEX = new ValueTypes.ComplexType();
-    public static final ValueType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of());
-    public static final ValueType NULL_POINTER = new ValueTypes.PointerType(VOID);
+    public static final VoidType VOID = new ValueTypes.VoidType();
+    public static final BoolType BOOL = new ValueTypes.BoolType();
+    public static final IntType INT = new ValueTypes.IntType();
+    public static final RealType REAL = new ValueTypes.RealType();
+    public static final ComplexType COMPLEX = new ValueTypes.ComplexType();
+    public static final FunctionType NULL_FUNCTION = new ValueTypes.FunctionType(VOID, ImmutableList.of());
+    public static final PointerType NULL_POINTER = new ValueTypes.PointerType(VOID);
 
     /* Derived type constructors */
 
-    public static ValueType FUNCTION(ValueType returnType, List<ValueType> argumentTypes) {
+    public static FunctionType FUNCTION(ValueType returnType, List<ValueType> argumentTypes) {
         if (returnType == null)
             throw new NullPointerException();
         if (argumentTypes.contains(VOID))
@@ -58,7 +58,7 @@ public final class ValueTypes {
         }
     }
 
-    public static ValueType FUNCTION(ValueType returnType, ValueType... argumentTypes) {
+    public static FunctionType FUNCTION(ValueType returnType, ValueType... argumentTypes) {
         if (returnType == null)
             throw new NullPointerException();
         if (ArrayUtils.contains(argumentTypes, VOID))
@@ -71,7 +71,7 @@ public final class ValueTypes {
         }
     }
 
-    public static ValueType POINTER(ValueType pointerType) {
+    public static PointerType POINTER(ValueType pointerType) {
         if (pointerType == null)
             throw new NullPointerException();
         if (isVoid(pointerType))
