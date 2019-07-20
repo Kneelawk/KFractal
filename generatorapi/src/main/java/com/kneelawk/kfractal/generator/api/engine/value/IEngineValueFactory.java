@@ -14,6 +14,8 @@ public interface IEngineValueFactory {
 
     IFunctionValue newFunction(String name, IEngineValue[] contextValues) throws FractalEngineException;
 
+    IFunctionValue nullFunction() throws FractalEngineException;
+
     IPointerValue newPointer(IEngineValue referencedData) throws FractalEngineException;
 
     IPointerValue nullPointer() throws FractalEngineException;
