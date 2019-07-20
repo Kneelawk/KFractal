@@ -45,7 +45,7 @@ public class InstructionValidationFunctionTests {
 
     private static Stream<Pair<ValueType, ImmutableList<ValueType>>> incompatibleFunctionTypeAndArguments() {
         return shortVariableValueTypes()
-                .flatMap(ret -> argumentTypes().map(args -> ValueTypes.FUNCTION(ret, args)))
+                .flatMap(ret -> argumentTypes().map(args -> (ValueType) ValueTypes.FUNCTION(ret, args)))
                 .flatMap(f -> argumentTypes().map(args -> Pair.of(f, args))).filter(p -> {
                     List<ValueType> argumentTypes = ValueTypes.toFunction(p.getLeft()).getArgumentTypes();
                     if (p.getRight().size() != argumentTypes.size())
