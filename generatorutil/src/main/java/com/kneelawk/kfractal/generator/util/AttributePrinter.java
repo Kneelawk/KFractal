@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.util;
 
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttributeVisitor;
 
-class AttributePrinter implements IAttributeVisitor {
+class AttributePrinter implements IAttributeVisitor<Void> {
     private final StringBuilder builder;
 
     AttributePrinter(StringBuilder builder) {
@@ -10,7 +10,8 @@ class AttributePrinter implements IAttributeVisitor {
     }
 
     @Override
-    public void visitPreallocated() {
+    public Void visitPreallocated() {
         builder.append("Preallocated");
+        return null;
     }
 }

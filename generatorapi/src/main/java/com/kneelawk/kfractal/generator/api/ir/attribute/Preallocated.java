@@ -1,5 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.attribute;
 
+import com.kneelawk.kfractal.generator.api.FractalException;
+
 /**
  * Preallocated - Variables declared with the preallocated attribute must be pointer type and cannot be reassigned. When
  * a pointer is preallocated, it means that it starts as a valid memory handle to memory who's lifetime is the same as
@@ -12,7 +14,7 @@ public class Preallocated implements IAttribute {
     }
 
     @Override
-    public void accept(IAttributeVisitor visitor) {
-        visitor.visitPreallocated();
+    public <R> R accept(IAttributeVisitor<R> visitor) throws FractalException {
+        return visitor.visitPreallocated();
     }
 }
