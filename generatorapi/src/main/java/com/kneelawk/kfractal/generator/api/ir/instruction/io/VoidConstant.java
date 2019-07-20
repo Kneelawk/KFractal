@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 
 public class VoidConstant implements IInstructionInput, IInstructionOutput {
     public static final VoidConstant INSTANCE = new VoidConstant();
@@ -9,12 +9,12 @@ public class VoidConstant implements IInstructionInput, IInstructionOutput {
     }
 
     @Override
-    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException {
+    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
         return visitor.visitVoid();
     }
 
     @Override
-    public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalIRException {
+    public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalException {
         return visitor.visitVoid();
     }
 

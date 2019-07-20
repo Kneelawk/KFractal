@@ -1,10 +1,10 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 
 /**
  * Created by Kneelawk on 5/26/19.
  */
 public interface IInstructionInput {
-    <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalIRException;
+    <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException;
 }

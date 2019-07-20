@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -41,7 +41,7 @@ public class If implements IInstruction {
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalIRException {
+    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
         return visitor.visitIf(this);
     }
 
