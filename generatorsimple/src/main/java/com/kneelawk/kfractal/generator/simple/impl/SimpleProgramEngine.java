@@ -2,6 +2,7 @@ package com.kneelawk.kfractal.generator.simple.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
@@ -105,7 +106,7 @@ public class SimpleProgramEngine implements IProgramEngine {
     }
 
     IEngineValue invokeFunction(String name, List<IEngineValue> contextVariables, List<IEngineValue> arguments)
-            throws FractalEngineException {
+            throws FractalException {
         FunctionDefinition definition = program.getFunctions().get(name);
         List<VariableDeclaration> contextVariableList = definition.getContextVariableList();
         List<VariableDeclaration> argumentList = definition.getArgumentList();
@@ -133,16 +134,11 @@ public class SimpleProgramEngine implements IProgramEngine {
         SimpleGeneratorInstructionVisitor visitor = new SimpleGeneratorInstructionVisitor(this, functionScope.build());
 
         // visit the instructions
-        try {
-            for (IInstruction instruction : definition.getBody()) {
-                boolean ret = instruction.accept(visitor);
-                if (ret) {
-                    return visitor.getReturnValue();
-                }
+        for (IInstruction instruction : definition.getBody()) {
+            boolean ret = instruction.accept(visitor);
+            if (ret) {
+                return visitor.getReturnValue();
             }
-        } catch (FractalIRException e) {
-            // rethrow this exception as something that's compatible with this interface
-            throw new FractalEngineException("FractalIRException", e);
         }
 
         throw new FractalEngineException("Function failed to return a value");

@@ -1,12 +1,12 @@
 package com.kneelawk.kfractal.generator.simple.impl;
 
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 import com.kneelawk.kfractal.generator.api.engine.value.IFunctionValue;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ public class SimpleFunctionValue implements IFunctionValue {
     }
 
     @Override
-    public IEngineValue invoke(List<IEngineValue> arguments) throws FractalEngineException {
+    public IEngineValue invoke(List<IEngineValue> arguments) throws FractalException {
         return engine.invokeFunction(name, contextVariables, arguments);
     }
 

@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.simple.impl;
 
-import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 import com.kneelawk.kfractal.generator.api.engine.value.IPointerValue;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
@@ -27,12 +27,12 @@ public class SimplePointerValue implements IPointerValue {
     }
 
     @Override
-    public ValueType getDataType() throws FractalEngineException {
+    public ValueType getDataType() throws FractalException {
         return referencedData.getType();
     }
 
     @Override
-    public ValueType getType() throws FractalEngineException {
+    public ValueType getType() throws FractalException {
         return ValueTypes.POINTER(referencedData.getType());
     }
 }

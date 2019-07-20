@@ -1,7 +1,7 @@
 package com.kneelawk.kfractal.generator.simple;
 
 import com.google.common.collect.ImmutableList;
-import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
 import com.kneelawk.kfractal.generator.api.engine.value.*;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class SimpleGeneratorTests {
     @Test
-    void testSimpleArithmetic() throws FractalEngineException {
+    void testSimpleArithmetic() throws FractalException {
         // build the program
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
@@ -55,7 +55,7 @@ class SimpleGeneratorTests {
     }
 
     @Test
-    void testComplicatedArithmetic() throws FractalEngineException {
+    void testComplicatedArithmetic() throws FractalException {
         // build the program
         /*
          * If this program were in c++, it would essentially be:
