@@ -6,13 +6,13 @@ dependencies {
 compileTestJava {
     moduleOptions {
         addModules = ['com.kneelawk.kfractal.generator.util']
-        addReads = ['com.kneelawk.kfractal.generator.validation': 'com.kneelawk.kfractal.generator.util']
+        addReads = ['com.kneelawk.kfractal.generator.simple': 'com.kneelawk.kfractal.generator.util']
     }
 }
 
 test {
     moduleOptions {
         addModules = ['com.kneelawk.kfractal.generator.util']
-        addReads = ['com.kneelawk.kfractal.generator.validation': 'com.kneelawk.kfractal.generator.util']
+        addReads = ['com.kneelawk.kfractal.generator.simple': 'com.kneelawk.kfractal.generator.util']
     }
 }
