@@ -3,6 +3,8 @@ package com.kneelawk.kfractal.generator.api.engine.value;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import org.apache.commons.math3.complex.Complex;
 
+import java.util.List;
+
 public interface IEngineValueFactory {
     IBoolValue newBool(boolean b) throws FractalEngineException;
 
@@ -12,7 +14,7 @@ public interface IEngineValueFactory {
 
     IComplexValue newComplex(Complex complex) throws FractalEngineException;
 
-    IFunctionValue newFunction(String name, IEngineValue[] contextValues) throws FractalEngineException;
+    IFunctionValue newFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException;
 
     IFunctionValue nullFunction() throws FractalEngineException;
 

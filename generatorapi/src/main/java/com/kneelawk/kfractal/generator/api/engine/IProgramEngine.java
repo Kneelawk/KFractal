@@ -7,6 +7,8 @@ import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
+import java.util.List;
+
 public interface IProgramEngine {
     void initialize(Program program) throws FractalEngineException;
 
@@ -20,5 +22,5 @@ public interface IProgramEngine {
 
     ValueTypes.FunctionType getFunctionSignature(String name) throws FractalEngineException;
 
-    IFunctionValue getFunction(String name, IEngineValue[] contextValues) throws FractalEngineException;
+    IFunctionValue getFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException;
 }
