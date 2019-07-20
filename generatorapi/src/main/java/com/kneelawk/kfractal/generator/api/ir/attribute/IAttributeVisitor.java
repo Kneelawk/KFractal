@@ -1,5 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.attribute;
 
-public interface IAttributeVisitor {
-    void visitPreallocated();
+import com.kneelawk.kfractal.generator.api.FractalException;
+
+public interface IAttributeVisitor<R> {
+    R visitPreallocated() throws FractalException;
 }
