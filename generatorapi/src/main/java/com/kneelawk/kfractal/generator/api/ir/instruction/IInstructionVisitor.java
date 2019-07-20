@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.FractalException;
 
 /**
  * This interface is implemented by anything that wants to be able to traverse a Fractal IR instruction tree.
@@ -8,117 +8,117 @@ import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 public interface IInstructionVisitor<R> {
     /* General Purpose Operations */
 
-    R visitAssign(Assign assign) throws FractalIRException;
+    R visitAssign(Assign assign) throws FractalException;
 
-    R visitReturn(Return aReturn) throws FractalIRException;
+    R visitReturn(Return aReturn) throws FractalException;
 
     /* Bool Operations */
 
-    R visitBoolNot(BoolNot boolNot) throws FractalIRException;
+    R visitBoolNot(BoolNot boolNot) throws FractalException;
 
-    R visitBoolAnd(BoolAnd boolAnd) throws FractalIRException;
+    R visitBoolAnd(BoolAnd boolAnd) throws FractalException;
 
-    R visitBoolOr(BoolOr boolOr) throws FractalIRException;
+    R visitBoolOr(BoolOr boolOr) throws FractalException;
 
-    R visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalIRException;
+    R visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalException;
 
-    R visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalIRException;
+    R visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalException;
 
     /* Int Operations */
 
-    R visitIntAdd(IntAdd intAdd) throws FractalIRException;
+    R visitIntAdd(IntAdd intAdd) throws FractalException;
 
-    R visitIntSubtract(IntSubtract intSubtract) throws FractalIRException;
+    R visitIntSubtract(IntSubtract intSubtract) throws FractalException;
 
-    R visitIntMultiply(IntMultiply intMultiply) throws FractalIRException;
+    R visitIntMultiply(IntMultiply intMultiply) throws FractalException;
 
-    R visitIntDivide(IntDivide intDivide) throws FractalIRException;
+    R visitIntDivide(IntDivide intDivide) throws FractalException;
 
-    R visitIntModulo(IntModulo intModulo) throws FractalIRException;
+    R visitIntModulo(IntModulo intModulo) throws FractalException;
 
-    R visitIntPower(IntPower intPower) throws FractalIRException;
+    R visitIntPower(IntPower intPower) throws FractalException;
 
-    R visitIntNot(IntNot intNot) throws FractalIRException;
+    R visitIntNot(IntNot intNot) throws FractalException;
 
-    R visitIntAnd(IntAnd intAnd) throws FractalIRException;
+    R visitIntAnd(IntAnd intAnd) throws FractalException;
 
-    R visitIntOr(IntOr intOr) throws FractalIRException;
+    R visitIntOr(IntOr intOr) throws FractalException;
 
-    R visitIntXor(IntXor intXor) throws FractalIRException;
+    R visitIntXor(IntXor intXor) throws FractalException;
 
-    R visitIntIsEqual(IntIsEqual intIsEqual) throws FractalIRException;
+    R visitIntIsEqual(IntIsEqual intIsEqual) throws FractalException;
 
-    R visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalIRException;
+    R visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalException;
 
-    R visitIntIsGreater(IntIsGreater intIsGreater) throws FractalIRException;
+    R visitIntIsGreater(IntIsGreater intIsGreater) throws FractalException;
 
-    R visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalIRException;
+    R visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalException;
 
     /* Real Operations */
 
-    R visitRealAdd(RealAdd realAdd) throws FractalIRException;
+    R visitRealAdd(RealAdd realAdd) throws FractalException;
 
-    R visitRealSubtract(RealSubtract realSubtract) throws FractalIRException;
+    R visitRealSubtract(RealSubtract realSubtract) throws FractalException;
 
-    R visitRealMultiply(RealMultiply realMultiply) throws FractalIRException;
+    R visitRealMultiply(RealMultiply realMultiply) throws FractalException;
 
-    R visitRealDivide(RealDivide realDivide) throws FractalIRException;
+    R visitRealDivide(RealDivide realDivide) throws FractalException;
 
-    R visitRealPower(RealPower realPower) throws FractalIRException;
+    R visitRealPower(RealPower realPower) throws FractalException;
 
-    R visitRealIsEqual(RealIsEqual realIsEqual) throws FractalIRException;
+    R visitRealIsEqual(RealIsEqual realIsEqual) throws FractalException;
 
-    R visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalIRException;
+    R visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalException;
 
-    R visitRealIsGreater(RealIsGreater realIsGreater) throws FractalIRException;
+    R visitRealIsGreater(RealIsGreater realIsGreater) throws FractalException;
 
-    R visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalIRException;
+    R visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalException;
 
-    R visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalIRException;
+    R visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalException;
 
     /* Complex Operations */
 
-    R visitComplexAdd(ComplexAdd complexAdd) throws FractalIRException;
+    R visitComplexAdd(ComplexAdd complexAdd) throws FractalException;
 
-    R visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalIRException;
+    R visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalException;
 
-    R visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalIRException;
+    R visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalException;
 
-    R visitComplexDivide(ComplexDivide complexDivide) throws FractalIRException;
+    R visitComplexDivide(ComplexDivide complexDivide) throws FractalException;
 
-    R visitComplexPower(ComplexPower complexPower) throws FractalIRException;
+    R visitComplexPower(ComplexPower complexPower) throws FractalException;
 
-    R visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalIRException;
+    R visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalException;
 
-    R visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalIRException;
+    R visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalException;
 
-    R visitComplexModulo(ComplexModulo complexModulo) throws FractalIRException;
+    R visitComplexModulo(ComplexModulo complexModulo) throws FractalException;
 
     /* Function Operations */
 
-    R visitFunctionCall(FunctionCall functionCall) throws FractalIRException;
+    R visitFunctionCall(FunctionCall functionCall) throws FractalException;
 
-    R visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalIRException;
+    R visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalException;
 
-    R visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalIRException;
+    R visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalException;
 
     /* Pointer Operations */
 
-    R visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalIRException;
+    R visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalException;
 
-    R visitPointerFree(PointerFree pointerFree) throws FractalIRException;
+    R visitPointerFree(PointerFree pointerFree) throws FractalException;
 
-    R visitPointerGet(PointerGet pointerGet) throws FractalIRException;
+    R visitPointerGet(PointerGet pointerGet) throws FractalException;
 
-    R visitPointerSet(PointerSet pointerSet) throws FractalIRException;
+    R visitPointerSet(PointerSet pointerSet) throws FractalException;
 
-    R visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalIRException;
+    R visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException;
 
-    R visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalIRException;
+    R visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalException;
 
     /* Control-Flow Operations */
 
-    R visitIf(If anIf) throws FractalIRException;
+    R visitIf(If anIf) throws FractalException;
 
-    R visitWhile(While aWhile) throws FractalIRException;
+    R visitWhile(While aWhile) throws FractalException;
 }

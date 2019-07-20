@@ -1,8 +1,8 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ProgramValidator {
-    public static void checkValidity(Program program) throws FractalIRException {
+    public static void checkValidity(Program program) throws FractalException {
         checkVariables(program.getGlobalVariables().values());
         Map<String, ValueInfo> globalVariables = ImmutableMap.copyOf(program.getGlobalVariables().values().stream()
                 .map(v -> new ImmutablePair<>(v.getName(),
