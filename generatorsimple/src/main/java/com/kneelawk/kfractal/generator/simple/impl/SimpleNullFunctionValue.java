@@ -17,7 +17,7 @@ public class SimpleNullFunctionValue implements IFunctionValue {
 
     @Override
     public ValueTypes.FunctionType getSignature() throws FractalEngineException {
-        return ValueTypes.toFunction(ValueTypes.NULL_FUNCTION);
+        return ValueTypes.NULL_FUNCTION;
     }
 
     @Override

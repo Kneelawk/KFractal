@@ -90,8 +90,8 @@ public class SimpleProgramEngine implements IProgramEngine {
     @Override
     public ValueTypes.FunctionType getFunctionSignature(String name) throws FractalEngineException {
         FunctionDefinition definition = program.getFunctions().get(name);
-        return ValueTypes.toFunction(ValueTypes.FUNCTION(definition.getReturnType(),
-                definition.getArgumentList().stream().map(VariableDeclaration::getType).collect(Collectors.toList())));
+        return ValueTypes.FUNCTION(definition.getReturnType(),
+                definition.getArgumentList().stream().map(VariableDeclaration::getType).collect(Collectors.toList()));
     }
 
     @Override
