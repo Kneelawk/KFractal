@@ -157,7 +157,11 @@ public class ProgramPrinter {
             for (IAttribute attribute : declaration.getAttributes()) {
                 if (!first)
                     builder.append(", ");
-                attribute.accept(attributePrinter);
+                try {
+                    attribute.accept(attributePrinter);
+                } catch (FractalException e) {
+                    e.printStackTrace();
+                }
                 first = false;
             }
             builder.append(" ])");
