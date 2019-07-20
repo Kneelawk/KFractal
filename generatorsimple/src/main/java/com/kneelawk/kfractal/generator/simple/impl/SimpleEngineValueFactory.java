@@ -40,6 +40,11 @@ public class SimpleEngineValueFactory implements IEngineValueFactory {
     }
 
     @Override
+    public IFunctionValue nullFunction() throws FractalEngineException {
+        return SimpleNullFunctionValue.INSTANCE;
+    }
+
+    @Override
     public IPointerValue newPointer(IEngineValue referencedData) throws FractalEngineException {
         return new SimplePointerValue(referencedData);
     }
