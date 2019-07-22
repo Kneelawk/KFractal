@@ -1,69 +1,48 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class FunctionDefinition {
-    private String name;
     private ValueType returnType;
-    private Map<String, VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> contextVariableList;
-    private Map<String, VariableDeclaration> arguments;
-    private List<VariableDeclaration> argumentList;
-    private Map<String, VariableDeclaration> localVariables;
+    private List<VariableDeclaration> contextVariables;
+    private List<VariableDeclaration> arguments;
+    private List<VariableDeclaration> localVariables;
     private List<IInstruction> body;
 
-    private FunctionDefinition(String name, ValueType returnType,
-                               Map<String, VariableDeclaration> contextVariables,
-                               List<VariableDeclaration> contextVariableList,
-                               Map<String, VariableDeclaration> arguments,
-                               List<VariableDeclaration> argumentList,
-                               Map<String, VariableDeclaration> localVariables,
+    private FunctionDefinition(ValueType returnType,
+                               List<VariableDeclaration> contextVariables,
+                               List<VariableDeclaration> arguments,
+                               List<VariableDeclaration> localVariables,
                                List<IInstruction> body) {
-        this.name = name;
         this.returnType = returnType;
         this.contextVariables = contextVariables;
-        this.contextVariableList = contextVariableList;
         this.arguments = arguments;
-        this.argumentList = argumentList;
         this.localVariables = localVariables;
         this.body = body;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public ValueType getReturnType() {
         return returnType;
     }
 
-    public Map<String, VariableDeclaration> getContextVariables() {
+    public List<VariableDeclaration> getContextVariables() {
         return contextVariables;
     }
 
-    public List<VariableDeclaration> getContextVariableList() {
-        return contextVariableList;
-    }
-
-    public Map<String, VariableDeclaration> getArguments() {
+    public List<VariableDeclaration> getArguments() {
         return arguments;
     }
 
-    public List<VariableDeclaration> getArgumentList() {
-        return argumentList;
-    }
-
-    public Map<String, VariableDeclaration> getLocalVariables() {
+    public List<VariableDeclaration> getLocalVariables() {
         return localVariables;
     }
 
@@ -74,7 +53,6 @@ public class FunctionDefinition {
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("name", name)
                 .append("returnType", returnType)
                 .append("contextVariables", contextVariables)
                 .append("arguments", arguments)
@@ -84,48 +62,30 @@ public class FunctionDefinition {
     }
 
     public static class Builder {
-        private String name;
         private ValueType returnType;
-        private Map<String, VariableDeclaration> contextVariables = Maps.newLinkedHashMap();
-        private Map<String, VariableDeclaration> arguments = Maps.newLinkedHashMap();
-        private Map<String, VariableDeclaration> localVariables = Maps.newHashMap();
+        private List<VariableDeclaration> contextVariables = Lists.newArrayList();
+        private List<VariableDeclaration> arguments = Lists.newArrayList();
+        private List<VariableDeclaration> localVariables = Lists.newArrayList();
         private List<IInstruction> body = Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(String name,
-                       Iterable<VariableDeclaration> contextVariables,
-                       Iterable<VariableDeclaration> arguments,
-                       Iterable<VariableDeclaration> localVariables,
+        public Builder(ValueType returnType,
+                       Collection<VariableDeclaration> contextVariables,
+                       Collection<VariableDeclaration> arguments,
+                       Collection<VariableDeclaration> localVariables,
                        Collection<IInstruction> body) {
-            this.name = name;
-            for (VariableDeclaration variable : contextVariables) {
-                this.contextVariables.put(variable.getName(), variable);
-            }
-            for (VariableDeclaration argument : arguments) {
-                this.arguments.put(argument.getName(), argument);
-            }
-            for (VariableDeclaration variable : localVariables) {
-                this.localVariables.put(variable.getName(), variable);
-            }
+            this.returnType = returnType;
+            this.contextVariables.addAll(contextVariables);
+            this.arguments.addAll(arguments);
+            this.localVariables.addAll(localVariables);
             this.body.addAll(body);
         }
 
         public FunctionDefinition build() {
-            return new FunctionDefinition(name, returnType, ImmutableMap.copyOf(contextVariables),
-                    ImmutableList.copyOf(contextVariables.values()), ImmutableMap.copyOf(arguments),
-                    ImmutableList.copyOf(arguments.values()), ImmutableMap.copyOf(localVariables),
-                    ImmutableList.copyOf(body));
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
+            return new FunctionDefinition(returnType, ImmutableList.copyOf(contextVariables),
+                    ImmutableList.copyOf(arguments), ImmutableList.copyOf(localVariables), ImmutableList.copyOf(body));
         }
 
         public ValueType getReturnType() {
@@ -137,75 +97,105 @@ public class FunctionDefinition {
             return this;
         }
 
-        public Map<String, VariableDeclaration> getContextVariables() {
+        public List<VariableDeclaration> getContextVariables() {
             return contextVariables;
         }
 
-        public Builder setContextVariables(Iterable<VariableDeclaration> contextVariables) {
+        public VariableReference getNextContextVariableReference() {
+            return VariableReference.create(Scope.CONTEXT, contextVariables.size());
+        }
+
+        public int getNextContextVariableIndex() {
+            return contextVariables.size();
+        }
+
+        public Builder setContextVariables(
+                Collection<VariableDeclaration> contextVariables) {
             this.contextVariables.clear();
-            for (VariableDeclaration variable : contextVariables) {
-                this.contextVariables.put(variable.getName(), variable);
-            }
+            this.contextVariables.addAll(contextVariables);
             return this;
         }
 
-        public Builder addContextVariable(VariableDeclaration contextVariable) {
-            contextVariables.put(contextVariable.getName(), contextVariable);
+        public VariableReference addContextVariable(VariableDeclaration declaration) {
+            contextVariables.add(declaration);
+            return VariableReference.create(Scope.CONTEXT, contextVariables.size() - 1);
+        }
+
+        public Builder addContextVariables(VariableDeclaration... declarations) {
+            contextVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addContextVariables(Iterable<VariableDeclaration> contextVariables) {
-            for (VariableDeclaration variable : contextVariables) {
-                this.contextVariables.put(variable.getName(), variable);
-            }
+        public Builder addContextVariables(Collection<VariableDeclaration> declarations) {
+            contextVariables.addAll(declarations);
             return this;
         }
 
-        public Map<String, VariableDeclaration> getArguments() {
+        public List<VariableDeclaration> getArguments() {
             return arguments;
         }
 
-        public Builder setArguments(Iterable<VariableDeclaration> arguments) {
+        public VariableReference getNextArgumentReference() {
+            return VariableReference.create(Scope.ARGUMENTS, arguments.size());
+        }
+
+        public int getNextArgumentIndex() {
+            return arguments.size();
+        }
+
+        public Builder setArguments(
+                Collection<VariableDeclaration> arguments) {
             this.arguments.clear();
-            for (VariableDeclaration arg : arguments) {
-                this.arguments.put(arg.getName(), arg);
-            }
+            this.arguments.addAll(arguments);
             return this;
         }
 
-        public Builder addArgument(VariableDeclaration argument) {
-            arguments.put(argument.getName(), argument);
+        public VariableReference addArgument(VariableDeclaration declaration) {
+            arguments.add(declaration);
+            return VariableReference.create(Scope.ARGUMENTS, arguments.size() - 1);
+        }
+
+        public Builder addArguments(VariableDeclaration... declarations) {
+            arguments.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addArguments(Iterable<VariableDeclaration> arguments) {
-            for (VariableDeclaration arg : arguments) {
-                this.arguments.put(arg.getName(), arg);
-            }
+        public Builder addArguments(Collection<VariableDeclaration> declarations) {
+            arguments.addAll(declarations);
             return this;
         }
 
-        public Map<String, VariableDeclaration> getLocalVariables() {
+        public List<VariableDeclaration> getLocalVariables() {
             return localVariables;
         }
 
-        public Builder setLocalVariables(Iterable<VariableDeclaration> localVariables) {
+        public VariableReference getNextLocalVariableReference() {
+            return VariableReference.create(Scope.LOCAL, localVariables.size());
+        }
+
+        public int getNextLocalVariableIndex() {
+            return localVariables.size();
+        }
+
+        public Builder setLocalVariables(
+                Collection<VariableDeclaration> localVariables) {
             this.localVariables.clear();
-            for (VariableDeclaration variable : localVariables) {
-                this.localVariables.put(variable.getName(), variable);
-            }
+            this.localVariables.addAll(localVariables);
             return this;
         }
 
-        public Builder addLocalVariable(VariableDeclaration localVariable) {
-            localVariables.put(localVariable.getName(), localVariable);
+        public VariableReference addLocalVariable(VariableDeclaration declaration) {
+            localVariables.add(declaration);
+            return VariableReference.create(Scope.LOCAL, localVariables.size() - 1);
+        }
+
+        public Builder addLocalVariables(VariableDeclaration... declarations) {
+            localVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addLocalVariables(Iterable<VariableDeclaration> localVariables) {
-            for (VariableDeclaration variable : localVariables) {
-                this.localVariables.put(variable.getName(), variable);
-            }
+        public Builder addLocalVariables(Collection<VariableDeclaration> declarations) {
+            localVariables.addAll(declarations);
             return this;
         }
 
@@ -221,6 +211,11 @@ public class FunctionDefinition {
 
         public Builder addStatement(IInstruction statement) {
             body.add(statement);
+            return this;
+        }
+
+        public Builder addStatements(IInstruction... statements) {
+            body.addAll(Arrays.asList(statements));
             return this;
         }
 
