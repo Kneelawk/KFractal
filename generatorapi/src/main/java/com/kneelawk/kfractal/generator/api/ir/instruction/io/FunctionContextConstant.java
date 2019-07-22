@@ -16,6 +16,8 @@ public class FunctionContextConstant implements IInstructionInput {
 
     private FunctionContextConstant(int functionIndex,
                                     List<IInstructionInput> contextVariables) {
+        if (functionIndex < 0)
+            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         this.functionIndex = functionIndex;
         this.contextVariables = contextVariables;
     }

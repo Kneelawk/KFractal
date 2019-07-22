@@ -14,7 +14,7 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
 
     private VariableReference(Scope scope, int index) {
         if (index < 0)
-            throw new ArrayIndexOutOfBoundsException("VariableReference index cannot be less than 0");
+            throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
         this.scope = scope;
         this.index = index;
     }
