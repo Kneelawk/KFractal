@@ -15,24 +15,24 @@ import java.util.Objects;
  */
 public class SimpleFunctionValue implements IFunctionValue {
     private final SimpleProgramEngine engine;
-    private final String name;
+    private final int index;
     private final List<IEngineValue> contextVariables;
 
-    public SimpleFunctionValue(SimpleProgramEngine engine, String name,
+    public SimpleFunctionValue(SimpleProgramEngine engine, int index,
                                List<IEngineValue> contextVariables) {
         this.engine = engine;
-        this.name = name;
+        this.index = index;
         this.contextVariables = contextVariables;
     }
 
     @Override
     public ValueTypes.FunctionType getSignature() throws FractalEngineException {
-        return engine.getFunctionSignature(name);
+        return engine.getFunctionSignature(index);
     }
 
     @Override
     public IEngineValue invoke(List<IEngineValue> arguments) throws FractalException {
-        return engine.invokeFunction(name, contextVariables, arguments);
+        return engine.invokeFunction(index, contextVariables, arguments);
     }
 
     @Override
@@ -45,12 +45,12 @@ public class SimpleFunctionValue implements IFunctionValue {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimpleFunctionValue that = (SimpleFunctionValue) o;
-        return name.equals(that.name) &&
+        return index == that.index &&
                 contextVariables.equals(that.contextVariables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, contextVariables);
+        return Objects.hash(index, contextVariables);
     }
 }

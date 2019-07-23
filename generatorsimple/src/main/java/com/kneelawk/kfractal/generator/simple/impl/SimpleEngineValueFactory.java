@@ -37,8 +37,8 @@ public class SimpleEngineValueFactory implements IEngineValueFactory {
     }
 
     @Override
-    public IFunctionValue newFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException {
-        return engine.getFunction(name, contextValues);
+    public IFunctionValue newFunction(int index, List<IEngineValue> contextValues) throws FractalEngineException {
+        return engine.getFunction(index, contextValues);
     }
 
     @Override
