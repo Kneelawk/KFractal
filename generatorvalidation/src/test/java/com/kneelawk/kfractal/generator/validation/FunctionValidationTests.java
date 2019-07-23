@@ -19,7 +19,6 @@ class FunctionValidationTests {
     void testIllegalMissingReturnType() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         programBuilder.addFunction(function.build());
 
@@ -35,7 +34,6 @@ class FunctionValidationTests {
     void testIncompatibleFunctionReturnType(ImmutablePair<ValueType, ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(valueTypes.left);
         function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.right)));
         programBuilder.addFunction(function.build());

@@ -1,34 +1,60 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
-import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
-import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
-import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
+import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<ValueInfo> {
-    private final Map<String, FunctionDefinition> functions;
-    private final Map<String, ValueInfo> variables;
+    private List<FunctionDefinition> functions;
+    private List<VariableDeclaration> globalVariables;
+    private List<VariableDeclaration> contextVariables;
+    private List<VariableDeclaration> arguments;
+    private List<VariableDeclaration> localVariables;
 
-    ValidatingInstructionInputVisitor(
-            Map<String, FunctionDefinition> functions,
-            Map<String, ValueInfo> variables) {
+    public ValidatingInstructionInputVisitor(
+            List<FunctionDefinition> functions,
+            List<VariableDeclaration> globalVariables,
+            List<VariableDeclaration> contextVariables,
+            List<VariableDeclaration> arguments,
+            List<VariableDeclaration> localVariables) {
         this.functions = functions;
-        this.variables = variables;
+        this.globalVariables = globalVariables;
+        this.contextVariables = contextVariables;
+        this.arguments = arguments;
+        this.localVariables = localVariables;
     }
 
     @Override
     public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
-        String referenceName = reference.getName();
-        if (variables.containsKey(referenceName)) {
-            return variables.get(referenceName);
+        int index = reference.getIndex();
+        Scope scope = reference.getScope();
+        List<VariableDeclaration> scopeList;
+        switch (scope) {
+            case GLOBAL:
+                scopeList = globalVariables;
+                break;
+            case CONTEXT:
+                scopeList = contextVariables;
+                break;
+            case ARGUMENTS:
+                scopeList = arguments;
+                break;
+            case LOCAL:
+                scopeList = localVariables;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + scope);
+        }
+
+        if (index < scopeList.size()) {
+            VariableDeclaration declaration = scopeList.get(index);
+            return new ValueInfo.Builder(true, declaration.getType(), declaration.getAttributes()).build();
         } else {
-            throw new MissingVariableReferenceException("Reference to missing variable: '" + referenceName + '\'');
+            throw new MissingVariableReferenceException(
+                    "Reference to missing variable: scope: " + scope + ", index: " + index);
         }
     }
 
@@ -56,15 +82,15 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalException {
         // find the function
         FunctionDefinition target;
-        String functionName = contextConstant.getFunctionName();
-        if (functions.containsKey(functionName)) {
-            target = functions.get(functionName);
+        int functionIndex = contextConstant.getFunctionIndex();
+        if (functionIndex < functions.size()) {
+            target = functions.get(functionIndex);
         } else {
-            throw new MissingFunctionReferenceException("Reference to missing function: '" + functionName + '\'');
+            throw new MissingFunctionReferenceException("Reference to missing function: index: " + functionIndex);
         }
 
         // compare context variable types
-        List<VariableDeclaration> targetContextVariables = target.getContextVariableList();
+        List<VariableDeclaration> targetContextVariables = target.getContextVariables();
         List<IInstructionInput> constantContextVariables = contextConstant.getContextVariables();
         int targetContextVariablesSize = targetContextVariables.size();
         int constantContextVariablesSize = constantContextVariables.size();
@@ -90,7 +116,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
 
         // build the function type from the target function details
         return new ValueInfo.Builder().setType(ValueTypes.FUNCTION(target.getReturnType(),
-                target.getArgumentList().stream().map(VariableDeclaration::getType).collect(
+                target.getArguments().stream().map(VariableDeclaration::getType).collect(
                         Collectors.toList()))).build();
     }
 

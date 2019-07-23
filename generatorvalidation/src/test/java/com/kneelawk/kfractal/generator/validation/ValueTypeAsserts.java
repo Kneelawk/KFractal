@@ -2,7 +2,6 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 
@@ -16,11 +15,10 @@ public class ValueTypeAsserts {
     static void assertThreeIncompatibleValueTypes(List<ValueType> argumentTypes, InstructionCreator3 creator) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0), "res"));
+        var res = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
         function.addStatement(
-                creator.create(VariableReference.create("res"),
+                creator.create(res,
                         createConstant(programBuilder, function, argumentTypes.get(1)),
                         createConstant(programBuilder, function, argumentTypes.get(2))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -35,11 +33,10 @@ public class ValueTypeAsserts {
     static void assertThreeCompatibleValueTypes(List<ValueType> argumentTypes, InstructionCreator3 creator) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0), "res"));
+        var res = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
         function.addStatement(
-                creator.create(VariableReference.create("res"),
+                creator.create(res,
                         createConstant(programBuilder, function, argumentTypes.get(1)),
                         createConstant(programBuilder, function, argumentTypes.get(2))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -53,10 +50,9 @@ public class ValueTypeAsserts {
     static void assertTwoIncompatibleValueTypes(List<ValueType> argumentTypes, InstructionCreator2 creator) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0), "output"));
-        function.addStatement(creator.create(VariableReference.create("output"),
+        var output = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        function.addStatement(creator.create(output,
                 createConstant(programBuilder, function, argumentTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -70,10 +66,9 @@ public class ValueTypeAsserts {
     static void assertTwoCompatibleValueTypes(List<ValueType> argumentTypes, InstructionCreator2 creator) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0), "output"));
-        function.addStatement(creator.create(VariableReference.create("output"),
+        var output = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        function.addStatement(creator.create(output,
                 createConstant(programBuilder, function, argumentTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
