@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
@@ -10,6 +11,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class FunctionDefinition {
     private ValueType returnType;
@@ -63,18 +66,18 @@ public class FunctionDefinition {
 
     public static class Builder {
         private ValueType returnType;
-        private List<VariableDeclaration> contextVariables = Lists.newArrayList();
-        private List<VariableDeclaration> arguments = Lists.newArrayList();
-        private List<VariableDeclaration> localVariables = Lists.newArrayList();
+        private List<Supplier<VariableDeclaration>> contextVariables = Lists.newArrayList();
+        private List<Supplier<VariableDeclaration>> arguments = Lists.newArrayList();
+        private List<Supplier<VariableDeclaration>> localVariables = Lists.newArrayList();
         private List<IInstruction> body = Lists.newArrayList();
 
         public Builder() {
         }
 
         public Builder(ValueType returnType,
-                       Collection<VariableDeclaration> contextVariables,
-                       Collection<VariableDeclaration> arguments,
-                       Collection<VariableDeclaration> localVariables,
+                       Collection<Supplier<VariableDeclaration>> contextVariables,
+                       Collection<Supplier<VariableDeclaration>> arguments,
+                       Collection<Supplier<VariableDeclaration>> localVariables,
                        Collection<IInstruction> body) {
             this.returnType = returnType;
             this.contextVariables.addAll(contextVariables);
@@ -84,8 +87,11 @@ public class FunctionDefinition {
         }
 
         public FunctionDefinition build() {
-            return new FunctionDefinition(returnType, ImmutableList.copyOf(contextVariables),
-                    ImmutableList.copyOf(arguments), ImmutableList.copyOf(localVariables), ImmutableList.copyOf(body));
+            return new FunctionDefinition(returnType,
+                    contextVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
+                    arguments.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
+                    localVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
+                    ImmutableList.copyOf(body));
         }
 
         public ValueType getReturnType() {
@@ -97,7 +103,7 @@ public class FunctionDefinition {
             return this;
         }
 
-        public List<VariableDeclaration> getContextVariables() {
+        public List<Supplier<VariableDeclaration>> getContextVariables() {
             return contextVariables;
         }
 
@@ -109,29 +115,53 @@ public class FunctionDefinition {
             return contextVariables.size();
         }
 
-        public Builder setContextVariables(
-                Collection<VariableDeclaration> contextVariables) {
+        public Builder setContextVariableSuppliers(
+                Collection<Supplier<VariableDeclaration>> contextVariables) {
             this.contextVariables.clear();
             this.contextVariables.addAll(contextVariables);
             return this;
         }
 
-        public VariableReference addContextVariable(VariableDeclaration declaration) {
+        public Builder setContextVariables(Collection<VariableDeclaration> contextVariables) {
+            this.contextVariables.clear();
+            this.contextVariables
+                    .addAll(contextVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public VariableReference addContextVariable(Supplier<VariableDeclaration> declaration) {
             contextVariables.add(declaration);
             return VariableReference.create(Scope.CONTEXT, contextVariables.size() - 1);
         }
 
-        public Builder addContextVariables(VariableDeclaration... declarations) {
+        public VariableReference addContextVariable(VariableDeclaration declaration) {
+            contextVariables.add(Suppliers.ofInstance(declaration));
+            return VariableReference.create(Scope.CONTEXT, contextVariables.size() - 1);
+        }
+
+        @SafeVarargs
+        public final Builder addContextVariables(Supplier<VariableDeclaration>... declarations) {
             contextVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addContextVariables(Collection<VariableDeclaration> declarations) {
+        public final Builder addContextVariables(VariableDeclaration... declarations) {
+            contextVariables
+                    .addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public Builder addContextVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
             contextVariables.addAll(declarations);
             return this;
         }
 
-        public List<VariableDeclaration> getArguments() {
+        public Builder addContextVariables(Collection<VariableDeclaration> declarations) {
+            contextVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public List<Supplier<VariableDeclaration>> getArguments() {
             return arguments;
         }
 
@@ -143,29 +173,51 @@ public class FunctionDefinition {
             return arguments.size();
         }
 
-        public Builder setArguments(
-                Collection<VariableDeclaration> arguments) {
+        public Builder setArgumentSuppliers(
+                Collection<Supplier<VariableDeclaration>> arguments) {
             this.arguments.clear();
             this.arguments.addAll(arguments);
             return this;
         }
 
-        public VariableReference addArgument(VariableDeclaration declaration) {
+        public Builder setArguments(Collection<VariableDeclaration> arguments) {
+            this.arguments.clear();
+            this.arguments.addAll(arguments.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public VariableReference addArgument(Supplier<VariableDeclaration> declaration) {
             arguments.add(declaration);
             return VariableReference.create(Scope.ARGUMENTS, arguments.size() - 1);
         }
 
-        public Builder addArguments(VariableDeclaration... declarations) {
+        public VariableReference addArgument(VariableDeclaration declaration) {
+            arguments.add(Suppliers.ofInstance(declaration));
+            return VariableReference.create(Scope.ARGUMENTS, arguments.size() - 1);
+        }
+
+        @SafeVarargs
+        public final Builder addArguments(Supplier<VariableDeclaration>... declarations) {
             arguments.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addArguments(Collection<VariableDeclaration> declarations) {
+        public Builder addArguments(VariableDeclaration... declarations) {
+            arguments.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public Builder addArgumentSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
             arguments.addAll(declarations);
             return this;
         }
 
-        public List<VariableDeclaration> getLocalVariables() {
+        public Builder addArguments(Collection<VariableDeclaration> declarations) {
+            arguments.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public List<Supplier<VariableDeclaration>> getLocalVariables() {
             return localVariables;
         }
 
@@ -177,25 +229,47 @@ public class FunctionDefinition {
             return localVariables.size();
         }
 
-        public Builder setLocalVariables(
-                Collection<VariableDeclaration> localVariables) {
+        public Builder setLocalVariableSuppliers(
+                Collection<Supplier<VariableDeclaration>> localVariables) {
             this.localVariables.clear();
             this.localVariables.addAll(localVariables);
             return this;
         }
 
-        public VariableReference addLocalVariable(VariableDeclaration declaration) {
+        public Builder setLocalVariables(Collection<VariableDeclaration> localVariables) {
+            this.localVariables.clear();
+            this.localVariables.addAll(localVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public VariableReference addLocalVariable(Supplier<VariableDeclaration> declaration) {
             localVariables.add(declaration);
             return VariableReference.create(Scope.LOCAL, localVariables.size() - 1);
         }
 
-        public Builder addLocalVariables(VariableDeclaration... declarations) {
+        public VariableReference addLocalVariable(VariableDeclaration declaration) {
+            localVariables.add(Suppliers.ofInstance(declaration));
+            return VariableReference.create(Scope.LOCAL, localVariables.size() - 1);
+        }
+
+        @SafeVarargs
+        public final Builder addLocalVariables(Supplier<VariableDeclaration>... declarations) {
             localVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addLocalVariables(Collection<VariableDeclaration> declarations) {
+        public Builder addLocalVariables(VariableDeclaration... declarations) {
+            localVariables.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public Builder addLocalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
             localVariables.addAll(declarations);
+            return this;
+        }
+
+        public Builder addLocalVariables(Collection<VariableDeclaration> declarations) {
+            localVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 

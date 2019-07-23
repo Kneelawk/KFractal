@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
@@ -8,6 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Created by Kneelawk on 5/25/19.
@@ -45,23 +48,24 @@ public class Program {
     }
 
     public static class Builder {
-        private List<VariableDeclaration> globalVariables = Lists.newArrayList();
-        private List<FunctionDefinition> functions = Lists.newArrayList();
+        private List<Supplier<VariableDeclaration>> globalVariables = Lists.newArrayList();
+        private List<Supplier<FunctionDefinition>> functions = Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(Collection<VariableDeclaration> globalVariables,
-                       Collection<FunctionDefinition> functions) {
+        public Builder(Collection<Supplier<VariableDeclaration>> globalVariables,
+                       Collection<Supplier<FunctionDefinition>> functions) {
             this.globalVariables.addAll(globalVariables);
             this.functions.addAll(functions);
         }
 
         public Program build() {
-            return new Program(ImmutableList.copyOf(globalVariables), ImmutableList.copyOf(functions));
+            return new Program(globalVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
+                    functions.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()));
         }
 
-        public List<VariableDeclaration> getGlobalVariables() {
+        public List<Supplier<VariableDeclaration>> getGlobalVariables() {
             return globalVariables;
         }
 
@@ -73,24 +77,41 @@ public class Program {
             return globalVariables.size();
         }
 
-        public Builder setGlobalVariables(
-                Collection<VariableDeclaration> globalVariables) {
+        public Builder setGlobalVariableSuppliers(
+                Collection<Supplier<VariableDeclaration>> globalVariables) {
             this.globalVariables.clear();
             this.globalVariables.addAll(globalVariables);
             return this;
         }
 
-        public VariableReference addGlobalVariable(VariableDeclaration declaration) {
+        public Builder setGlobalVariables(Collection<VariableDeclaration> globalVariables) {
+            this.globalVariables.clear();
+            this.globalVariables
+                    .addAll(globalVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public VariableReference addGlobalVariable(Supplier<VariableDeclaration> declaration) {
             globalVariables.add(declaration);
             return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
         }
 
-        public Builder addGlobalVariables(Collection<VariableDeclaration> declarations) {
+        public VariableReference addGlobalVariable(VariableDeclaration declaration) {
+            globalVariables.add(Suppliers.ofInstance(declaration));
+            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+        }
+
+        public Builder addGlobalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
             globalVariables.addAll(declarations);
             return this;
         }
 
-        public List<FunctionDefinition> getFunctions() {
+        public Builder addGlobalVariables(Collection<VariableDeclaration> declarations) {
+            globalVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public List<Supplier<FunctionDefinition>> getFunctions() {
             return functions;
         }
 
@@ -98,20 +119,36 @@ public class Program {
             return functions.size();
         }
 
-        public Builder setFunctions(
-                Collection<FunctionDefinition> functions) {
+        public Builder setFunctionSuppliers(
+                Collection<Supplier<FunctionDefinition>> functions) {
             this.functions.clear();
             this.functions.addAll(functions);
             return this;
         }
 
-        public int addFunction(FunctionDefinition definition) {
+        public Builder setFunctions(Collection<FunctionDefinition> functions) {
+            this.functions.clear();
+            this.functions.addAll(functions.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public int addFunction(Supplier<FunctionDefinition> definition) {
             functions.add(definition);
             return functions.size() - 1;
         }
 
-        public Builder addFunctions(List<FunctionDefinition> definitions) {
+        public int addFunction(FunctionDefinition definition) {
+            functions.add(Suppliers.ofInstance(definition));
+            return functions.size() - 1;
+        }
+
+        public Builder addFunctionSuppliers(Collection<Supplier<FunctionDefinition>> definitions) {
             functions.addAll(definitions);
+            return this;
+        }
+
+        public Builder addFunctions(Collection<FunctionDefinition> definitions) {
+            functions.addAll(definitions.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
     }
