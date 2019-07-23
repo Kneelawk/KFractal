@@ -22,7 +22,6 @@ public class InstructionValidationReturnTests {
     void testIncompatibleReturnTypes(Pair<ValueType, ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(valueTypes.getLeft());
         function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.getRight())));
         programBuilder.addFunction(function.build());
@@ -38,7 +37,6 @@ public class InstructionValidationReturnTests {
     void testReturnTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(valueType);
         function.addStatement(Return.create(createConstant(programBuilder, function, valueType)));
         programBuilder.addFunction(function.build());
@@ -52,7 +50,6 @@ public class InstructionValidationReturnTests {
     void testVoidReturnType() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());

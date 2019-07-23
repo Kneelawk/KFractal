@@ -9,7 +9,6 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionIsNotEqual;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.FunctionContextConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.NullFunction;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -93,22 +92,18 @@ public class InstructionValidationFunctionTests {
         ValueTypes.FunctionType functionType = ValueTypes.toFunction(functionAndArgs.getLeft());
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
-        otherFunction.setName("g");
         otherFunction.setReturnType(functionType.getReturnType());
-        int size = functionType.getArgumentTypes().size();
-        for (int i = 0; i < size; i++) {
-            otherFunction.addArgument(VariableDeclaration.create(functionType.getArgumentTypes().get(i), "arg" + i));
-        }
+        functionType.getArgumentTypes().stream().map(VariableDeclaration::create)
+                .forEachOrdered(otherFunction::addArgument);
         otherFunction.addStatement(
                 Return.create(createConstant(programBuilder, otherFunction, functionType.getReturnType())));
-        programBuilder.addFunction(otherFunction.build());
+        int gIndex = programBuilder.addFunction(otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType(), "ret"));
+        var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
-                .create(VariableReference.create("ret"), FunctionContextConstant.create("g", ImmutableList.of()),
+                .create(ret, FunctionContextConstant.create(gIndex),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))
                                 .collect(Collectors.toList())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -126,17 +121,15 @@ public class InstructionValidationFunctionTests {
         Program.Builder programBuilder = new Program.Builder();
 
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
-        otherFunction.setName("g");
         otherFunction.setReturnType(valueTypes.getRight());
         otherFunction.addStatement(Return.create(createConstant(programBuilder, otherFunction, valueTypes.getRight())));
-        programBuilder.addFunction(otherFunction.build());
+        int gIndex = programBuilder.addFunction(otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueTypes.getLeft(), "ret"));
+        var ret = function.addLocalVariable(VariableDeclaration.create(valueTypes.getLeft()));
         function.addStatement(FunctionCall
-                .create(VariableReference.create("ret"), FunctionContextConstant.create("g", ImmutableList.of()),
+                .create(ret, FunctionContextConstant.create(gIndex),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -152,17 +145,15 @@ public class InstructionValidationFunctionTests {
         Program.Builder programBuilder = new Program.Builder();
 
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
-        otherFunction.setName("g");
         otherFunction.setReturnType(ValueTypes.VOID);
         otherFunction.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(otherFunction.build());
+        int gIndex = programBuilder.addFunction(otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX, "ret"));
+        var ret = function.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
         function.addStatement(FunctionCall
-                .create(VariableReference.create("ret"), FunctionContextConstant.create("g", ImmutableList.of()),
+                .create(ret, FunctionContextConstant.create(gIndex, ImmutableList.of()),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -177,7 +168,6 @@ public class InstructionValidationFunctionTests {
     void testIncompatibleFunctionCallNullFunctionType() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(FunctionCall.create(VoidConstant.INSTANCE, NullFunction.INSTANCE, ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -195,22 +185,19 @@ public class InstructionValidationFunctionTests {
         ValueTypes.FunctionType functionType = ValueTypes.toFunction(functionAndArgs.getLeft());
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
-        otherFunction.setName("g");
         otherFunction.setReturnType(functionType.getReturnType());
         int size = functionType.getArgumentTypes().size();
-        for (int i = 0; i < size; i++) {
-            otherFunction.addArgument(VariableDeclaration.create(functionType.getArgumentTypes().get(i), "arg" + i));
-        }
+        functionType.getArgumentTypes().stream().map(VariableDeclaration::create)
+                .forEachOrdered(otherFunction::addArgument);
         otherFunction.addStatement(
                 Return.create(createConstant(programBuilder, otherFunction, functionType.getReturnType())));
-        programBuilder.addFunction(otherFunction.build());
+        int gIndex = programBuilder.addFunction(otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType(), "ret"));
+        var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
-                .create(VariableReference.create("ret"), FunctionContextConstant.create("g", ImmutableList.of()),
+                .create(ret, FunctionContextConstant.create(gIndex, ImmutableList.of()),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))
                                 .collect(Collectors.toList())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -227,16 +214,14 @@ public class InstructionValidationFunctionTests {
         Program.Builder programBuilder = new Program.Builder();
 
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
-        otherFunction.setName("g");
         otherFunction.setReturnType(ValueTypes.VOID);
         otherFunction.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(otherFunction.build());
+        int gIndex = programBuilder.addFunction(otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(FunctionCall
-                .create(VoidConstant.INSTANCE, FunctionContextConstant.create("g", ImmutableList.of()),
+                .create(VoidConstant.INSTANCE, FunctionContextConstant.create(gIndex, ImmutableList.of()),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.NullPointer;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -84,10 +83,9 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerAllocateTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueType, "p"));
-        function.addStatement(PointerAllocate.create(VariableReference.create("p")));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        function.addStatement(PointerAllocate.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -102,10 +100,9 @@ public class InstructionValidationPointerTests {
     void testCompatiblePointerAllocateTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueType, "p"));
-        function.addStatement(PointerAllocate.create(VariableReference.create("p")));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        function.addStatement(PointerAllocate.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -119,10 +116,9 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerFreeTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueType, "p"));
-        function.addStatement(PointerFree.create(VariableReference.create("p")));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        function.addStatement(PointerFree.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -136,7 +132,6 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerFreeNullPointerType() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(PointerFree.create(NullPointer.INSTANCE));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -153,10 +148,9 @@ public class InstructionValidationPointerTests {
     void testCompatiblePointerFreeTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueType, "p"));
-        function.addStatement(PointerFree.create(VariableReference.create("p")));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        function.addStatement(PointerFree.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -194,11 +188,10 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerSetNotPointerTypes(List<ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0), "p"));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
-                .create(VariableReference.create("p"), createConstant(programBuilder, function, valueTypes.get(1))));
+                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -213,11 +206,10 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerSetIncompatibleTypes(List<ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0), "p"));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
-                .create(VariableReference.create("p"), createConstant(programBuilder, function, valueTypes.get(1))));
+                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 
@@ -232,7 +224,6 @@ public class InstructionValidationPointerTests {
     void testIncompatiblePointerSetNullPointerTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(
                 PointerSet.create(NullPointer.INSTANCE, createConstant(programBuilder, function, valueType)));
@@ -250,11 +241,10 @@ public class InstructionValidationPointerTests {
     void testCompatiblePointerSetTypes(List<ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0), "p"));
+        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
-                .create(VariableReference.create("p"), createConstant(programBuilder, function, valueTypes.get(1))));
+                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
 

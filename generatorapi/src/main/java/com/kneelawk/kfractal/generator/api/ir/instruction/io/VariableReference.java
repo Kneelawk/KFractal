@@ -1,6 +1,7 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction.io;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.Scope;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -8,14 +9,22 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Created by Kneelawk on 5/26/19.
  */
 public class VariableReference implements IInstructionInput, IInstructionOutput {
-    private String name;
+    private Scope scope;
+    private int index;
 
-    private VariableReference(String name) {
-        this.name = name;
+    private VariableReference(Scope scope, int index) {
+        if (index < 0)
+            throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
+        this.scope = scope;
+        this.index = index;
     }
 
-    public String getName() {
-        return name;
+    public Scope getScope() {
+        return scope;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     @Override
@@ -31,34 +40,50 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("name", name)
+                .append("scope", scope)
+                .append("index", index)
                 .toString();
     }
 
-    public static VariableReference create(String name) {
-        return new VariableReference(name);
+    public VariableReference offset(int offset) {
+        return new VariableReference(scope, index + offset);
+    }
+
+    public static VariableReference create(Scope scope, int index) {
+        return new VariableReference(scope, index);
     }
 
     public static class Builder {
-        private String name;
+        private Scope scope;
+        private int index;
 
         public Builder() {
         }
 
-        public Builder(String name) {
-            this.name = name;
+        public Builder(Scope scope, int index) {
+            this.scope = scope;
+            this.index = index;
         }
 
         public VariableReference build() {
-            return new VariableReference(name);
+            return new VariableReference(scope, index);
         }
 
-        public String getName() {
-            return name;
+        public Scope getScope() {
+            return scope;
         }
 
-        public Builder setName(String name) {
-            this.name = name;
+        public Builder setScope(Scope scope) {
+            this.scope = scope;
+            return this;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public Builder setIndex(int index) {
+            this.index = index;
             return this;
         }
     }

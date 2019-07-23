@@ -12,7 +12,8 @@ class InstructionOutputPrinter implements IInstructionOutputVisitor<Void> {
 
     @Override
     public Void visitVariableReference(VariableReference reference) {
-        builder.append("VariableReference(\"").append(reference.getName()).append("\")");
+        builder.append("VariableReference(").append(reference.getScope()).append(", ").append(reference.getIndex())
+                .append(")");
         return null;
     }
 
