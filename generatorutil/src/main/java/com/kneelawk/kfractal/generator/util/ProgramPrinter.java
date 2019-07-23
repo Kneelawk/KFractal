@@ -14,12 +14,13 @@ public class ProgramPrinter {
         builder.append("Program(").append(System.lineSeparator());
         builder.append("[");
         boolean first = true;
-        for (VariableDeclaration variable : program.getGlobalVariables().values()) {
+        for (int i = 0; i < program.getGlobalVariables().size(); i++) {
+            VariableDeclaration variable = program.getGlobalVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 1);
-            builder.append("\"").append(variable.getName()).append("\"=");
+            builder.append(i).append("=");
             printVariableDeclaration(builder, variable);
             first = false;
         }
@@ -31,12 +32,13 @@ public class ProgramPrinter {
         builder.append("],").append(System.lineSeparator());
         builder.append("[");
         first = true;
-        for (FunctionDefinition function : program.getFunctions().values()) {
+        for (int i = 0; i < program.getFunctions().size(); i++) {
+            FunctionDefinition function = program.getFunctions().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 1);
-            builder.append("\"").append(function.getName()).append("\"=");
+            builder.append(i).append("=");
             printFunctionDefinition(builder, function);
             first = false;
         }
@@ -54,18 +56,17 @@ public class ProgramPrinter {
     private static void printFunctionDefinition(StringBuilder builder, FunctionDefinition function) {
         builder.append("FunctionDefinition(").append(System.lineSeparator());
         StringUtils.indent(builder, 2);
-        builder.append("\"").append(function.getName()).append("\",").append(System.lineSeparator());
-        StringUtils.indent(builder, 2);
         builder.append(function.getReturnType().toString()).append(",").append(System.lineSeparator());
         StringUtils.indent(builder, 2);
         builder.append("[");
         boolean first = true;
-        for (VariableDeclaration variable : function.getContextVariableList()) {
+        for (int i = 0; i < function.getContextVariables().size(); i++) {
+            VariableDeclaration variable = function.getContextVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 3);
-            builder.append("\"").append(variable.getName()).append("\"=");
+            builder.append(i).append("=");
             printVariableDeclaration(builder, variable);
             first = false;
         }
@@ -79,12 +80,13 @@ public class ProgramPrinter {
         StringUtils.indent(builder, 2);
         builder.append("[");
         first = true;
-        for (VariableDeclaration argument : function.getArgumentList()) {
+        for (int i = 0; i < function.getArguments().size(); i++) {
+            VariableDeclaration argument = function.getArguments().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 3);
-            builder.append("\"").append(argument.getName()).append("\"=");
+            builder.append(i).append("=");
             printVariableDeclaration(builder, argument);
             first = false;
         }
@@ -98,12 +100,13 @@ public class ProgramPrinter {
         StringUtils.indent(builder, 2);
         builder.append("[");
         first = true;
-        for (VariableDeclaration variable : function.getLocalVariables().values()) {
+        for (int i = 0; i < function.getLocalVariables().size(); i++) {
+            VariableDeclaration variable = function.getLocalVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 3);
-            builder.append("\"").append(variable.getName()).append("\"=");
+            builder.append(i).append("=");
             printVariableDeclaration(builder, variable);
             first = false;
         }
@@ -146,12 +149,10 @@ public class ProgramPrinter {
     private static void printVariableDeclaration(StringBuilder builder, VariableDeclaration declaration) {
         builder.append("VariableDeclaration(");
         builder.append(declaration.getType().toString());
-        builder.append(", \"");
-        builder.append(declaration.getName());
         if (declaration.getAttributes().isEmpty()) {
-            builder.append("\")");
+            builder.append(")");
         } else {
-            builder.append("\", [ ");
+            builder.append(", [ ");
             AttributePrinter attributePrinter = new AttributePrinter(builder);
             boolean first = true;
             for (IAttribute attribute : declaration.getAttributes()) {

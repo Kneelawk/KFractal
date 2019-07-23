@@ -12,7 +12,8 @@ class InstructionInputPrinter implements IInstructionInputVisitor<Void> {
 
     @Override
     public Void visitVariableReference(VariableReference reference) {
-        builder.append("VariableReference(\"").append(reference.getName()).append("\")");
+        builder.append("VariableReference(").append(reference.getScope()).append(", ").append(reference.getIndex())
+                .append(")");
         return null;
     }
 
@@ -42,7 +43,7 @@ class InstructionInputPrinter implements IInstructionInputVisitor<Void> {
 
     @Override
     public Void visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalException {
-        builder.append("FunctionContextConstant(\"").append(contextConstant.getFunctionName()).append("\", [ ");
+        builder.append("FunctionContextConstant(").append(contextConstant.getFunctionIndex()).append(", [ ");
         boolean first = true;
         for (IInstructionInput input : contextConstant.getContextVariables()) {
             if (!first)

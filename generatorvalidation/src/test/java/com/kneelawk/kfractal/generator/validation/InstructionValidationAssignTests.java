@@ -3,7 +3,6 @@ package com.kneelawk.kfractal.generator.validation;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Assign;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,10 +19,9 @@ public class InstructionValidationAssignTests {
     void testIncompatibleAssignTypes(Pair<ValueType, ValueType> assignTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft(), "res"));
-        function.addStatement(Assign.create(VariableReference.create("res"),
+        var res = function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft()));
+        function.addStatement(Assign.create(res,
                 createConstant(programBuilder, function, assignTypes.getRight())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -39,11 +37,10 @@ public class InstructionValidationAssignTests {
     void testCompatibleAssignTypes(Pair<ValueType, ValueType> assignTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setName("f");
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft(), "res"));
+        var res = function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft()));
         function.addStatement(
-                Assign.create(VariableReference.create("res"),
+                Assign.create(res,
                         createConstant(programBuilder, function, assignTypes.getRight())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());

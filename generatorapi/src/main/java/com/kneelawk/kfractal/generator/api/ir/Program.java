@@ -1,31 +1,35 @@
 package com.kneelawk.kfractal.generator.api.ir;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Created by Kneelawk on 5/25/19.
  */
 public class Program {
-    private Map<String, VariableDeclaration> globalVariables;
-    private Map<String, FunctionDefinition> functions;
+    private List<VariableDeclaration> globalVariables;
+    private List<FunctionDefinition> functions;
 
-    private Program(
-            Map<String, VariableDeclaration> globalVariables,
-            Map<String, FunctionDefinition> functions) {
+    private Program(List<VariableDeclaration> globalVariables,
+                    List<FunctionDefinition> functions) {
         this.globalVariables = globalVariables;
         this.functions = functions;
     }
 
-    public Map<String, VariableDeclaration> getGlobalVariables() {
+    public List<VariableDeclaration> getGlobalVariables() {
         return globalVariables;
     }
 
-    public Map<String, FunctionDefinition> getFunctions() {
+    public List<FunctionDefinition> getFunctions() {
         return functions;
     }
 
@@ -37,89 +41,114 @@ public class Program {
                 .toString();
     }
 
-    public static Program create(Iterable<VariableDeclaration> globalVariables,
-                                 Iterable<FunctionDefinition> functions) {
-        ImmutableMap.Builder<String, VariableDeclaration> globalVariablesBuilder = ImmutableMap.builder();
-        for (VariableDeclaration v : globalVariables) {
-            globalVariablesBuilder.put(v.getName(), v);
-        }
-
-        ImmutableMap.Builder<String, FunctionDefinition> functionsBuilder = ImmutableMap.builder();
-        for (FunctionDefinition f : functions) {
-            functionsBuilder.put(f.getName(), f);
-        }
-
-        return new Program(globalVariablesBuilder.build(), functionsBuilder.build());
+    public static Program create(
+            List<VariableDeclaration> globalVariables,
+            List<FunctionDefinition> functions) {
+        return new Program(ImmutableList.copyOf(globalVariables), ImmutableList.copyOf(functions));
     }
 
     public static class Builder {
-        private Map<String, VariableDeclaration>
-                globalVariables = Maps.newHashMap();
-        private Map<String, FunctionDefinition> functions = Maps.newHashMap();
+        private List<Supplier<VariableDeclaration>> globalVariables = Lists.newArrayList();
+        private List<Supplier<FunctionDefinition>> functions = Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(
-                Iterable<VariableDeclaration> globalVariables,
-                Iterable<FunctionDefinition> functions) {
-            for (VariableDeclaration variable : globalVariables) {
-                this.globalVariables.put(variable.getName(), variable);
-            }
-            for (FunctionDefinition function : functions) {
-                this.functions.put(function.getName(), function);
-            }
+        public Builder(Collection<Supplier<VariableDeclaration>> globalVariables,
+                       Collection<Supplier<FunctionDefinition>> functions) {
+            this.globalVariables.addAll(globalVariables);
+            this.functions.addAll(functions);
         }
 
         public Program build() {
-            return new Program(ImmutableMap.copyOf(globalVariables), ImmutableMap.copyOf(functions));
+            return new Program(globalVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
+                    functions.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()));
         }
 
-        public Map<String, VariableDeclaration> getGlobalVariables() {
+        public List<Supplier<VariableDeclaration>> getGlobalVariables() {
             return globalVariables;
         }
 
-        public Builder setGlobalVariables(Iterable<VariableDeclaration> globalVariables) {
+        public VariableReference getNextGlobalVariableReference() {
+            return VariableReference.create(Scope.GLOBAL, globalVariables.size());
+        }
+
+        public int getNextGlobalVariableIndex() {
+            return globalVariables.size();
+        }
+
+        public Builder setGlobalVariableSuppliers(
+                Collection<Supplier<VariableDeclaration>> globalVariables) {
             this.globalVariables.clear();
-            for (VariableDeclaration variable : globalVariables) {
-                this.globalVariables.put(variable.getName(), variable);
-            }
+            this.globalVariables.addAll(globalVariables);
             return this;
         }
 
-        public Builder addGlobalVariable(VariableDeclaration globalVariable) {
-            globalVariables.put(globalVariable.getName(), globalVariable);
+        public Builder setGlobalVariables(Collection<VariableDeclaration> globalVariables) {
+            this.globalVariables.clear();
+            this.globalVariables
+                    .addAll(globalVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addGlobalVariables(Iterable<VariableDeclaration> globalVariables) {
-            for (VariableDeclaration variable : globalVariables) {
-                this.globalVariables.put(variable.getName(), variable);
-            }
+        public VariableReference addGlobalVariable(Supplier<VariableDeclaration> declaration) {
+            globalVariables.add(declaration);
+            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+        }
+
+        public VariableReference addGlobalVariable(VariableDeclaration declaration) {
+            globalVariables.add(Suppliers.ofInstance(declaration));
+            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+        }
+
+        public Builder addGlobalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
+            globalVariables.addAll(declarations);
             return this;
         }
 
-        public Map<String, FunctionDefinition> getFunctions() {
+        public Builder addGlobalVariables(Collection<VariableDeclaration> declarations) {
+            globalVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
+        public List<Supplier<FunctionDefinition>> getFunctions() {
             return functions;
         }
 
-        public Builder setFunctions(Iterable<FunctionDefinition> functions) {
+        public int getNextFunctionIndex() {
+            return functions.size();
+        }
+
+        public Builder setFunctionSuppliers(
+                Collection<Supplier<FunctionDefinition>> functions) {
             this.functions.clear();
-            for (FunctionDefinition function : functions) {
-                this.functions.put(function.getName(), function);
-            }
+            this.functions.addAll(functions);
             return this;
         }
 
-        public Builder addFunction(FunctionDefinition function) {
-            functions.put(function.getName(), function);
+        public Builder setFunctions(Collection<FunctionDefinition> functions) {
+            this.functions.clear();
+            this.functions.addAll(functions.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addFunctions(Iterable<FunctionDefinition> functions) {
-            for (FunctionDefinition function : functions) {
-                this.functions.put(function.getName(), function);
-            }
+        public int addFunction(Supplier<FunctionDefinition> definition) {
+            functions.add(definition);
+            return functions.size() - 1;
+        }
+
+        public int addFunction(FunctionDefinition definition) {
+            functions.add(Suppliers.ofInstance(definition));
+            return functions.size() - 1;
+        }
+
+        public Builder addFunctionSuppliers(Collection<Supplier<FunctionDefinition>> definitions) {
+            functions.addAll(definitions);
+            return this;
+        }
+
+        public Builder addFunctions(Collection<FunctionDefinition> definitions) {
+            functions.addAll(definitions.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
     }
