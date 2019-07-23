@@ -3,58 +3,27 @@ package com.kneelawk.kfractal.generator.validation;
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
 import com.kneelawk.kfractal.generator.api.ir.Scope;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
-import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutputVisitor;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
-
-import java.util.List;
+import com.kneelawk.kfractal.generator.util.FunctionScope;
 
 class ValidatingInstructionOutputVisitor implements IInstructionOutputVisitor<ValueInfo> {
-    private List<VariableDeclaration> globalVariables;
-    private List<VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> arguments;
-    private List<VariableDeclaration> localVariables;
+    private FunctionScope<ValueInfo> functionScope;
 
     public ValidatingInstructionOutputVisitor(
-            List<VariableDeclaration> globalVariables,
-            List<VariableDeclaration> contextVariables,
-            List<VariableDeclaration> arguments,
-            List<VariableDeclaration> localVariables) {
-        this.globalVariables = globalVariables;
-        this.contextVariables = contextVariables;
-        this.arguments = arguments;
-        this.localVariables = localVariables;
+            FunctionScope<ValueInfo> functionScope) {
+        this.functionScope = functionScope;
     }
 
     @Override
     public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
-        // find the variable
-        // This might bes appropriate for its own class
         int index = reference.getIndex();
         Scope scope = reference.getScope();
-        List<VariableDeclaration> scopeList;
-        switch (scope) {
-            case GLOBAL:
-                scopeList = globalVariables;
-                break;
-            case CONTEXT:
-                scopeList = contextVariables;
-                break;
-            case ARGUMENTS:
-                scopeList = arguments;
-                break;
-            case LOCAL:
-                scopeList = localVariables;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + scope);
-        }
 
         ValueInfo valueInfo;
-        if (index < scopeList.size()) {
-            VariableDeclaration declaration = scopeList.get(index);
-            valueInfo = new ValueInfo.Builder(true, declaration.getType(), declaration.getAttributes()).build();
+        if (index < functionScope.getScope(scope).size()) {
+            valueInfo = functionScope.get(scope, index);
         } else {
             throw new MissingVariableReferenceException(
                     "Reference to missing variable: scope: " + scope + ", index: " + index);

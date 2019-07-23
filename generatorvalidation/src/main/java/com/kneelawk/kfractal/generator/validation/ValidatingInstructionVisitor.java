@@ -1,19 +1,20 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
+import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
+import com.kneelawk.kfractal.generator.api.ir.ValueType;
+import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.util.FunctionScope;
 
 import java.util.List;
 import java.util.function.Function;
 
 class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
     private List<FunctionDefinition> functions;
-    private List<VariableDeclaration> globalVariables;
-    private List<VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> arguments;
-    private List<VariableDeclaration> localVariables;
+    private FunctionScope<ValueInfo> functionScope;
     private final ValueType returnType;
 
     private final ValidatingInstructionInputVisitor inputVisitor;
@@ -22,21 +23,13 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
     private boolean returned = false;
 
     public ValidatingInstructionVisitor(List<FunctionDefinition> functions,
-                                        List<VariableDeclaration> globalVariables,
-                                        List<VariableDeclaration> contextVariables,
-                                        List<VariableDeclaration> arguments,
-                                        List<VariableDeclaration> localVariables,
+                                        FunctionScope<ValueInfo> functionScope,
                                         ValueType returnType) {
         this.functions = functions;
-        this.globalVariables = globalVariables;
-        this.contextVariables = contextVariables;
-        this.arguments = arguments;
-        this.localVariables = localVariables;
+        this.functionScope = functionScope;
         this.returnType = returnType;
-        inputVisitor = new ValidatingInstructionInputVisitor(functions, globalVariables, contextVariables, arguments,
-                localVariables);
-        outputVisitor =
-                new ValidatingInstructionOutputVisitor(globalVariables, contextVariables, arguments, localVariables);
+        inputVisitor = new ValidatingInstructionInputVisitor(functions, functionScope);
+        outputVisitor = new ValidatingInstructionOutputVisitor(functionScope);
     }
 
     private void checkState() throws FractalIRException {
@@ -685,16 +678,14 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
         // check the true condition
         ValidatingInstructionVisitor ifTrueVisitor =
-                new ValidatingInstructionVisitor(functions, globalVariables, contextVariables, arguments,
-                        localVariables, returnType);
+                new ValidatingInstructionVisitor(functions, functionScope, returnType);
         for (IInstruction instruction : anIf.getIfTrue()) {
             instruction.accept(ifTrueVisitor);
         }
 
         // check the false condition
         ValidatingInstructionVisitor ifFalseVisitor =
-                new ValidatingInstructionVisitor(functions, globalVariables, contextVariables, arguments,
-                        localVariables, returnType);
+                new ValidatingInstructionVisitor(functions, functionScope, returnType);
         for (IInstruction instruction : anIf.getIfFalse()) {
             instruction.accept(ifFalseVisitor);
         }
@@ -713,8 +704,7 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
 
         // check the loop instructions
         ValidatingInstructionVisitor loopVisitor =
-                new ValidatingInstructionVisitor(functions, globalVariables, contextVariables, arguments,
-                        localVariables, returnType);
+                new ValidatingInstructionVisitor(functions, functionScope, returnType);
         for (IInstruction instruction : aWhile.getWhileTrue()) {
             instruction.accept(loopVisitor);
         }

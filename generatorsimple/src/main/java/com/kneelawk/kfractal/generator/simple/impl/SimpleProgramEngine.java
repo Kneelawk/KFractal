@@ -11,6 +11,7 @@ import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
 import com.kneelawk.kfractal.generator.simple.impl.ir.SimpleGeneratorInstructionVisitor;
+import com.kneelawk.kfractal.generator.util.FunctionScope;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.List;
@@ -129,10 +130,11 @@ public class SimpleProgramEngine implements IProgramEngine {
         ImmutableList.Builder<ValueContainer> localScope = ImmutableList.builder();
         addVariablesToScope(localScope, definition.getLocalVariables());
 
+        FunctionScope<ValueContainer> functionScope =
+                new FunctionScope<>(globalScope, contextScope.build(), argumentScope.build(), localScope.build());
+
         // setup the instruction visitor
-        SimpleGeneratorInstructionVisitor visitor =
-                new SimpleGeneratorInstructionVisitor(this, globalScope, contextScope.build(), argumentScope.build(),
-                        localScope.build());
+        SimpleGeneratorInstructionVisitor visitor = new SimpleGeneratorInstructionVisitor(this, functionScope);
 
         // visit the instructions
         for (IInstruction instruction : definition.getBody()) {

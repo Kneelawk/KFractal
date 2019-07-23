@@ -1,9 +1,11 @@
 package com.kneelawk.kfractal.generator.validation;
 
+import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
+import com.kneelawk.kfractal.generator.util.FunctionScope;
 
 import java.util.Collection;
 import java.util.Set;
@@ -18,10 +20,22 @@ public class ProgramValidator {
             checkArguments(function.getArguments());
             checkVariables(function.getLocalVariables());
 
+            FunctionScope<ValueInfo> functionScope = new FunctionScope<>(
+                    program.getGlobalVariables().stream()
+                            .map(v -> new ValueInfo.Builder(true, v.getType(), v.getAttributes()).build())
+                            .collect(ImmutableList.toImmutableList()),
+                    function.getContextVariables().stream()
+                            .map(v -> new ValueInfo.Builder(true, v.getType(), v.getAttributes()).build())
+                            .collect(ImmutableList.toImmutableList()),
+                    function.getArguments().stream()
+                            .map(v -> new ValueInfo.Builder(true, v.getType(), v.getAttributes()).build())
+                            .collect(ImmutableList.toImmutableList()),
+                    function.getLocalVariables().stream()
+                            .map(v -> new ValueInfo.Builder(true, v.getType(), v.getAttributes()).build())
+                            .collect(ImmutableList.toImmutableList()));
+
             ValidatingInstructionVisitor visitor =
-                    new ValidatingInstructionVisitor(program.getFunctions(), program.getGlobalVariables(),
-                            function.getContextVariables(), function.getArguments(), function.getLocalVariables(),
-                            function.getReturnType());
+                    new ValidatingInstructionVisitor(program.getFunctions(), functionScope, function.getReturnType());
 
             for (IInstruction instruction : function.getBody()) {
                 instruction.accept(visitor);

@@ -3,17 +3,3 @@ dependencies {
     implementation project(':util')
     implementation project(':generatorutil')
 }
-
-compileTestJava {
-    moduleOptions {
-        addModules = ['com.kneelawk.kfractal.generator.util']
-        addReads = ['com.kneelawk.kfractal.generator.validation': 'com.kneelawk.kfractal.generator.util']
-    }
-}
-
-test {
-    moduleOptions {
-        addModules = ['com.kneelawk.kfractal.generator.util']
-        addReads = ['com.kneelawk.kfractal.generator.validation': 'com.kneelawk.kfractal.generator.util']
-    }
-}

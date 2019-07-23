@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
-import com.kneelawk.kfractal.generator.api.ir.Scope;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
 import com.kneelawk.kfractal.generator.simple.impl.*;
+import com.kneelawk.kfractal.generator.util.FunctionScope;
 
 import java.util.List;
 
@@ -15,46 +15,17 @@ import java.util.List;
  */
 public class SimpleGeneratorInstructionInputVisitor implements IInstructionInputVisitor<IEngineValue> {
     private SimpleProgramEngine engine;
-    private List<ValueContainer> globalScope;
-    private List<ValueContainer> contextScope;
-    private List<ValueContainer> argumentScope;
-    private List<ValueContainer> localScope;
+    private FunctionScope<ValueContainer> scope;
 
     public SimpleGeneratorInstructionInputVisitor(SimpleProgramEngine engine,
-                                                  List<ValueContainer> globalScope,
-                                                  List<ValueContainer> contextScope,
-                                                  List<ValueContainer> argumentScope,
-                                                  List<ValueContainer> localScope) {
+                                                  FunctionScope<ValueContainer> scope) {
         this.engine = engine;
-        this.globalScope = globalScope;
-        this.contextScope = contextScope;
-        this.argumentScope = argumentScope;
-        this.localScope = localScope;
+        this.scope = scope;
     }
 
     @Override
     public IEngineValue visitVariableReference(VariableReference reference) throws FractalIRException {
-        int index = reference.getIndex();
-        Scope scope = reference.getScope();
-        List<ValueContainer> scopeList;
-        switch (scope) {
-            case GLOBAL:
-                scopeList = globalScope;
-                break;
-            case CONTEXT:
-                scopeList = contextScope;
-                break;
-            case ARGUMENTS:
-                scopeList = argumentScope;
-                break;
-            case LOCAL:
-                scopeList = localScope;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + scope);
-        }
-
-        return scopeList.get(index).getValue();
+        return scope.get(reference.getScope(), reference.getIndex()).getValue();
     }
 
     @Override
