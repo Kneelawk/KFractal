@@ -55,6 +55,12 @@ public class RealComposeComplex implements IInstruction {
             IInstructionOutput complex,
             IInstructionInput real,
             IInstructionInput imaginary) {
+        if (complex == null)
+            throw new NullPointerException("Complex cannot be null");
+        if (real == null)
+            throw new NullPointerException("Real cannot be null");
+        if (imaginary == null)
+            throw new NullPointerException("Imaginary cannot be null");
         return new RealComposeComplex(complex, real, imaginary);
     }
 
@@ -75,6 +81,12 @@ public class RealComposeComplex implements IInstruction {
         }
 
         public RealComposeComplex build() {
+            if (complex == null)
+                throw new IllegalStateException("No complex specified");
+            if (real == null)
+                throw new IllegalStateException("No real specified");
+            if (imaginary == null)
+                throw new IllegalStateException("No imaginary specified");
             return new RealComposeComplex(complex, real, imaginary);
         }
 

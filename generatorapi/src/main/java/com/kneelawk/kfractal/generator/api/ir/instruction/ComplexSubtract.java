@@ -53,6 +53,12 @@ public class ComplexSubtract implements IInstruction {
             IInstructionOutput difference,
             IInstructionInput minuend,
             IInstructionInput subtrahend) {
+        if (difference == null)
+            throw new NullPointerException("Difference cannot be null");
+        if (minuend == null)
+            throw new NullPointerException("Minuend cannot be null");
+        if (subtrahend == null)
+            throw new NullPointerException("Subtrahend cannot be null");
         return new ComplexSubtract(difference, minuend, subtrahend);
     }
 
@@ -71,6 +77,12 @@ public class ComplexSubtract implements IInstruction {
         }
 
         public ComplexSubtract build() {
+            if (difference == null)
+                throw new IllegalStateException("No difference specified");
+            if (minuend == null)
+                throw new IllegalStateException("No minuend specified");
+            if (subtrahend == null)
+                throw new IllegalStateException("No subtrahend specified");
             return new ComplexSubtract(difference, minuend, subtrahend);
         }
 

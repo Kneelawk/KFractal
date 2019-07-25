@@ -53,6 +53,12 @@ public class ComplexDivide implements IInstruction {
             IInstructionOutput quotient,
             IInstructionInput dividend,
             IInstructionInput divisor) {
+        if (quotient == null)
+            throw new NullPointerException("Quotient cannot be null");
+        if (dividend == null)
+            throw new NullPointerException("Dividend cannot be null");
+        if (divisor == null)
+            throw new NullPointerException("Divisor cannot be null");
         return new ComplexDivide(quotient, dividend, divisor);
     }
 
@@ -71,6 +77,12 @@ public class ComplexDivide implements IInstruction {
         }
 
         public ComplexDivide build() {
+            if (quotient == null)
+                throw new IllegalStateException("No quotient specified");
+            if (dividend == null)
+                throw new IllegalStateException("No dividend specified");
+            if (divisor == null)
+                throw new IllegalStateException("No divisor specified");
             return new ComplexDivide(quotient, dividend, divisor);
         }
 

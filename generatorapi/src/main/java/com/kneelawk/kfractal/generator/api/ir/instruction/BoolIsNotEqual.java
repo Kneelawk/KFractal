@@ -54,6 +54,12 @@ public class BoolIsNotEqual implements IInstruction {
     public static BoolIsNotEqual create(IInstructionOutput result,
                                         IInstructionInput left,
                                         IInstructionInput right) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (left == null)
+            throw new NullPointerException("Left cannot be null");
+        if (right == null)
+            throw new NullPointerException("Right cannot be null");
         return new BoolIsNotEqual(result, left, right);
     }
 
@@ -74,6 +80,12 @@ public class BoolIsNotEqual implements IInstruction {
         }
 
         public BoolIsNotEqual build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (left == null)
+                throw new IllegalStateException("No left specified");
+            if (right == null)
+                throw new IllegalStateException("No right specified");
             return new BoolIsNotEqual(result, left, right);
         }
 

@@ -54,6 +54,12 @@ public class RealAdd implements IInstruction {
     public static RealAdd create(IInstructionOutput sum,
                                  IInstructionInput leftAddend,
                                  IInstructionInput rightAddend) {
+        if (sum == null)
+            throw new NullPointerException("Sum cannot be null");
+        if (leftAddend == null)
+            throw new NullPointerException("LeftAddend cannot be null");
+        if (rightAddend == null)
+            throw new NullPointerException("RightAddend cannot be null");
         return new RealAdd(sum, leftAddend, rightAddend);
     }
 
@@ -74,6 +80,12 @@ public class RealAdd implements IInstruction {
         }
 
         public RealAdd build() {
+            if (sum == null)
+                throw new IllegalStateException("No sum specified");
+            if (leftAddend == null)
+                throw new IllegalStateException("No leftAddend specified");
+            if (rightAddend == null)
+                throw new IllegalStateException("No rightAddend specified");
             return new RealAdd(sum, leftAddend, rightAddend);
         }
 

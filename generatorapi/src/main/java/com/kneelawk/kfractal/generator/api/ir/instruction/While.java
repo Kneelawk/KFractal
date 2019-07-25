@@ -49,6 +49,8 @@ public class While implements IInstruction {
 
     public static While create(IInstructionInput condition,
                                Iterable<IInstruction> whileTrue) {
+        if (condition == null)
+            throw new NullPointerException("Condition cannot be null");
         return new While(condition, ImmutableList.copyOf(whileTrue));
     }
 
@@ -66,6 +68,8 @@ public class While implements IInstruction {
         }
 
         public While build() {
+            if (condition == null)
+                throw new IllegalStateException("No condition specified");
             return new While(condition, ImmutableList.copyOf(whileTrue));
         }
 

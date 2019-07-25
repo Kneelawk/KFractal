@@ -56,6 +56,12 @@ public class RealIsGreaterOrEqual implements IInstruction {
             IInstructionOutput result,
             IInstructionInput subject,
             IInstructionInput basis) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (subject == null)
+            throw new NullPointerException("Subject cannot be null");
+        if (basis == null)
+            throw new NullPointerException("Basis cannot be null");
         return new RealIsGreaterOrEqual(result, subject, basis);
     }
 
@@ -76,6 +82,12 @@ public class RealIsGreaterOrEqual implements IInstruction {
         }
 
         public RealIsGreaterOrEqual build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (subject == null)
+                throw new IllegalStateException("No subject specified");
+            if (basis == null)
+                throw new IllegalStateException("No basis specified");
             return new RealIsGreaterOrEqual(result, subject, basis);
         }
 

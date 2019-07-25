@@ -44,6 +44,10 @@ public class PointerSet implements IInstruction {
 
     public static PointerSet create(IInstructionInput pointer,
                                     IInstructionInput data) {
+        if (pointer == null)
+            throw new NullPointerException("Pointer cannot be null");
+        if (data == null)
+            throw new NullPointerException("Data cannot be null");
         return new PointerSet(pointer, data);
     }
 
@@ -61,6 +65,10 @@ public class PointerSet implements IInstruction {
         }
 
         public PointerSet build() {
+            if (pointer == null)
+                throw new IllegalStateException("No pointer specified");
+            if (data == null)
+                throw new IllegalStateException("No data specified");
             return new PointerSet(pointer, data);
         }
 

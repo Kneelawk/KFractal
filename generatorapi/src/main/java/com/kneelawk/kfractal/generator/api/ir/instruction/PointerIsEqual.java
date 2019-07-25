@@ -54,6 +54,12 @@ public class PointerIsEqual implements IInstruction {
     public static PointerIsEqual create(IInstructionOutput result,
                                         IInstructionInput left,
                                         IInstructionInput right) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (left == null)
+            throw new NullPointerException("Left cannot be null");
+        if (right == null)
+            throw new NullPointerException("Right cannot be null");
         return new PointerIsEqual(result, left, right);
     }
 
@@ -74,6 +80,12 @@ public class PointerIsEqual implements IInstruction {
         }
 
         public PointerIsEqual build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (left == null)
+                throw new IllegalStateException("No left specified");
+            if (right == null)
+                throw new IllegalStateException("No right specified");
             return new PointerIsEqual(result, left, right);
         }
 

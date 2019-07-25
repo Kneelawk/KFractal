@@ -43,6 +43,10 @@ public class Assign implements IInstruction {
     }
 
     public static Assign create(IInstructionOutput dest, IInstructionInput source) {
+        if (dest == null)
+            throw new NullPointerException("Dest cannot be null");
+        if (source == null)
+            throw new NullPointerException("Source cannot be null");
         return new Assign(dest, source);
     }
 
@@ -59,6 +63,10 @@ public class Assign implements IInstruction {
         }
 
         public Assign build() {
+            if (dest == null)
+                throw new IllegalStateException("No dest specified");
+            if (source == null)
+                throw new IllegalStateException("No source specified");
             return new Assign(dest, source);
         }
 
