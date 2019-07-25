@@ -7,6 +7,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -101,6 +102,17 @@ public class Program {
             return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
         }
 
+        @SafeVarargs
+        public final Builder addGlobalVariables(Supplier<VariableDeclaration>... declarations) {
+            globalVariables.addAll(Arrays.asList(declarations));
+            return this;
+        }
+
+        public final Builder addGlobalVariables(VariableDeclaration... declarations) {
+            globalVariables.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
+        }
+
         public Builder addGlobalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
             globalVariables.addAll(declarations);
             return this;
@@ -140,6 +152,17 @@ public class Program {
         public int addFunction(FunctionDefinition definition) {
             functions.add(Suppliers.ofInstance(definition));
             return functions.size() - 1;
+        }
+
+        @SafeVarargs
+        public final Builder addFunctions(Supplier<FunctionDefinition>... definitions) {
+            functions.addAll(Arrays.asList(definitions));
+            return this;
+        }
+
+        public Builder addFunctions(FunctionDefinition... definitions) {
+            functions.addAll(Arrays.stream(definitions).map(Suppliers::ofInstance).collect(Collectors.toList()));
+            return this;
         }
 
         public Builder addFunctionSuppliers(Collection<Supplier<FunctionDefinition>> definitions) {
