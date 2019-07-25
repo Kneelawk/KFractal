@@ -52,6 +52,12 @@ public class ComplexMultiply implements IInstruction {
             IInstructionOutput product,
             IInstructionInput leftFactor,
             IInstructionInput rightFactor) {
+        if (product == null)
+            throw new NullPointerException("Product cannot be null");
+        if (leftFactor == null)
+            throw new NullPointerException("LeftFactor cannot be null");
+        if (rightFactor == null)
+            throw new NullPointerException("RightFactor cannot be null");
         return new ComplexMultiply(product, leftFactor, rightFactor);
     }
 
@@ -70,6 +76,12 @@ public class ComplexMultiply implements IInstruction {
         }
 
         public ComplexMultiply build() {
+            if (product == null)
+                throw new IllegalStateException("No product specified");
+            if (leftFactor == null)
+                throw new IllegalStateException("No leftFactor specified");
+            if (rightFactor == null)
+                throw new IllegalStateException("No rightFactor specified");
             return new ComplexMultiply(product, leftFactor, rightFactor);
         }
 

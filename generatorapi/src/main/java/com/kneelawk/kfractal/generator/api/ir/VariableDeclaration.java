@@ -37,15 +37,21 @@ public class VariableDeclaration {
     }
 
     public static VariableDeclaration create(ValueType type) {
+        if (type == null)
+            throw new NullPointerException("Type cannot be null");
         return new VariableDeclaration(type, ImmutableSet.of());
     }
 
     public static VariableDeclaration create(ValueType type, IAttribute... attributes) {
+        if (type == null)
+            throw new NullPointerException("Type cannot be null");
         return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
     }
 
     public static VariableDeclaration create(ValueType type,
                                              Iterable<IAttribute> attributes) {
+        if (type == null)
+            throw new NullPointerException("Type cannot be null");
         return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
     }
 
@@ -63,6 +69,8 @@ public class VariableDeclaration {
         }
 
         public VariableDeclaration build() {
+            if (type == null)
+                throw new IllegalStateException("No type specified");
             return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
         }
 

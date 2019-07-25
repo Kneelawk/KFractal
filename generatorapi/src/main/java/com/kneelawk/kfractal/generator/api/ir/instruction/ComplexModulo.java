@@ -46,6 +46,10 @@ public class ComplexModulo implements IInstruction {
 
     public static ComplexModulo create(IInstructionOutput modulus,
                                        IInstructionInput complex) {
+        if (modulus == null)
+            throw new NullPointerException("Modulus cannot be null");
+        if (complex == null)
+            throw new NullPointerException("Complex cannot be null");
         return new ComplexModulo(modulus, complex);
     }
 
@@ -63,6 +67,10 @@ public class ComplexModulo implements IInstruction {
         }
 
         public ComplexModulo build() {
+            if (modulus == null)
+                throw new IllegalStateException("No modulus specified");
+            if (complex == null)
+                throw new IllegalStateException("No complex specified");
             return new ComplexModulo(modulus, complex);
         }
 

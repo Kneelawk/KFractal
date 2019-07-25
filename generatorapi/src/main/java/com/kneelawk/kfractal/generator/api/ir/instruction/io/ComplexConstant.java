@@ -32,6 +32,8 @@ public class ComplexConstant implements IInstructionInput {
     }
 
     public static ComplexConstant create(Complex value) {
+        if (value == null)
+            throw new NullPointerException("Value cannot be null");
         return new ComplexConstant(value);
     }
 
@@ -46,6 +48,8 @@ public class ComplexConstant implements IInstructionInput {
         }
 
         public ComplexConstant build() {
+            if (value == null)
+                throw new IllegalStateException("No value specified");
             return new ComplexConstant(value);
         }
 

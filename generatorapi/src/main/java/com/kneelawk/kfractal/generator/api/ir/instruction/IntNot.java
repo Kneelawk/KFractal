@@ -44,6 +44,10 @@ public class IntNot implements IInstruction {
 
     public static IntNot create(IInstructionOutput output,
                                 IInstructionInput input) {
+        if (output == null)
+            throw new NullPointerException("Output cannot be null");
+        if (input == null)
+            throw new NullPointerException("Input cannot be null");
         return new IntNot(output, input);
     }
 
@@ -61,6 +65,10 @@ public class IntNot implements IInstruction {
         }
 
         public IntNot build() {
+            if (output == null)
+                throw new IllegalStateException("No output specified");
+            if (input == null)
+                throw new IllegalStateException("No input specified");
             return new IntNot(output, input);
         }
 

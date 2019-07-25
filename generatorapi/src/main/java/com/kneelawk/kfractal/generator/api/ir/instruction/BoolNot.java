@@ -44,6 +44,10 @@ public class BoolNot implements IInstruction {
 
     public static BoolNot create(IInstructionOutput output,
                                  IInstructionInput input) {
+        if (output == null)
+            throw new NullPointerException("Output cannot be null");
+        if (input == null)
+            throw new NullPointerException("Input cannot be null");
         return new BoolNot(output, input);
     }
 
@@ -61,6 +65,10 @@ public class BoolNot implements IInstruction {
         }
 
         public BoolNot build() {
+            if (output == null)
+                throw new IllegalStateException("No output specified");
+            if (input == null)
+                throw new IllegalStateException("No input specified");
             return new BoolNot(output, input);
         }
 

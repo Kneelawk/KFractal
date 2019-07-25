@@ -52,6 +52,12 @@ public class ComplexAdd implements IInstruction {
     public static ComplexAdd create(IInstructionOutput sum,
                                     IInstructionInput leftAddend,
                                     IInstructionInput rightAddend) {
+        if (sum == null)
+            throw new NullPointerException("Sum cannot be null");
+        if (leftAddend == null)
+            throw new NullPointerException("LeftAddend cannot be null");
+        if (rightAddend == null)
+            throw new NullPointerException("RightAddend cannot be null");
         return new ComplexAdd(sum, leftAddend, rightAddend);
     }
 
@@ -70,6 +76,12 @@ public class ComplexAdd implements IInstruction {
         }
 
         public ComplexAdd build() {
+            if (sum == null)
+                throw new IllegalStateException("No sum specified");
+            if (leftAddend == null)
+                throw new IllegalStateException("No leftAddend specified");
+            if (rightAddend == null)
+                throw new IllegalStateException("No rightAddend specified");
             return new ComplexAdd(sum, leftAddend, rightAddend);
         }
 

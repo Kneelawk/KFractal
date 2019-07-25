@@ -54,6 +54,12 @@ public class IntMultiply implements IInstruction {
     public static IntMultiply create(IInstructionOutput product,
                                      IInstructionInput leftFactor,
                                      IInstructionInput rightFactor) {
+        if (product == null)
+            throw new NullPointerException("Product cannot be null");
+        if (leftFactor == null)
+            throw new NullPointerException("LeftFactor cannot be null");
+        if (rightFactor == null)
+            throw new NullPointerException("RightFactor cannot be null");
         return new IntMultiply(product, leftFactor, rightFactor);
     }
 
@@ -74,6 +80,12 @@ public class IntMultiply implements IInstruction {
         }
 
         public IntMultiply build() {
+            if (product == null)
+                throw new IllegalStateException("No product specified");
+            if (leftFactor == null)
+                throw new IllegalStateException("No leftFactor specified");
+            if (rightFactor == null)
+                throw new IllegalStateException("No rightFactor specified");
             return new IntMultiply(product, leftFactor, rightFactor);
         }
 

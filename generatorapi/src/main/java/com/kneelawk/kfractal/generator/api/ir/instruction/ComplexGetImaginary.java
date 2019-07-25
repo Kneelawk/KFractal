@@ -46,6 +46,10 @@ public class ComplexGetImaginary implements IInstruction {
     public static ComplexGetImaginary create(
             IInstructionOutput imaginary,
             IInstructionInput complex) {
+        if (imaginary == null)
+            throw new NullPointerException("Imaginary cannot be null");
+        if (complex == null)
+            throw new NullPointerException("Complex cannot be null");
         return new ComplexGetImaginary(imaginary, complex);
     }
 
@@ -63,6 +67,10 @@ public class ComplexGetImaginary implements IInstruction {
         }
 
         public ComplexGetImaginary build() {
+            if (imaginary == null)
+                throw new IllegalStateException("No imaginary specified");
+            if (complex == null)
+                throw new IllegalStateException("No complex specified");
             return new ComplexGetImaginary(imaginary, complex);
         }
 

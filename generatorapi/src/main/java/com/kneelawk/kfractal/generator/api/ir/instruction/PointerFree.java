@@ -35,6 +35,8 @@ public class PointerFree implements IInstruction {
     }
 
     public static PointerFree create(IInstructionInput pointer) {
+        if (pointer == null)
+            throw new NullPointerException("Pointer cannot be null");
         return new PointerFree(pointer);
     }
 
@@ -49,6 +51,8 @@ public class PointerFree implements IInstruction {
         }
 
         public PointerFree build() {
+            if (pointer == null)
+                throw new IllegalStateException("No pointer specified");
             return new PointerFree(pointer);
         }
 

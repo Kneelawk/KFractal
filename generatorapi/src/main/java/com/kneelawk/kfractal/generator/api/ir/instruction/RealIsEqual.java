@@ -54,6 +54,12 @@ public class RealIsEqual implements IInstruction {
     public static RealIsEqual create(IInstructionOutput result,
                                      IInstructionInput left,
                                      IInstructionInput right) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (left == null)
+            throw new NullPointerException("Left cannot be null");
+        if (right == null)
+            throw new NullPointerException("Right cannot be null");
         return new RealIsEqual(result, left, right);
     }
 
@@ -74,6 +80,12 @@ public class RealIsEqual implements IInstruction {
         }
 
         public RealIsEqual build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (left == null)
+                throw new IllegalStateException("No left specified");
+            if (right == null)
+                throw new IllegalStateException("No right specified");
             return new RealIsEqual(result, left, right);
         }
 
