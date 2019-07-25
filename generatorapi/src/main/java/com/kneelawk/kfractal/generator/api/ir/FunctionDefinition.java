@@ -87,6 +87,8 @@ public class FunctionDefinition {
         }
 
         public FunctionDefinition build() {
+            if (returnType == null)
+                throw new IllegalStateException("No returnType specified");
             return new FunctionDefinition(returnType,
                     contextVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
                     arguments.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),

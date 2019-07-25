@@ -63,6 +63,8 @@ public class VariableDeclaration {
         }
 
         public VariableDeclaration build() {
+            if (type == null)
+                throw new IllegalStateException("No type specified");
             return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
         }
 

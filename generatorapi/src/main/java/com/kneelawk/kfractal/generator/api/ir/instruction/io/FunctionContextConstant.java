@@ -16,8 +16,6 @@ public class FunctionContextConstant implements IInstructionInput {
 
     private FunctionContextConstant(int functionIndex,
                                     List<IInstructionInput> contextVariables) {
-        if (functionIndex < 0)
-            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         this.functionIndex = functionIndex;
         this.contextVariables = contextVariables;
     }
@@ -44,16 +42,22 @@ public class FunctionContextConstant implements IInstructionInput {
     }
 
     public static FunctionContextConstant create(int functionIndex) {
+        if (functionIndex < 0)
+            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         return new FunctionContextConstant(functionIndex, ImmutableList.of());
     }
 
     public static FunctionContextConstant create(int functionIndex,
                                                  IInstructionInput... contextVariables) {
+        if (functionIndex < 0)
+            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         return new FunctionContextConstant(functionIndex, ImmutableList.copyOf(contextVariables));
     }
 
     public static FunctionContextConstant create(int functionIndex,
                                                  List<IInstructionInput> contextVariables) {
+        if (functionIndex < 0)
+            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         return new FunctionContextConstant(functionIndex, ImmutableList.copyOf(contextVariables));
     }
 
@@ -72,6 +76,8 @@ public class FunctionContextConstant implements IInstructionInput {
         }
 
         public FunctionContextConstant build() {
+            if (functionIndex < 0)
+                throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
             return new FunctionContextConstant(functionIndex, ImmutableList.copyOf(contextVariables));
         }
 
