@@ -49,6 +49,12 @@ public class BoolAnd implements IInstruction {
     }
 
     public static BoolAnd create(IInstructionOutput result, IInstructionInput left, IInstructionInput right) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (left == null)
+            throw new NullPointerException("Left cannot be null");
+        if (right == null)
+            throw new NullPointerException("Right cannot be null");
         return new BoolAnd(result, left, right);
     }
 
@@ -69,6 +75,12 @@ public class BoolAnd implements IInstruction {
         }
 
         public BoolAnd build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (left == null)
+                throw new IllegalStateException("No left specified");
+            if (right == null)
+                throw new IllegalStateException("No right specified");
             return new BoolAnd(result, left, right);
         }
 

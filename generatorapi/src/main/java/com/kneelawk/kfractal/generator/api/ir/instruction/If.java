@@ -57,6 +57,8 @@ public class If implements IInstruction {
     public static If create(IInstructionInput condition,
                             Iterable<IInstruction> ifTrue,
                             Iterable<IInstruction> ifFalse) {
+        if (condition == null)
+            throw new NullPointerException("Condition cannot be null");
         return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
     }
 
@@ -77,6 +79,8 @@ public class If implements IInstruction {
         }
 
         public If build() {
+            if (condition == null)
+                throw new IllegalStateException("No condition specified");
             return new If(condition, ImmutableList.copyOf(ifTrue), ImmutableList.copyOf(ifFalse));
         }
 

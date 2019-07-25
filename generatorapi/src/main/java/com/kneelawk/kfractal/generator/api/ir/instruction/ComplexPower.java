@@ -54,6 +54,12 @@ public class ComplexPower implements IInstruction {
     public static ComplexPower create(IInstructionOutput result,
                                       IInstructionInput base,
                                       IInstructionInput exponent) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (base == null)
+            throw new NullPointerException("Base cannot be null");
+        if (exponent == null)
+            throw new NullPointerException("Exponent cannot be null");
         return new ComplexPower(result, base, exponent);
     }
 
@@ -74,6 +80,12 @@ public class ComplexPower implements IInstruction {
         }
 
         public ComplexPower build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (base == null)
+                throw new IllegalStateException("No base specified");
+            if (exponent == null)
+                throw new IllegalStateException("No exponent specified");
             return new ComplexPower(result, base, exponent);
         }
 

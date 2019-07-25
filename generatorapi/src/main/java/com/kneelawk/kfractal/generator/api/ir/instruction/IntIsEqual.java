@@ -53,6 +53,12 @@ public class IntIsEqual implements IInstruction {
     public static IntIsEqual create(IInstructionOutput result,
                                     IInstructionInput left,
                                     IInstructionInput right) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (left == null)
+            throw new NullPointerException("Left cannot be null");
+        if (right == null)
+            throw new NullPointerException("Right cannot be null");
         return new IntIsEqual(result, left, right);
     }
 
@@ -73,6 +79,12 @@ public class IntIsEqual implements IInstruction {
         }
 
         public IntIsEqual build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (left == null)
+                throw new IllegalStateException("No left specified");
+            if (right == null)
+                throw new IllegalStateException("No right specified");
             return new IntIsEqual(result, left, right);
         }
 

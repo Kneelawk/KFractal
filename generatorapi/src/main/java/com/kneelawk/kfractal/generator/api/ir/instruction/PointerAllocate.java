@@ -36,6 +36,8 @@ public class PointerAllocate implements IInstruction {
 
     public static PointerAllocate create(
             IInstructionOutput pointer) {
+        if (pointer == null)
+            throw new NullPointerException("Pointer cannot be null");
         return new PointerAllocate(pointer);
     }
 
@@ -50,6 +52,8 @@ public class PointerAllocate implements IInstruction {
         }
 
         public PointerAllocate build() {
+            if (pointer == null)
+                throw new IllegalStateException("No pointer specified");
             return new PointerAllocate(pointer);
         }
 

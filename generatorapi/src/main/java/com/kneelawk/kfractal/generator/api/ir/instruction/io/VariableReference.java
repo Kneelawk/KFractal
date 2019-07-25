@@ -13,8 +13,6 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     private int index;
 
     private VariableReference(Scope scope, int index) {
-        if (index < 0)
-            throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
         this.scope = scope;
         this.index = index;
     }
@@ -46,10 +44,16 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     }
 
     public VariableReference offset(int offset) {
+        if (index + offset < 0)
+            throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
         return new VariableReference(scope, index + offset);
     }
 
     public static VariableReference create(Scope scope, int index) {
+        if (scope == null)
+            throw new NullPointerException("Scope cannot be null");
+        if (index < 0)
+            throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
         return new VariableReference(scope, index);
     }
 
@@ -66,6 +70,10 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
         }
 
         public VariableReference build() {
+            if (scope == null)
+                throw new IllegalStateException("No scope specified");
+            if (index < 0)
+                throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
             return new VariableReference(scope, index);
         }
 

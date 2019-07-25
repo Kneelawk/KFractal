@@ -34,6 +34,8 @@ public class Return implements IInstruction {
     }
 
     public static Return create(IInstructionInput returnValue) {
+        if (returnValue == null)
+            throw new NullPointerException("ReturnValue cannot be null");
         return new Return(returnValue);
     }
 
@@ -48,6 +50,8 @@ public class Return implements IInstruction {
         }
 
         public Return build() {
+            if (returnValue == null)
+                throw new IllegalStateException("No returnValue specified");
             return new Return(returnValue);
         }
 

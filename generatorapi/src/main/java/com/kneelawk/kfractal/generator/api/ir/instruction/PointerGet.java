@@ -45,6 +45,10 @@ public class PointerGet implements IInstruction {
 
     public static PointerGet create(IInstructionOutput data,
                                     IInstructionInput pointer) {
+        if (data == null)
+            throw new NullPointerException("Data cannot be null");
+        if (pointer == null)
+            throw new NullPointerException("Pointer cannot be null");
         return new PointerGet(data, pointer);
     }
 
@@ -62,6 +66,10 @@ public class PointerGet implements IInstruction {
         }
 
         public PointerGet build() {
+            if (data == null)
+                throw new IllegalStateException("No data specified");
+            if (pointer == null)
+                throw new IllegalStateException("No pointer specified");
             return new PointerGet(data, pointer);
         }
 

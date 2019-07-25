@@ -62,6 +62,10 @@ public class FunctionCall implements IInstruction {
     public static FunctionCall create(IInstructionOutput result,
                                       IInstructionInput function,
                                       Iterable<IInstructionInput> arguments) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (function == null)
+            throw new NullPointerException("Function cannot be null");
         return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
     }
 
@@ -82,6 +86,10 @@ public class FunctionCall implements IInstruction {
         }
 
         public FunctionCall build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (function == null)
+                throw new IllegalStateException("No function specified");
             return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
         }
 

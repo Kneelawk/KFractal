@@ -45,6 +45,10 @@ public class ComplexGetReal implements IInstruction {
 
     public static ComplexGetReal create(IInstructionOutput real,
                                         IInstructionInput complex) {
+        if (real == null)
+            throw new NullPointerException("Real cannot be null");
+        if (complex == null)
+            throw new NullPointerException("Complex cannot be null");
         return new ComplexGetReal(real, complex);
     }
 
@@ -62,6 +66,10 @@ public class ComplexGetReal implements IInstruction {
         }
 
         public ComplexGetReal build() {
+            if (real == null)
+                throw new IllegalStateException("No real specified");
+            if (complex == null)
+                throw new IllegalStateException("No complex specified");
             return new ComplexGetReal(real, complex);
         }
 

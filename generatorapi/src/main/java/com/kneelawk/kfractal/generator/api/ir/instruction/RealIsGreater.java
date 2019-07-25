@@ -54,6 +54,12 @@ public class RealIsGreater implements IInstruction {
     public static RealIsGreater create(IInstructionOutput result,
                                        IInstructionInput subject,
                                        IInstructionInput basis) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (subject == null)
+            throw new NullPointerException("Subject cannot be null");
+        if (basis == null)
+            throw new NullPointerException("Basis cannot be null");
         return new RealIsGreater(result, subject, basis);
     }
 
@@ -74,6 +80,12 @@ public class RealIsGreater implements IInstruction {
         }
 
         public RealIsGreater build() {
+            if (result == null)
+                throw new IllegalStateException("No result specified");
+            if (subject == null)
+                throw new IllegalStateException("No subject specified");
+            if (basis == null)
+                throw new IllegalStateException("No basis specified");
             return new RealIsGreater(result, subject, basis);
         }
 
