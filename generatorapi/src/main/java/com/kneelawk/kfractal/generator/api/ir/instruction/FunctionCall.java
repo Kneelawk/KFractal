@@ -8,6 +8,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -57,6 +58,25 @@ public class FunctionCall implements IInstruction {
                 .append("function", function)
                 .append("arguments", arguments)
                 .toString();
+    }
+
+    public static FunctionCall create(IInstructionOutput result,
+                                      IInstructionInput function) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (function == null)
+            throw new NullPointerException("Function cannot be null");
+        return new FunctionCall(result, function, ImmutableList.of());
+    }
+
+    public static FunctionCall create(IInstructionOutput result,
+                                      IInstructionInput function,
+                                      IInstructionInput... arguments) {
+        if (result == null)
+            throw new NullPointerException("Result cannot be null");
+        if (function == null)
+            throw new NullPointerException("Function cannot be null");
+        return new FunctionCall(result, function, ImmutableList.copyOf(arguments));
     }
 
     public static FunctionCall create(IInstructionOutput result,
@@ -124,6 +144,11 @@ public class FunctionCall implements IInstruction {
 
         public Builder addArgument(IInstructionInput argument) {
             this.arguments.add(argument);
+            return this;
+        }
+
+        public Builder addArguments(IInstructionInput... arguments) {
+            this.arguments.addAll(Arrays.asList(arguments));
             return this;
         }
 
