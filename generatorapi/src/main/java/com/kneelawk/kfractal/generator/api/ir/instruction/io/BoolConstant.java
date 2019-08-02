@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class BoolConstant implements IInstructionInput {
+public class BoolConstant implements IBoolInstructionInput {
     private boolean value;
 
     private BoolConstant(boolean value) {
@@ -16,6 +16,16 @@ public class BoolConstant implements IInstructionInput {
 
     public boolean isValue() {
         return value;
+    }
+
+    @Override
+    public <R> R acceptBool(IBoolInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitBoolConstant(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitBoolConstant(this);
     }
 
     @Override

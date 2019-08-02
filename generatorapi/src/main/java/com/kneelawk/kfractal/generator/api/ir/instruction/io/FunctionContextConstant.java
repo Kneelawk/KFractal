@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class FunctionContextConstant implements IInstructionInput {
+public class FunctionContextConstant implements IFunctionInstructionInput {
     private int functionIndex;
     private List<IInstructionInput> contextVariables;
 
@@ -26,6 +26,16 @@ public class FunctionContextConstant implements IInstructionInput {
 
     public List<IInstructionInput> getContextVariables() {
         return contextVariables;
+    }
+
+    @Override
+    public <R> R acceptFunction(IFunctionInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitFunctionContextConstant(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitFunctionContextConstant(this);
     }
 
     @Override

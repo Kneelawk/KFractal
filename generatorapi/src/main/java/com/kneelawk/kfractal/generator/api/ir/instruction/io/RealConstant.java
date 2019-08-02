@@ -4,7 +4,7 @@ import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class RealConstant implements IInstructionInput {
+public class RealConstant implements IRealInstructionInput {
     private double value;
 
     private RealConstant(double value) {
@@ -13,6 +13,16 @@ public class RealConstant implements IInstructionInput {
 
     public double getValue() {
         return value;
+    }
+
+    @Override
+    public <R> R acceptReal(IRealInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealConstant(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealConstant(this);
     }
 
     @Override

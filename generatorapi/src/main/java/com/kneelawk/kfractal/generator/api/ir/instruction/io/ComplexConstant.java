@@ -8,7 +8,7 @@ import org.apache.commons.math3.complex.Complex;
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class ComplexConstant implements IInstructionInput {
+public class ComplexConstant implements IComplexInstructionInput {
     private Complex value;
 
     private ComplexConstant(Complex value) {
@@ -17,6 +17,16 @@ public class ComplexConstant implements IInstructionInput {
 
     public Complex getValue() {
         return value;
+    }
+
+    @Override
+    public <R> R acceptComplex(IComplexInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexConstant(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexConstant(this);
     }
 
     @Override

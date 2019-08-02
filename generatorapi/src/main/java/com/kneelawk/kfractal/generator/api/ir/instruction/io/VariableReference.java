@@ -8,7 +8,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class VariableReference implements IInstructionInput, IInstructionOutput {
+public class VariableReference
+        implements IBoolInstructionInputAndOutput, IIntInstructionInputAndOutput, IRealInstructionInputAndOutput,
+        IComplexInstructionInputAndOutput, IFunctionInstructionInputAndOutput, IPointerInstructionInputAndOutput {
     private Scope scope;
     private int index;
 
@@ -26,12 +28,82 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     }
 
     @Override
-    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
+    public <R> R acceptBool(IBoolInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptBool(IBoolInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptComplex(IComplexInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptComplex(IComplexInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptFunction(IFunctionInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptFunction(IFunctionInstructionOutputVisitor<R> visitor) throws FractalException {
         return visitor.visitVariableReference(this);
     }
 
     @Override
     public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptInt(IIntInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R visitInt(IIntInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptPointer(IPointerInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptReal(IRealInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptPointer(IPointerInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptReal(IRealInstructionOutputVisitor<R> visitor) throws FractalException {
+        return visitor.visitVariableReference(this);
+    }
+
+    @Override
+    public <R> R acceptNotVoid(INotVoidInstructionOutputVisitor<R> visitor) throws FractalException {
         return visitor.visitVariableReference(this);
     }
 
