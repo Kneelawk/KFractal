@@ -1,0 +1,53 @@
+Programs contain functions and global variables.
+Every function is referenced by its index within the program.
+Every global variable is referenced by the global scope and its index within the global scope.
+
+Every variable MUST be initialized with a value.
+
+Functions contain:
+ * A return type
+ * Argument list
+ * BasicBlock list
+
+Every argument is referenced by the argument list scope and its index within the argument list.
+Every basic block is referenced by its index within the BasicBlock list.
+
+BasicBlocks contain:
+ * Instruction list
+
+Every BasicBlock must end with a no-return control-flow instruction.
+No-return control-flow instructions include:
+ * Return (returns from the current function)
+ * Jump (unconditionally jumps to another BasicBlock within this function)
+ * ConditionalJump (conditionally jumps to another BasicBlock within this function)
+
+All instructions in a BasicBlock's list should be kept in that order.
+All instructions not in a BasicBlock's list (referenced only as values used in other instructions) could be performed in
+any order.
+
+When walking an instruction graph, care should be taken to recognize duplicate uses of an instruction, allowing its value
+to be saved and re-used.
+
+The Instructions that have a result value will also implement the Value interface.
+Constants and VariableReferences will also implement the Value interface.
+
+How would I implement Phi instructions?
+What a Phi instruction supposed to do is merging values from other BasicBlocks into a value that can be used in this
+BasicBlock.
+Should Phi even be instruction like other instructions?
+Not if possible.
+I actually don't see the problem.
+CURRENT ISSUE: I do, the problem is when you're building a loop, how would you have a phi instruction referencing something that
+references the phi instruction?
+
+Maybe every instruction should have a reference to the BasicBlock it's in?
+No, that shouldn't be necessary, because everything referenced by an instruction should be in the same BasicBlock as that
+instruction and everything referenced by a phi instruction should be from a different block (which block is specified in
+the phi instruction).
+No Wait. What if an instruction referenced a value from another block that doesn't need to be merged with anything (
+therefore no phi instruction)?
+Does that prove that an instruction needs to know which BasicBlock it's in?
+Not necessarily. If the instruction was only created in that other block then it isn't necessary for it to be there.
+Unless it has side-effects. But if it has side-effects, it should already either have already been traversed when going
+through that BasicBlock (either as a top-level instruction or as a dependency). Therefore it should already be
+remembered by anything doing the traversing.
