@@ -51,3 +51,29 @@ Not necessarily. If the instruction was only created in that other block then it
 Unless it has side-effects. But if it has side-effects, it should already either have already been traversed when going
 through that BasicBlock (either as a top-level instruction or as a dependency). Therefore it should already be
 remembered by anything doing the traversing.
+
+IDEA #1:
+Instructions do not take other instructions as inputs. Rather, they take references to indices within their same BasicBlock.
+These indices will be returned by a basic block from adding an instruction.
+A Phi instruction takes both a basic block position reference and a basic block reference.
+
+PROBLEM: This doesn't work if an instruction is referencing another instruction in another BasicBlock who's value is not
+influenced by control-flow and therefore does not need to be passed through a Phi instruction.
+
+IDEA #2:
+Instructions directly take other instructions as inputs. This solves some of the referencing issues. If an instruction was
+used in another BasicBlock, it will be remembered and therefore can have its result stored. Otherwise, it never needed to
+be in that basic block in the first place.
+
+The issue is that, due to the program structure's immutability, there is no way to have instruction variable use loops, even
+when they should be there (like when using Phi instructions in control-flow loops).
+    One way around this might be to have a special kind of reference that would be to a value that has not been defined yet.
+    This kind of reference would only be accepted by Phi instructions.
+
+    In fact, it might be a good idea to have Phi instructions only accept value references. There would be two kinds of
+    value references, ones that have already been defined and ones that haven't.
+
+Another issue is that because all instructions are encountered lazily, there is a chance that an instruction could end up
+in a less-optimal position than its intent.
+    This is not an issue because if an instruction were intended to be in a specific BasicBlock, it would be explicitly added
+    to that BasicBlock and therefore remembered when the program structure is being walked.
