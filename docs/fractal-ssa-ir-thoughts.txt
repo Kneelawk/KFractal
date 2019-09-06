@@ -59,6 +59,9 @@ A Phi instruction takes both a basic block position reference and a basic block 
 
 PROBLEM: This doesn't work if an instruction is referencing another instruction in another BasicBlock who's value is not
 influenced by control-flow and therefore does not need to be passed through a Phi instruction.
+    This problem would be easily fixed by having every reference also contain information about the basic block it came from.
+
+Another issue is that this form of code can get rather bloated and unwieldy.
 
 IDEA #2:
 Instructions directly take other instructions as inputs. This solves some of the referencing issues. If an instruction was
@@ -70,10 +73,163 @@ when they should be there (like when using Phi instructions in control-flow loop
     One way around this might be to have a special kind of reference that would be to a value that has not been defined yet.
     This kind of reference would only be accepted by Phi instructions.
 
-    In fact, it might be a good idea to have Phi instructions only accept value references. There would be two kinds of
-    value references, ones that have already been defined and ones that haven't.
+    In fact, it might be a good idea to have Phi instructions only accept value or instruction references. There would be
+    two kinds of value references, ones that have already been defined and ones that haven't.
 
 Another issue is that because all instructions are encountered lazily, there is a chance that an instruction could end up
 in a less-optimal position than its intent.
     This is not an issue because if an instruction were intended to be in a specific BasicBlock, it would be explicitly added
     to that BasicBlock and therefore remembered when the program structure is being walked.
+
+IDEA #3:
+A hybrid approach.
+It might make sense for instructions to be able to take references to other instructions as arguments instead of only taking
+other instructions directly. This would partly be for the sake of compactness of serialized forms.
+
+Instructions can take other instructions directly as input values or indirectly as references. Phi instructions would only
+accept references. A normal instruction can only reference instructions before it in its current BasicBlock or in previous
+BasicBlocks. Phi instruction can reference instructions from any BasicBlock and from any position in a basic block.
+
+Here is a simple program using the ssa ir system:
+Program(
+[], // global variables (must be initialized)
+[
+    FunctionDefinition(
+        COMPLEX, // return type
+        [], // context arguments
+        [ // arguments
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [ // basic blocks
+            // the first basic block is considered the entry
+            BasicBlock([ // instructions in this basic block
+                Return(ComplexAdd(
+                    ComplexMultiply(ValueReference(ARGUMENTS, 0), ValueReference(ARGUMENTS, 0)),
+                    ValueReference(ARGUMENTS, 1)
+                ))
+            ])
+        ]
+    )
+]
+)
+
+Here is a slightly more complex one:
+Program(
+[],
+[
+    FunctionDefinition(
+        COMPLEX,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                ComplexMultiply(ValueReference(ARGUMENTS, 0), ValueReference(ARGUMENTS, 0)),
+                Return(ComplexAdd(
+                    ComplexAdd(
+                        InstructionReference(0, 0), // (index of the basic block and index within the basic block)
+                        FunctionCall(FunctionContext("cos", []), [
+                            InstructionReference(0, 0)
+                        ])
+                    ),
+                    ValueReference(ARGUMENTS, 1)
+                ))
+            ])
+        ]
+    )
+]
+)
+
+Here is a program that makes use of the phi instruction:
+FIXME: this representation increments the counter even if the complex number successfully escaped
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                Phi([
+                    PhiBranch(IntConstant(0), -1),
+                    PhiBranch(InstructionReference(0, 3), 0)
+                ]),
+                Phi([
+                    PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                    PhiBranch(InstructionReference(0, 6), 0)
+                ]),
+                ConditionalJump(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, 0))), 1),
+                IntAdd(InstructionReference(0, 0), IntConstant(1)),
+                ComplexMultiply(InstructionReference(0, 1), InstructionReference(0, 1)),
+                ComplexMultiply(InstructionReference(0, 4), InstructionReference(0, 4)),
+                ComplexAdd(ComplexMultiply(InstructionReference(0, 5), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
+                ConditionalJump(RealIsGreater(ComplexModulo(InstructionReference(0, 6)), RealConstant(4)), 1),
+                Jump(0)
+            ]),
+            BasicBlock([
+                Return(InstructionReference(0, 3))
+            ])
+        ]
+    )
+]
+)
+
+This would have a java byte code representation similar to:
+class com.kneelawk.kfractal.generator.jvm.generated.Generated$yz3wmbDjgps {
+  public Generated$yz3wmbDjgps();
+    Code:
+       0: aload_0
+       1: invokespecial #1 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public int func$0(org.apache.commons.math3.complex.Complex, org.apache.commons.math3.complex.Complex);
+    Code:
+       0: aload_1
+       1: bipush 0
+       3: istore_3
+       4: astore 4
+       6: sipush 500
+       9: iload_3
+      10: if_icmple 64
+      13: iload_3
+      14: bipush 1
+      16: iadd
+      17: istore_3
+      18: aload 4
+      20: aload 4
+      22: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      25: astore 5
+      27: aload 5
+      29: aload 5
+      31: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      34: astore 5
+      36: aload 5
+      38: aload 5
+      40: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      43: aload_2
+      44: invokevirtual #3 // Method com/apache/commons/math3/complex/Complex.add:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      47: astore 4
+      49: aload 4
+      51: invokevirtual #4 // Method com/apache/commons/math3/complex/Complex.abs:()Lcom/apache/commons/math3/complex/Complex;
+      54: ldc2_w #5 // double 4.0
+      57: dcmpg
+      58: ifgt 64
+      61: goto 6
+      64: iload_3
+      65: ireturn
+}
+
+In the java bytecode context, it currently seems best if every phi instruction is assigned a local variable index. Then anything
+that the phi instruction draws from would simply set the value of that local variable before jumping to that phi instructions's
+basic block.
+
+It also seems like every instruction that is referenced by two other instructions should have its own local variable index,
+simply because it is not always possible to simply push things on to the stack in the right order if the fractal ir structure
+doesn't guarantee instructions will be in the right order. Some generation-time optimisation might be necessary.
