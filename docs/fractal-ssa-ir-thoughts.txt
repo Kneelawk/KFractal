@@ -144,7 +144,6 @@ Program(
 )
 
 Here is a program that makes use of the phi instruction:
-FIXME: this representation increments the counter even if the complex number successfully escaped
 Program(
 [],
 [
@@ -159,22 +158,22 @@ Program(
             BasicBlock([
                 Phi([
                     PhiBranch(IntConstant(0), -1),
-                    PhiBranch(InstructionReference(0, 3), 0)
+                    PhiBranch(InstructionReference(0, 7), 0)
                 ]),
                 Phi([
                     PhiBranch(ValueReference(ARGUMENTS, 0), -1),
-                    PhiBranch(InstructionReference(0, 6), 0)
+                    PhiBranch(InstructionReference(0, 5), 0)
                 ]),
                 ConditionalJump(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, 0))), 1),
-                IntAdd(InstructionReference(0, 0), IntConstant(1)),
                 ComplexMultiply(InstructionReference(0, 1), InstructionReference(0, 1)),
-                ComplexMultiply(InstructionReference(0, 4), InstructionReference(0, 4)),
-                ComplexAdd(ComplexMultiply(InstructionReference(0, 5), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
-                ConditionalJump(RealIsGreater(ComplexModulo(InstructionReference(0, 6)), RealConstant(4)), 1),
+                ComplexMultiply(InstructionReference(0, 3), InstructionReference(0, 3)),
+                ComplexAdd(ComplexMultiply(InstructionReference(0, 4), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
+                ConditionalJump(RealIsGreater(ComplexModulo(InstructionReference(0, 5)), RealConstant(4)), 1),
+                IntAdd(InstructionReference(0, 0), IntConstant(1)),
                 Jump(0)
             ]),
             BasicBlock([
-                Return(InstructionReference(0, 3))
+                Return(InstructionReference(0, 0))
             ])
         ]
     )
@@ -198,29 +197,29 @@ class com.kneelawk.kfractal.generator.jvm.generated.Generated$yz3wmbDjgps {
        6: sipush 500
        9: iload_3
       10: if_icmple 64
-      13: iload_3
-      14: bipush 1
-      16: iadd
-      17: istore_3
-      18: aload 4
-      20: aload 4
-      22: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
-      25: astore 5
-      27: aload 5
-      29: aload 5
-      31: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
-      34: astore 5
-      36: aload 5
-      38: aload 5
-      40: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
-      43: aload_2
-      44: invokevirtual #3 // Method com/apache/commons/math3/complex/Complex.add:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
-      47: astore 4
-      49: aload 4
-      51: invokevirtual #4 // Method com/apache/commons/math3/complex/Complex.abs:()Lcom/apache/commons/math3/complex/Complex;
-      54: ldc2_w #5 // double 4.0
-      57: dcmpg
-      58: ifgt 64
+      13: aload 4
+      15: aload 4
+      17: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      20: astore 5
+      22: aload 5
+      24: aload 5
+      26: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      29: astore 5
+      31: aload 5
+      33: aload 5
+      35: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      38: aload_2
+      39: invokevirtual #3 // Method com/apache/commons/math3/complex/Complex.add:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      42: astore 4
+      44: aload 4
+      46: invokevirtual #4 // Method com/apache/commons/math3/complex/Complex.abs:()Lcom/apache/commons/math3/complex/Complex;
+      49: ldc2_w #5 // double 4.0
+      52: dcmpg
+      53: ifgt 64
+      56: iload_3
+      57: bipush 1
+      59: iadd
+      60: istore_3
       61: goto 6
       64: iload_3
       65: ireturn
