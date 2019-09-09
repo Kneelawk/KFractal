@@ -232,3 +232,46 @@ basic block.
 It also seems like every instruction that is referenced by two other instructions should have its own local variable index,
 simply because it is not always possible to simply push things on to the stack in the right order if the fractal ir structure
 doesn't guarantee instructions will be in the right order. Some generation-time optimisation might be necessary.
+
+The previous fractal ir program might have an LLVM IR representation similar to:
+declare { double, double } @kfComplexMultiply(double, double, double, double)
+
+declare { double, double } @kfComplexAdd(double, double, double, double)
+
+declare double @kfComplexModulo(double, double)
+
+define i32 @func0(double %arg0r, double %arg0i, double %arg1r, double %arg1i) {
+entry:
+  br label %block0
+block0:
+  %v0 = phi i32 [ 0, %entry], [ %v13, %block0$2 ]
+  %v1r = phi double [ %arg0r, %entry ], [ %v10r, %block0$2 ]
+  %v1i = phi double [ %arg0i, %entry ], [ %v10i, %block0$2 ]
+  %v2 = icmp sle i32 500, %v0
+  br i1 %v2, label %block1, label %block0$1
+block0$1:
+  %v3 = call { double, double } @kfComplexMultiply(double %v1r, double %v1i, double %v1r, double %v1i)
+  %v4r = extractvalue { double, double } %v3, 0
+  %v4i = extractvalue { double, double } %v3, 1
+  %v5 = call { double, double } @kfComplexMultiply(double %v4r, double %v4i, double %v4r, double %v4i)
+  %v6r = extractvalue { double, double } %v5, 0
+  %v6i = extractvalue { double, double } %v5, 1
+  %v7 = call { double, double } @kfComplexMultiply(double %v6r, double %v6i, double %v1r, double %v1i)
+  %v8r = extractvalue { double, double } %v7, 0
+  %v8i = extractvalue { double, double } %v7, 1
+  %v9 = call { double, double } @kfComplexAdd(double %v8r, double %v8i, double %arg1r, double %arg1i)
+  %v10r = extractvalue { double, double } %v9, 0
+  %v10i = extractvalue { double, double } %v9, 1
+  %v11 = call double @kfComplexModulo(double %v10r, double %v10i)
+  %v12 = fcmp ugt double %v11, 4.0
+  br i1 %v12, label %block1, label %block0$2
+block0$2:
+  %v13 = add i32 %v0, 1
+  br label %block0
+block1:
+  ret i32 %v0
+}
+
+Constructing an LLVM ir version of my program highlighted some shortcomings of the current Fractal IR. One of the important
+things is that currently jump instructions have the possibility to leave control-flow in the current basic block, leading
+to phi ambiguities. LLVM instead is makes every control-flow branch move to a new basic block on either path.
