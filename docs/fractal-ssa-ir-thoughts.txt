@@ -275,3 +275,52 @@ block1:
 Constructing an LLVM ir version of my program highlighted some shortcomings of the current Fractal IR. One of the important
 things is that currently jump instructions have the possibility to leave control-flow in the current basic block, leading
 to phi ambiguities. LLVM instead is makes every control-flow branch move to a new basic block on either path.
+
+Idea #4:
+Each control-flow branch has its own BasicBlock. Any instruction that causes control-flow branching must jump to a new BasicBlock
+no matter what.
+
+Here is the last program but making use of the improved branching system.
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                Phi([
+                    PhiBranch(IntConstant(0), -1),
+                    PhiBranch(InstructionReference(2, ?), 2)
+                ]),
+                Phi([
+                    PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                    PhiBranch(InstructionReference(1, 2), 2)
+                ]),
+                ConditionalBranch(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, 0))), 3, 1)
+            ]),
+            BasicBlock([
+                ComplexMultiply(InstructionReference(0, 1), InstructionReference(0, 1)),
+                ComplexMultiply(InstructionReference(1, 0), InstructionReference(1, 0)),
+                ComplexAdd(ComplexMultiply(InstructionReference(1, 1), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
+                ConditionalBranch(RealIsGreater(ComplexModulo(InstructionReference(1, 2)), RealConstant(4)), 3, 2)
+            ]),
+            BasicBlock([
+                IntAdd(InstructionReference(0, 0), IntConstant(1)),
+                Jump(0)
+            ]),
+            BasicBlock([
+                Return(InstructionReference(0, 0))
+            ])
+        ]
+    )
+]
+)
+
+How would hierarchies work?
+Instructions, references, and constants would implement IValue.
+References and constants would implement IPhiInput.
