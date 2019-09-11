@@ -295,7 +295,7 @@ Program(
             BasicBlock([
                 Phi([
                     PhiBranch(IntConstant(0), -1),
-                    PhiBranch(InstructionReference(2, ?), 2)
+                    PhiBranch(InstructionReference(2, 0), 2)
                 ]),
                 Phi([
                     PhiBranch(ValueReference(ARGUMENTS, 0), -1),
@@ -324,3 +324,67 @@ Program(
 How would hierarchies work?
 Instructions, references, and constants would implement IValue.
 References and constants would implement IPhiInput.
+
+Issue: How do we place Phi instructions in the block structure? Do we just let any instruction depend on Phi instructions?
+Should we try to make sure Phi instructions come before all other instructions?
+    It makes the most sense for Phi instructions to have to be first in every BasicBlock because Phi instructions only deal
+    with values from already finished BasicBlocks, including previous iterations of the BasicBlock containing them.
+
+How should we enforce the Phi instruction order? Should we simply leave it up to the validator to make sure Phi instructions
+come first in every BasicBlock's body?
+    I think one way to make the order of Phi instructions clear is to have a separate list that comes first in every basic
+    block specifically for phi instructions.
+
+Here is how the last program would look with the modifications:
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock(
+                [
+                    Phi([
+                        PhiBranch(IntConstant(0), -1),
+                        PhiBranch(InstructionReference(2, BODY, 0), 2)
+                    ]),
+                    Phi([
+                        PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                        PhiBranch(InstructionReference(1, BODY, 2), 2)
+                    ])
+                ],
+                [
+                    ConditionalBranch(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, PHI, 0))), 3, 1)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    ComplexMultiply(InstructionReference(0, PHI, 1), InstructionReference(0, PHI, 1)),
+                    ComplexMultiply(InstructionReference(1, BODY, 0), InstructionReference(1, BODY, 0)),
+                    ComplexAdd(ComplexMultiply(InstructionReference(1, BODY, 1), InstructionReference(0, BODY, 1)), ValueReference(ARGUMENTS, 1)),
+                    ConditionalBranch(RealIsGreater(ComplexModulo(InstructionReference(1, BODY, 2)), RealConstant(4)), 3, 2)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    IntAdd(InstructionReference(0, PHI, 0), IntConstant(1)),
+                    Jump(0)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    Return(InstructionReference(0, PHI, 0))
+                ]
+            )
+        ]
+    )
+]
+)
