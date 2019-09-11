@@ -1,7 +1,6 @@
 package com.kneelawk.kfractal.generator.util;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutputVisitor;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 
 class InstructionOutputPrinter implements IInstructionOutputVisitor<Void> {
     private final StringBuilder builder;

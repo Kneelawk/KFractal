@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 
 import java.util.List;

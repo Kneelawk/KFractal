@@ -1,10 +1,14 @@
-package com.kneelawk.kfractal.generator.api.ir.instruction.io;
+package com.kneelawk.kfractal.generator.api.ir.constant;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInput;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInputVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class IntConstant implements IInstructionInput {
+public class IntConstant implements IValue, IPhiInput {
     private int value;
 
     private IntConstant(int value) {
@@ -16,7 +20,12 @@ public class IntConstant implements IInstructionInput {
     }
 
     @Override
-    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitIntConstant(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitIntConstant(this);
     }
 

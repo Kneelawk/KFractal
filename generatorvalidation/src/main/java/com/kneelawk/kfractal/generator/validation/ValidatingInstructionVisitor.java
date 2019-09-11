@@ -3,7 +3,6 @@ package com.kneelawk.kfractal.generator.validation;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 
 import java.util.List;
 import java.util.function.Function;

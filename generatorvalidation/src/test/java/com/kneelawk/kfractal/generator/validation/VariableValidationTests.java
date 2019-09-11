@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;

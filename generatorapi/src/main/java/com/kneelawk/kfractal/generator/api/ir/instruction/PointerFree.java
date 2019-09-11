@@ -1,29 +1,30 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * PointerFree - Instruction. Frees the data pointed to by the handle in the only argument. This also sets the pointer's
- * handle value to NullPointer.
+ * PointerFree - Instruction. Frees the data pointed to by the handle in the only argument if the current language
+ * backend supports explicitly freeing pointers.
  * <p>
  * PointerFree(Pointer(*) pointer)
  */
-public class PointerFree implements IInstruction {
-    private IInstructionInput pointer;
+public class PointerFree implements IValue {
+    private IValue pointer;
 
-    private PointerFree(IInstructionInput pointer) {
+    private PointerFree(IValue pointer) {
         this.pointer = pointer;
     }
 
-    public IInstructionInput getPointer() {
+    public IValue getPointer() {
         return pointer;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitPointerFree(this);
     }
 
@@ -34,19 +35,19 @@ public class PointerFree implements IInstruction {
                 .toString();
     }
 
-    public static PointerFree create(IInstructionInput pointer) {
+    public static PointerFree create(IValue pointer) {
         if (pointer == null)
             throw new NullPointerException("Pointer cannot be null");
         return new PointerFree(pointer);
     }
 
     public static class Builder {
-        private IInstructionInput pointer;
+        private IValue pointer;
 
         public Builder() {
         }
 
-        public Builder(IInstructionInput pointer) {
+        public Builder(IValue pointer) {
             this.pointer = pointer;
         }
 
@@ -56,11 +57,11 @@ public class PointerFree implements IInstruction {
             return new PointerFree(pointer);
         }
 
-        public IInstructionInput getPointer() {
+        public IValue getPointer() {
             return pointer;
         }
 
-        public Builder setPointer(IInstructionInput pointer) {
+        public Builder setPointer(IValue pointer) {
             this.pointer = pointer;
             return this;
         }

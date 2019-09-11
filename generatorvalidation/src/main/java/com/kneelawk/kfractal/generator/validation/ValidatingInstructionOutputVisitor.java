@@ -1,12 +1,11 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.FractalIRException;
-import com.kneelawk.kfractal.generator.api.ir.Scope;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutputVisitor;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ class ValidatingInstructionOutputVisitor implements IInstructionOutputVisitor<Va
         // find the variable
         // This might bes appropriate for its own class
         int index = reference.getIndex();
-        Scope scope = reference.getScope();
+        VariableScope scope = reference.getScope();
         List<VariableDeclaration> scopeList;
         switch (scope) {
             case GLOBAL:

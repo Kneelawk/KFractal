@@ -2,7 +2,6 @@ package com.kneelawk.kfractal.generator.util;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
 import com.kneelawk.kfractal.util.StringUtils;
 
 class InstructionPrinter implements IInstructionVisitor<Void> {

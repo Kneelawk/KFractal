@@ -1,23 +1,25 @@
-package com.kneelawk.kfractal.generator.api.ir.instruction.io;
+package com.kneelawk.kfractal.generator.api.ir.reference;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.Scope;
+import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInput;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInputVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class VariableReference implements IInstructionInput, IInstructionOutput {
-    private Scope scope;
+public class VariableReference implements IValue, IPhiInput {
+    private VariableScope scope;
     private int index;
 
-    private VariableReference(Scope scope, int index) {
+    private VariableReference(VariableScope scope, int index) {
         this.scope = scope;
         this.index = index;
     }
 
-    public Scope getScope() {
+    public VariableScope getScope() {
         return scope;
     }
 
@@ -26,12 +28,12 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     }
 
     @Override
-    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
         return visitor.visitVariableReference(this);
     }
 
     @Override
-    public <R> R accept(IInstructionOutputVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitVariableReference(this);
     }
 
@@ -49,7 +51,7 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
         return new VariableReference(scope, index + offset);
     }
 
-    public static VariableReference create(Scope scope, int index) {
+    public static VariableReference create(VariableScope scope, int index) {
         if (scope == null)
             throw new NullPointerException("Scope cannot be null");
         if (index < 0)
@@ -58,13 +60,13 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
     }
 
     public static class Builder {
-        private Scope scope;
+        private VariableScope scope;
         private int index;
 
         public Builder() {
         }
 
-        public Builder(Scope scope, int index) {
+        public Builder(VariableScope scope, int index) {
             this.scope = scope;
             this.index = index;
         }
@@ -77,11 +79,11 @@ public class VariableReference implements IInstructionInput, IInstructionOutput 
             return new VariableReference(scope, index);
         }
 
-        public Scope getScope() {
+        public VariableScope getScope() {
             return scope;
         }
 
-        public Builder setScope(Scope scope) {
+        public Builder setScope(VariableScope scope) {
             this.scope = scope;
             return this;
         }

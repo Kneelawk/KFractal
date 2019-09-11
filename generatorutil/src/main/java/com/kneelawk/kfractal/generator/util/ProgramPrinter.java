@@ -5,7 +5,6 @@ import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
-import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
 import com.kneelawk.kfractal.util.StringUtils;
 
 public class ProgramPrinter {
@@ -123,7 +122,7 @@ public class ProgramPrinter {
         InstructionPrinter printer = new InstructionPrinter(builder, 3);
 
         first = true;
-        for (IInstruction instruction : function.getBody()) {
+        for (IInstruction instruction : function.getBlocks()) {
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());

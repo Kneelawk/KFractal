@@ -3,7 +3,8 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -71,7 +72,7 @@ public class Program {
         }
 
         public VariableReference getNextGlobalVariableReference() {
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size());
+            return VariableReference.create(VariableScope.GLOBAL, globalVariables.size());
         }
 
         public int getNextGlobalVariableIndex() {
@@ -94,12 +95,12 @@ public class Program {
 
         public VariableReference addGlobalVariable(Supplier<VariableDeclaration> declaration) {
             globalVariables.add(declaration);
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+            return VariableReference.create(VariableScope.GLOBAL, globalVariables.size() - 1);
         }
 
         public VariableReference addGlobalVariable(VariableDeclaration declaration) {
             globalVariables.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+            return VariableReference.create(VariableScope.GLOBAL, globalVariables.size() - 1);
         }
 
         @SafeVarargs

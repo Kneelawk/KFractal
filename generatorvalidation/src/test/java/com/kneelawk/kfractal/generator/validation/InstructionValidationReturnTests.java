@@ -5,7 +5,7 @@ import com.kneelawk.kfractal.generator.api.ir.Program;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;

@@ -1,119 +1,90 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntAdd - Instruction. Adds the last two arguments as ints and stores the result in the variable referenced by the
- * first argument.
+ * IntAdd - Instruction. Adds the two arguments as ints.
  * <p>
- * IntAdd(Int sum, Int leftAddend, Int rightAddend)
+ * IntAdd(Int leftAddend, Int rightAddend)
  */
-public class IntAdd implements IInstruction {
-    private IInstructionOutput sum;
-    private IInstructionInput leftAddend;
-    private IInstructionInput rightAddend;
+public class IntAdd implements IValue {
+    private IValue leftAddend;
+    private IValue rightAddend;
 
-    private IntAdd(IInstructionOutput sum,
-                   IInstructionInput leftAddend,
-                   IInstructionInput rightAddend) {
-        this.sum = sum;
+    private IntAdd(IValue leftAddend, IValue rightAddend) {
         this.leftAddend = leftAddend;
         this.rightAddend = rightAddend;
     }
 
-    public IInstructionOutput getSum() {
-        return sum;
-    }
-
-    public IInstructionInput getLeftAddend() {
+    public IValue getLeftAddend() {
         return leftAddend;
     }
 
-    public IInstructionInput getRightAddend() {
+    public IValue getRightAddend() {
         return rightAddend;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitIntAdd(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("sum", sum)
                 .append("leftAddend", leftAddend)
                 .append("rightAddend", rightAddend)
                 .toString();
     }
 
-    public static IntAdd create(IInstructionOutput sum,
-                                IInstructionInput leftAddend,
-                                IInstructionInput rightAddend) {
-        if (sum == null)
-            throw new NullPointerException("Sum cannot be null");
+    public static IntAdd create(IValue leftAddend,
+                                IValue rightAddend) {
         if (leftAddend == null)
             throw new NullPointerException("LeftAddend cannot be null");
         if (rightAddend == null)
             throw new NullPointerException("RightAddend cannot be null");
-        return new IntAdd(sum, leftAddend, rightAddend);
+        return new IntAdd(leftAddend, rightAddend);
     }
 
     public static class Builder {
-        private IInstructionOutput sum;
-        private IInstructionInput leftAddend;
-        private IInstructionInput rightAddend;
+        private IValue leftAddend;
+        private IValue rightAddend;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput sum,
-                       IInstructionInput leftAddend,
-                       IInstructionInput rightAddend) {
-            this.sum = sum;
+        public Builder(IValue leftAddend,
+                       IValue rightAddend) {
             this.leftAddend = leftAddend;
             this.rightAddend = rightAddend;
         }
 
         public IntAdd build() {
-            if (sum == null)
-                throw new IllegalStateException("No sum specified");
             if (leftAddend == null)
                 throw new IllegalStateException("No leftAddend specified");
             if (rightAddend == null)
                 throw new IllegalStateException("No rightAddend specified");
-            return new IntAdd(sum, leftAddend, rightAddend);
+            return new IntAdd(leftAddend, rightAddend);
         }
 
-        public IInstructionOutput getSum() {
-            return sum;
-        }
-
-        public Builder setSum(IInstructionOutput sum) {
-            this.sum = sum;
-            return this;
-        }
-
-        public IInstructionInput getLeftAddend() {
+        public IValue getLeftAddend() {
             return leftAddend;
         }
 
-        public Builder setLeftAddend(
-                IInstructionInput leftAddend) {
+        public Builder setLeftAddend(IValue leftAddend) {
             this.leftAddend = leftAddend;
             return this;
         }
 
-        public IInstructionInput getRightAddend() {
+        public IValue getRightAddend() {
             return rightAddend;
         }
 
-        public Builder setRightAddend(
-                IInstructionInput rightAddend) {
+        public Builder setRightAddend(IValue rightAddend) {
             this.rightAddend = rightAddend;
             return this;
         }

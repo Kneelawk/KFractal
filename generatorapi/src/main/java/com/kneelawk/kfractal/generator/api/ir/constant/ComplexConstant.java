@@ -1,6 +1,10 @@
-package com.kneelawk.kfractal.generator.api.ir.instruction.io;
+package com.kneelawk.kfractal.generator.api.ir.constant;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInput;
+import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInputVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.math3.complex.Complex;
@@ -8,7 +12,7 @@ import org.apache.commons.math3.complex.Complex;
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class ComplexConstant implements IInstructionInput {
+public class ComplexConstant implements IValue, IPhiInput {
     private Complex value;
 
     private ComplexConstant(Complex value) {
@@ -20,7 +24,12 @@ public class ComplexConstant implements IInstructionInput {
     }
 
     @Override
-    public <R> R accept(IInstructionInputVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexConstant(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitComplexConstant(this);
     }
 

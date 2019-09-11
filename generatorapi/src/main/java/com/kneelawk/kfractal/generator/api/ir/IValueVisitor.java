@@ -1,14 +1,38 @@
-package com.kneelawk.kfractal.generator.api.ir.instruction;
+package com.kneelawk.kfractal.generator.api.ir;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.constant.BoolConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.RealConstant;
+import com.kneelawk.kfractal.generator.api.ir.instruction.*;
+import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 
-/**
- * This interface is implemented by anything that wants to be able to traverse a Fractal IR instruction tree.
- */
-public interface IInstructionVisitor<R> {
+public interface IValueVisitor<R> {
+    /* References */
+
+    R visitVariableReference(VariableReference variableReference) throws FractalException;
+
+    R visitInstructionReference(InstructionReference instructionReference) throws FractalException;
+
+    /* Constants */
+
+    R visitBoolConstant(BoolConstant constant) throws FractalException;
+
+    R visitIntConstant(IntConstant constant) throws FractalException;
+
+    R visitRealConstant(RealConstant constant) throws FractalException;
+
+    R visitComplexConstant(ComplexConstant constant) throws FractalException;
+
+    R visitNullPointer() throws FractalException;
+
+    R visitNullFunction() throws FractalException;
+
+    R visitVoid() throws FractalException;
+
     /* General Purpose Operations */
-
-    R visitAssign(Assign assign) throws FractalException;
 
     R visitReturn(Return aReturn) throws FractalException;
 
@@ -21,8 +45,6 @@ public interface IInstructionVisitor<R> {
     R visitBoolOr(BoolOr boolOr) throws FractalException;
 
     R visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalException;
-
-    R visitBoolIsNotEqual(BoolIsNotEqual boolIsNotEqual) throws FractalException;
 
     /* Int Operations */
 
@@ -48,8 +70,6 @@ public interface IInstructionVisitor<R> {
 
     R visitIntIsEqual(IntIsEqual intIsEqual) throws FractalException;
 
-    R visitIntIsNotEqual(IntIsNotEqual intIsNotEqual) throws FractalException;
-
     R visitIntIsGreater(IntIsGreater intIsGreater) throws FractalException;
 
     R visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalException;
@@ -67,8 +87,6 @@ public interface IInstructionVisitor<R> {
     R visitRealPower(RealPower realPower) throws FractalException;
 
     R visitRealIsEqual(RealIsEqual realIsEqual) throws FractalException;
-
-    R visitRealIsNotEqual(RealIsNotEqual realIsNotEqual) throws FractalException;
 
     R visitRealIsGreater(RealIsGreater realIsGreater) throws FractalException;
 
@@ -94,13 +112,15 @@ public interface IInstructionVisitor<R> {
 
     R visitComplexModulo(ComplexModulo complexModulo) throws FractalException;
 
+    R visitComplexIsEqual(ComplexIsEqual complexIsEqual) throws FractalException;
+
     /* Function Operations */
+
+    R visitFunctionCreate(FunctionCreate functionCreate) throws FractalException;
 
     R visitFunctionCall(FunctionCall functionCall) throws FractalException;
 
     R visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalException;
-
-    R visitFunctionIsNotEqual(FunctionIsNotEqual functionIsNotEqual) throws FractalException;
 
     /* Pointer Operations */
 
@@ -114,11 +134,9 @@ public interface IInstructionVisitor<R> {
 
     R visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException;
 
-    R visitPointerIsNotEqual(PointerIsNotEqual pointerIsNotEqual) throws FractalException;
-
     /* Control-Flow Operations */
 
-    R visitIf(If anIf) throws FractalException;
+    R visitBranchConditional(BranchConditional branchConditional) throws FractalException;
 
-    R visitWhile(While aWhile) throws FractalException;
+    R visitBranch(Branch branch) throws FractalException;
 }

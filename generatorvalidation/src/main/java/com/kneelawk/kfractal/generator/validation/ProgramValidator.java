@@ -3,7 +3,6 @@ package com.kneelawk.kfractal.generator.validation;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
-import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
 
 import java.util.Collection;
 import java.util.Set;
@@ -23,7 +22,7 @@ public class ProgramValidator {
                             function.getContextVariables(), function.getArguments(), function.getLocalVariables(),
                             function.getReturnType());
 
-            for (IInstruction instruction : function.getBody()) {
+            for (IInstruction instruction : function.getBlocks()) {
                 instruction.accept(visitor);
             }
 

@@ -3,8 +3,8 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -18,19 +18,16 @@ public class FunctionDefinition {
     private ValueType returnType;
     private List<VariableDeclaration> contextVariables;
     private List<VariableDeclaration> arguments;
-    private List<VariableDeclaration> localVariables;
-    private List<IInstruction> body;
+    private List<BasicBlock> blocks;
 
     private FunctionDefinition(ValueType returnType,
                                List<VariableDeclaration> contextVariables,
                                List<VariableDeclaration> arguments,
-                               List<VariableDeclaration> localVariables,
-                               List<IInstruction> body) {
+                               List<BasicBlock> blocks) {
         this.returnType = returnType;
         this.contextVariables = contextVariables;
         this.arguments = arguments;
-        this.localVariables = localVariables;
-        this.body = body;
+        this.blocks = blocks;
     }
 
     public ValueType getReturnType() {
@@ -45,12 +42,8 @@ public class FunctionDefinition {
         return arguments;
     }
 
-    public List<VariableDeclaration> getLocalVariables() {
-        return localVariables;
-    }
-
-    public List<IInstruction> getBody() {
-        return body;
+    public List<BasicBlock> getBlocks() {
+        return blocks;
     }
 
     @Override
@@ -59,8 +52,7 @@ public class FunctionDefinition {
                 .append("returnType", returnType)
                 .append("contextVariables", contextVariables)
                 .append("arguments", arguments)
-                .append("localVariables", localVariables)
-                .append("body", body)
+                .append("blocks", blocks)
                 .toString();
     }
 
@@ -68,8 +60,7 @@ public class FunctionDefinition {
         private ValueType returnType;
         private List<Supplier<VariableDeclaration>> contextVariables = Lists.newArrayList();
         private List<Supplier<VariableDeclaration>> arguments = Lists.newArrayList();
-        private List<Supplier<VariableDeclaration>> localVariables = Lists.newArrayList();
-        private List<IInstruction> body = Lists.newArrayList();
+        private List<Supplier<BasicBlock>> blocks = Lists.newArrayList();
 
         public Builder() {
         }
@@ -77,13 +68,11 @@ public class FunctionDefinition {
         public Builder(ValueType returnType,
                        Collection<Supplier<VariableDeclaration>> contextVariables,
                        Collection<Supplier<VariableDeclaration>> arguments,
-                       Collection<Supplier<VariableDeclaration>> localVariables,
-                       Collection<IInstruction> body) {
+                       Collection<Supplier<BasicBlock>> blocks) {
             this.returnType = returnType;
             this.contextVariables.addAll(contextVariables);
             this.arguments.addAll(arguments);
-            this.localVariables.addAll(localVariables);
-            this.body.addAll(body);
+            this.blocks.addAll(blocks);
         }
 
         public FunctionDefinition build() {
@@ -92,8 +81,7 @@ public class FunctionDefinition {
             return new FunctionDefinition(returnType,
                     contextVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
                     arguments.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
-                    localVariables.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()),
-                    ImmutableList.copyOf(body));
+                    blocks.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()));
         }
 
         public ValueType getReturnType() {
@@ -110,7 +98,7 @@ public class FunctionDefinition {
         }
 
         public VariableReference getNextContextVariableReference() {
-            return VariableReference.create(Scope.CONTEXT, contextVariables.size());
+            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size());
         }
 
         public int getNextContextVariableIndex() {
@@ -133,12 +121,12 @@ public class FunctionDefinition {
 
         public VariableReference addContextVariable(Supplier<VariableDeclaration> declaration) {
             contextVariables.add(declaration);
-            return VariableReference.create(Scope.CONTEXT, contextVariables.size() - 1);
+            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
         }
 
         public VariableReference addContextVariable(VariableDeclaration declaration) {
             contextVariables.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(Scope.CONTEXT, contextVariables.size() - 1);
+            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
         }
 
         @SafeVarargs
@@ -168,7 +156,7 @@ public class FunctionDefinition {
         }
 
         public VariableReference getNextArgumentReference() {
-            return VariableReference.create(Scope.ARGUMENTS, arguments.size());
+            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size());
         }
 
         public int getNextArgumentIndex() {
@@ -190,12 +178,12 @@ public class FunctionDefinition {
 
         public VariableReference addArgument(Supplier<VariableDeclaration> declaration) {
             arguments.add(declaration);
-            return VariableReference.create(Scope.ARGUMENTS, arguments.size() - 1);
+            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
         }
 
         public VariableReference addArgument(VariableDeclaration declaration) {
             arguments.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(Scope.ARGUMENTS, arguments.size() - 1);
+            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
         }
 
         @SafeVarargs
@@ -219,84 +207,60 @@ public class FunctionDefinition {
             return this;
         }
 
-        public List<Supplier<VariableDeclaration>> getLocalVariables() {
-            return localVariables;
+        public List<Supplier<BasicBlock>> getBlocks() {
+            return blocks;
         }
 
-        public VariableReference getNextLocalVariableReference() {
-            return VariableReference.create(Scope.LOCAL, localVariables.size());
+        public int getNextBlockIndex() {
+            return blocks.size();
         }
 
-        public int getNextLocalVariableIndex() {
-            return localVariables.size();
-        }
-
-        public Builder setLocalVariableSuppliers(
-                Collection<Supplier<VariableDeclaration>> localVariables) {
-            this.localVariables.clear();
-            this.localVariables.addAll(localVariables);
+        public Builder setBlockSuppliers(Collection<Supplier<BasicBlock>> blocks) {
+            this.blocks.clear();
+            this.blocks.addAll(blocks);
             return this;
         }
 
-        public Builder setLocalVariables(Collection<VariableDeclaration> localVariables) {
-            this.localVariables.clear();
-            this.localVariables.addAll(localVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
+        public Builder setBlocks(Collection<BasicBlock> blocks) {
+            this.blocks.clear();
+            this.blocks.addAll(blocks.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public VariableReference addLocalVariable(Supplier<VariableDeclaration> declaration) {
-            localVariables.add(declaration);
-            return VariableReference.create(Scope.LOCAL, localVariables.size() - 1);
+        public int addBlock(Supplier<BasicBlock> block) {
+            blocks.add(block);
+            return blocks.size() - 1;
         }
 
-        public VariableReference addLocalVariable(VariableDeclaration declaration) {
-            localVariables.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(Scope.LOCAL, localVariables.size() - 1);
+        public int addBlock(BasicBlock block) {
+            blocks.add(Suppliers.ofInstance(block));
+            return blocks.size() - 1;
+        }
+
+        public BasicBlock.Builder addBlock() {
+            BasicBlock.Builder builder = new BasicBlock.Builder(blocks.size());
+            blocks.add(builder::build);
+            return builder;
         }
 
         @SafeVarargs
-        public final Builder addLocalVariables(Supplier<VariableDeclaration>... declarations) {
-            localVariables.addAll(Arrays.asList(declarations));
+        public final Builder addBlocks(Supplier<BasicBlock>... blocks) {
+            this.blocks.addAll(Arrays.asList(blocks));
             return this;
         }
 
-        public Builder addLocalVariables(VariableDeclaration... declarations) {
-            localVariables.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
+        public Builder addBlocks(BasicBlock... blocks) {
+            this.blocks.addAll(Arrays.stream(blocks).map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addLocalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
-            localVariables.addAll(declarations);
+        public Builder addBlockSuppliers(Collection<Supplier<BasicBlock>> blocks) {
+            this.blocks.addAll(blocks);
             return this;
         }
 
-        public Builder addLocalVariables(Collection<VariableDeclaration> declarations) {
-            localVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
-            return this;
-        }
-
-        public List<IInstruction> getBody() {
-            return body;
-        }
-
-        public Builder setBody(Collection<IInstruction> body) {
-            this.body.clear();
-            this.body.addAll(body);
-            return this;
-        }
-
-        public Builder addStatement(IInstruction statement) {
-            body.add(statement);
-            return this;
-        }
-
-        public Builder addStatements(IInstruction... statements) {
-            body.addAll(Arrays.asList(statements));
-            return this;
-        }
-
-        public Builder addStatements(Collection<IInstruction> statements) {
-            body.addAll(statements);
+        public Builder addBlocks(Collection<BasicBlock> blocks) {
+            this.blocks.addAll(blocks.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
     }

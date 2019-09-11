@@ -2,13 +2,13 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.ir.*;
-import com.kneelawk.kfractal.generator.api.ir.instruction.Assign;
 import com.kneelawk.kfractal.generator.api.ir.instruction.ComplexAdd;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.ComplexConstant;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.FunctionContextConstant;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
+import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import org.apache.commons.math3.complex.Complex;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ class IOValidationTests {
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
         var a = functionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
-        functionBuilder.addStatement(Assign.create(a, VariableReference.create(Scope.LOCAL, 100)));
+        functionBuilder.addStatement(Assign.create(a, VariableReference.create(VariableScope.LOCAL, 100)));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
 
@@ -55,7 +55,7 @@ class IOValidationTests {
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
         functionBuilder.addStatement(
-                Assign.create(VariableReference.create(Scope.LOCAL, 100), ComplexConstant.create(new Complex(1, 1))));
+                Assign.create(VariableReference.create(VariableScope.LOCAL, 100), ComplexConstant.create(new Complex(1, 1))));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
 
@@ -89,7 +89,7 @@ class IOValidationTests {
         var a = functionBuilder.addLocalVariable(
                 VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.VOID, ImmutableList.of())));
         functionBuilder.addStatement(Assign.create(a,
-                FunctionContextConstant.create(100, ImmutableList.of())));
+                FunctionCreate.create(100, ImmutableList.of())));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
 
@@ -116,7 +116,7 @@ class IOValidationTests {
         var fa = fFunctionBuilder.addLocalVariable(
                 VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
         fFunctionBuilder.addStatement(
-                Assign.create(fa, FunctionContextConstant.create(gIndex, ImmutableList.of())));
+                Assign.create(fa, FunctionCreate.create(gIndex, ImmutableList.of())));
         fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(fFunctionBuilder.build());
 
@@ -143,7 +143,7 @@ class IOValidationTests {
         var fa = fFunctionBuilder.addLocalVariable(
                 VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
         fFunctionBuilder.addStatement(Assign.create(fa,
-                FunctionContextConstant.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0))))));
+                FunctionCreate.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0))))));
         fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(fFunctionBuilder.build());
 

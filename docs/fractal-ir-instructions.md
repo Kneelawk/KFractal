@@ -2,14 +2,12 @@
 
 The Fractal IR Instructions are:
 * [Miscellaneous Instructions](#miscellaneous-instructions)
-    * [`Assign`](#assign)
     * [`Return`](#return)
 * [Boolean Instructions](#boolean-instructions)
     * [`BoolNot`](#boolnot)
     * [`BoolAnd`](#booland)
     * [`BoolOr`](#boolor)
     * [`BoolIsEqual`](#boolisequal)
-    * [`BoolIsNotEqual`](#boolisnotequal)
 * [Int Instructions](#int-instructions)
     * [`IntAdd`](#intadd)
     * [`IntSubtract`](#intsubtract)
@@ -22,7 +20,6 @@ The Fractal IR Instructions are:
     * [`IntOr`](#intor)
     * [`IntXor`](#intxor)
     * [`IntIsEqual`](#intisequal)
-    * [`IntIsNotEqual`](#intisnotequal)
     * [`IntIsGreater`](#intisgreater)
     * [`IntIsGreaterOrEqual`](#intisgreaterorequal)
 * [Real Instructions](#real-instructions)
@@ -32,7 +29,6 @@ The Fractal IR Instructions are:
     * [`RealDivide`](#realdivide)
     * [`RealPower`](#realpower)
     * [`RealIsEqual`](#realisequal)
-    * [`RealIsNotEqual`](#realisnotequal)
     * [`RealIsGreater`](#realisgreater)
     * [`RealIsGreaterOrEqual`](#realisgreaterorequal)
     * [`RealComposeComplex`](#realcomposecomplex)
@@ -45,27 +41,22 @@ The Fractal IR Instructions are:
     * [`ComplexGetReal`](#complexgetreal)
     * [`ComplexGetImaginary`](#complexgetimaginary)
     * [`ComplexModulo`](#complexmodulo)
+    * [`ComplexIsEqual`](#complexisequal)
 * [Function Instructions](#function-instructions)
+    * [`FunctionCreate`](#functioncreate)
     * [`FunctionCall`](#functioncall)
     * [`FunctionIsEqual`](#functionisequal)
-    * [`FunctionIsNotEqual`](#functionisnotequal)
 * [Pointer Instructions](#pointer-instructions)
     * [`PointerAllocate`](#pointerallocate)
     * [`PointerFree`](#pointerfree)
     * [`PointerGet`](#pointerget)
     * [`PointerSet`](#pointerset)
     * [`PointerIsEqual`](#pointerisequal)
-    * [`PointerIsNotEqual`](#pointerisnotequal)
 * [Control-Flow Instructions](#control-flow-instructions)
-    * [`If`](#if)
-    * [`While`](#while)
+    * [`Branch`](#branch)
+    * [`BranchConditional`](#branchconditional)
 
 ## Miscellaneous Instructions
-
-### Assign
-Assigns the contents of its last argument to the variable referenced by its last argument.
-
-`Assign(* dest, * source)`
 
 ### Return
 Returns a value or void constant from a function, exiting the current function.
@@ -94,12 +85,6 @@ Checks to see if the two last boolean arguments are equal then stores the result
 first argument. This is the same as a boolean XNOR.
 
 `BoolIsEqual(Bool result, Bool left, Bool right)`
-
-### BoolIsNotEqual
-Checks to see if the two last boolean arguments are not equal and stores the result in the variable referenced by the
-first argument. This is the same as a boolean XOR.
-
-`BoolIsNotEqual(Bool result, Bool left, Bool right)`
 
 ## Int Instructions
 
@@ -163,12 +148,6 @@ referenced by the first argument.
 
 `IntIsEqual(Bool result, Int left, Int right)`
 
-### IntIsNotEqual
-Checks to see if the last two arguments do not have the same integer value and stores the resulting boolean in the 
-variable referenced by the first argument.
-
-`IntIsNotEqual(Bool result, Int left, Int right)`
-
 ### IntIsGreater
 Checks to see if the second to last argument is greater than the last arguments and stores the resulting boolean in 
 the variable referenced by the first argument.
@@ -216,12 +195,6 @@ Checks to see if the last two arguments have the same real value and stores the 
 referenced by the first argument.
 
 `RealIsEqual(Bool result, Real left, Real right)`
-
-### RealIsNotEqual
-Checks to see if the last two arguments do not have the same real value and stores the resulting boolean in the 
-variable referenced by the first argument.
-
-`RealIsNotEqual(Bool result, Real left, Real right)`
 
 ### RealIsGreater
 Checks to see if the second to last argument has a greater real value than the last argument and stores the resulting
@@ -288,7 +261,17 @@ sqrt(&lt;real-component&gt;^2 + &lt;imaginary-component&gt;^2).
 
 `ComplexModulo(Real modulus, Complex complex)`
 
+### ComplexIsEqual
+Checks to see if the two arguments have the same real and imaginary values.
+
+`ComplexIsEqual(Complex left, Complex right)`
+
 ## Function Instructions
+
+### FunctionCreate
+Constructs a function context variable using the given function name and context variable values.
+
+`FunctionCreate(functionName, [ ** contextVariables ])`
 
 ### FunctionCall
 Calls the function represented by the function context that is the second argument with arguments in the list that is 
@@ -303,12 +286,6 @@ Checks to see if the last two function arguments reference the same function and
 values and stores the result in the variable referenced by the first argument.
 
 `FunctionIsEqual(Bool result, Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
-
-### FunctionIsNotEqual
-Checks to see if the last two function arguments reference different functions or hold different context variable 
-values and stores the result in the variable referenced by the first argument.
-
-`FunctionIsNotEqual(Bool result, Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
 
 ## Pointer Instructions
 
@@ -340,21 +317,21 @@ referenced by the first argument.
 
 `PointerIsEqual(Bool result, Pointer(*) left, Pointer(*) right)`
 
-### PointerIsNotEqual
-Checks to see if the two last pointer arguments do not hold handles to the same data and stores the result in the 
-variable referenced by the first argument.
-
-`PointerIsNotEqual(Bool result, Pointer(*) left, Pointer(*) right)`
-
 ## Control-Flow Instructions
 
-### If
-Executes one of two instruction sub-lists based on the boolean value of the first argument.
+### Branch
+Unconditionally jumps to the basic block referenced by its argument.
 
-`If(Bool condition, [ Instruction* ifTrue ], [ Instruction* ifFalse ])`
+`Branch(blockIndex)`
 
-### While
-Repeated executes an internal instruction sub-list as long as the boolean value of the first argument is true, 
-re-checking before every iteration.
+### BranchConditional
+Jumps to one of the two BasicBlocks referenced by the two last arguments depending on the boolean value of the first
+argument.
 
-`While(Bool condition, [ Instruction* whileTrue ])`
+`BranchConditional(Bool condition, trueBlockIndex, falseBlockIndex)`
+
+### Phi
+Merges two or more values declared in different BasicBlocks by selecting one depending on which basic block was
+executed previously.
+
+`Phi([ PhiBranch(* value, previousBlockIndex)... ])`

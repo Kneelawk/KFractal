@@ -1,112 +1,90 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * BoolOr - Instruction. Ors the last two arguments together and stores it in the first argument.
+ * BoolOr - Instruction. Ors the two arguments together.
  * <p>
- * BoolOr(Bool result, Bool left, Bool right)
+ * BoolOr(Bool left, Bool right)
  */
-public class BoolOr implements IInstruction {
-    private IInstructionOutput result;
-    private IInstructionInput left;
-    private IInstructionInput right;
+public class BoolOr implements IValue {
+    private IValue left;
+    private IValue right;
 
-    private BoolOr(IInstructionOutput result, IInstructionInput left, IInstructionInput right) {
-        this.result = result;
+    private BoolOr(IValue left, IValue right) {
         this.left = left;
         this.right = right;
     }
 
-    public IInstructionOutput getResult() {
-        return result;
-    }
-
-    public IInstructionInput getLeft() {
+    public IValue getLeft() {
         return left;
     }
 
-    public IInstructionInput getRight() {
+    public IValue getRight() {
         return right;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitBoolOr(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("result", result)
                 .append("left", left)
                 .append("right", right)
                 .toString();
     }
 
-    public static BoolOr create(IInstructionOutput result,
-                                IInstructionInput left,
-                                IInstructionInput right) {
-        if (result == null)
-            throw new NullPointerException("Result cannot be null");
+    public static BoolOr create(IValue left,
+                                IValue right) {
         if (left == null)
             throw new NullPointerException("Left cannot be null");
         if (right == null)
             throw new NullPointerException("Right cannot be null");
-        return new BoolOr(result, left, right);
+        return new BoolOr(left, right);
     }
 
     public static class Builder {
-        private IInstructionOutput result;
-        private IInstructionInput left;
-        private IInstructionInput right;
+        private IValue left;
+        private IValue right;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput result, IInstructionInput left, IInstructionInput right) {
-            this.result = result;
+        public Builder(IValue left,
+                       IValue right) {
             this.left = left;
             this.right = right;
         }
 
         public BoolOr build() {
-            if (result == null)
-                throw new IllegalStateException("No result specified");
             if (left == null)
                 throw new IllegalStateException("No left specified");
             if (right == null)
                 throw new IllegalStateException("No right specified");
-            return new BoolOr(result, left, right);
+            return new BoolOr(left, right);
         }
 
-        public IInstructionOutput getResult() {
-            return result;
-        }
-
-        public Builder setResult(IInstructionOutput result) {
-            this.result = result;
-            return this;
-        }
-
-        public IInstructionInput getLeft() {
+        public IValue getLeft() {
             return left;
         }
 
-        public Builder setLeft(IInstructionInput left) {
+        public Builder setLeft(IValue left) {
             this.left = left;
             return this;
         }
 
-        public IInstructionInput getRight() {
+        public IValue getRight() {
             return right;
         }
 
-        public Builder setRight(IInstructionInput right) {
+        public Builder setRight(IValue right) {
             this.right = right;
             return this;
         }

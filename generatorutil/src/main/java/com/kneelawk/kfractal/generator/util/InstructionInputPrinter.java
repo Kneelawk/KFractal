@@ -1,7 +1,10 @@
 package com.kneelawk.kfractal.generator.util;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.constant.*;
+import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 
 class InstructionInputPrinter implements IInstructionInputVisitor<Void> {
     private final StringBuilder builder;
@@ -42,7 +45,7 @@ class InstructionInputPrinter implements IInstructionInputVisitor<Void> {
     }
 
     @Override
-    public Void visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalException {
+    public Void visitFunctionContextConstant(FunctionCreate contextConstant) throws FractalException {
         builder.append("FunctionContextConstant(").append(contextConstant.getFunctionIndex()).append(", [ ");
         boolean first = true;
         for (IInstructionInput input : contextConstant.getContextVariables()) {

@@ -2,7 +2,11 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.constant.*;
+import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +34,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     @Override
     public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
         int index = reference.getIndex();
-        Scope scope = reference.getScope();
+        VariableScope scope = reference.getScope();
         List<VariableDeclaration> scopeList;
         switch (scope) {
             case GLOBAL:
@@ -79,7 +83,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     }
 
     @Override
-    public ValueInfo visitFunctionContextConstant(FunctionContextConstant contextConstant) throws FractalException {
+    public ValueInfo visitFunctionContextConstant(FunctionCreate contextConstant) throws FractalException {
         // find the function
         FunctionDefinition target;
         int functionIndex = contextConstant.getFunctionIndex();

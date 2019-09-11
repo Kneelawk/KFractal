@@ -5,11 +5,10 @@ import com.google.common.collect.Streams;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCall;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionIsEqual;
-import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionIsNotEqual;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.FunctionContextConstant;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.NullFunction;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
+import com.kneelawk.kfractal.generator.api.ir.constant.NullFunction;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
@@ -103,7 +102,7 @@ public class InstructionValidationFunctionTests {
         function.setReturnType(ValueTypes.VOID);
         var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
-                .create(ret, FunctionContextConstant.create(gIndex),
+                .create(ret, FunctionCreate.create(gIndex),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))
                                 .collect(Collectors.toList())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -129,7 +128,7 @@ public class InstructionValidationFunctionTests {
         function.setReturnType(ValueTypes.VOID);
         var ret = function.addLocalVariable(VariableDeclaration.create(valueTypes.getLeft()));
         function.addStatement(FunctionCall
-                .create(ret, FunctionContextConstant.create(gIndex),
+                .create(ret, FunctionCreate.create(gIndex),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -153,7 +152,7 @@ public class InstructionValidationFunctionTests {
         function.setReturnType(ValueTypes.VOID);
         var ret = function.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
         function.addStatement(FunctionCall
-                .create(ret, FunctionContextConstant.create(gIndex, ImmutableList.of()),
+                .create(ret, FunctionCreate.create(gIndex, ImmutableList.of()),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -197,7 +196,7 @@ public class InstructionValidationFunctionTests {
         function.setReturnType(ValueTypes.VOID);
         var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
-                .create(ret, FunctionContextConstant.create(gIndex, ImmutableList.of()),
+                .create(ret, FunctionCreate.create(gIndex, ImmutableList.of()),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))
                                 .collect(Collectors.toList())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -221,7 +220,7 @@ public class InstructionValidationFunctionTests {
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
         function.addStatement(FunctionCall
-                .create(VoidConstant.INSTANCE, FunctionContextConstant.create(gIndex, ImmutableList.of()),
+                .create(VoidConstant.INSTANCE, FunctionCreate.create(gIndex, ImmutableList.of()),
                         ImmutableList.of()));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
