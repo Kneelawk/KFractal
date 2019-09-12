@@ -7,8 +7,7 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntOr - Instruction. Bitwise ors the last two arguments together and stores the result in the variable referenced by
- * the first argument.
+ * IntOr - Instruction. Bitwise ors the two arguments together.
  * <p>
  * IntOr(Int left, Int right)
  */

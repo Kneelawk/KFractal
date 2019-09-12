@@ -16,7 +16,7 @@ public class FunctionIsEqual implements IValue {
     private IValue left;
     private IValue right;
 
-    public FunctionIsEqual(IValue left, IValue right) {
+    private FunctionIsEqual(IValue left, IValue right) {
         this.left = left;
         this.right = right;
     }

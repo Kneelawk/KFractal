@@ -7,8 +7,8 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * RealComposeComplex - Instruction. Composes a complex number with the second to last argument as its real component
- * and the last argument as its imaginary component.
+ * RealComposeComplex - Instruction. Composes a complex number with the first argument as its real component and the
+ * second argument as its imaginary component.
  * <p>
  * RealComposeComplex(Real real, Real imaginary)
  */

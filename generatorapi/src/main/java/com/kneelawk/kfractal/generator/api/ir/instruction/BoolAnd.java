@@ -7,7 +7,7 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * BoolAnd - Ands the two arguments together.
+ * BoolAnd - Instruction. Ands the two arguments together.
  * <p>
  * BoolAnd(Bool left, Bool right)
  */

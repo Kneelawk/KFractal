@@ -66,200 +66,182 @@ Returns a value or void constant from a function, exiting the current function.
 ## Boolean Instructions
 
 ### BoolNot
-Assigns the not of the last argument to the variable referenced by the first argument.
+Gets the not value of the argument.
 
-`BoolNot(Bool output, Bool input)`
+`BoolNot(Bool input)`
 
 ### BoolAnd
-Ands the last two arguments together and stores the result in the variable referenced by the first argument.
+Ands the two arguments together.
 
-`BoolAnd(Bool result, Bool left, Bool right)`
+`BoolAnd(Bool left, Bool right)`
 
 ### BoolOr
-Ors the last two arguments together and stores the result in the variable referenced by the first argument.
+Ors the two arguments together.
 
-`BoolOr(Bool result, Bool left, Bool right)`
+`BoolOr(Bool left, Bool right)`
 
 ### BoolIsEqual
-Checks to see if the two last boolean arguments are equal then stores the result in the variable referenced by the 
-first argument. This is the same as a boolean XNOR.
+Checks to see if the two boolean arguments are equal. This is the same as a boolean XNOR.
 
-`BoolIsEqual(Bool result, Bool left, Bool right)`
+`BoolIsEqual(Bool left, Bool right)`
 
 ## Int Instructions
 
 ### IntAdd
-Adds the last two arguments as ints and stores the result in the variable referenced by the first argument.
+Adds the two arguments as ints.
 
-`IntAdd(Int sum, Int leftAddend, Int rightAddend)`
+`IntAdd(Int leftAddend, Int rightAddend)`
 
 ### IntSubtract
-Subtracts the last argument from the second to last argument and stores the result in the variable referenced by the 
-first argument.
+Subtracts the second argument from the first argument.
 
-`IntSubtract(Int difference, Int minuend, Int subtrahend)`
+`IntSubtract(Int minuend, Int subtrahend)`
 
 ### IntMultiply
-Multiplies the last two arguments together and stores the result in the variable referenced by the first argument.
+Multiplies the two arguments together.
 
-`IntMultiply(Int product, Int leftFactor, Int rightFactor)`
+`IntMultiply(Int leftFactor, Int rightFactor)`
 
 ### IntDivide
-Divides the second to last argument by the last argument and stores the result in the variable referenced by the 
-first argument.
+Divides the first argument by the second argument.
 
-`IntDivide(Int quotient, Int dividend, Int divisor)`
+`IntDivide(Int dividend, Int divisor)`
 
 ### IntModulo
-Finds the remainder after dividing the second to last argument by the last argument and stores the result in the 
-variable referenced by the first argument.
+Finds the modulus of dividing the first argument by the second argument.
 
-`IntModulo(Int remainder, Int dividend, Int divisor)`
+`IntModulo(Int dividend, Int divisor)`
 
 ### IntPower
-Finds the result of raising the second to last argument to the power of the last argument and stores that result in 
-the variable referenced by the first argument.
+Finds the result of raising the first argument to the power of the second argument.
 
-`IntPower(Int result, Int base, Int exponent)`
+`IntPower(Int base, Int exponent)`
 
 ### IntNot
-Finds the bitwise not of the last argument ans stores it in the variable referenced by the first argument.
+Finds the bitwise not of the argument.
 
-`IntNot(Int output, Int input)`
+`IntNot(Int input)`
 
 ### IntAnd
-Bitwise ands the last two arguments together and stores the result in the variable referenced by the first argument.
+Bitwise ands the two arguments together.
 
-`IntAnd(Int result, Int left, Int right)`
+`IntAnd(Int left, Int right)`
 
 ### IntOr
-Bitwise ors the last two arguments together and stores the result in the variable referenced by the first argument.
+Bitwise ors the two arguments together.
 
-`IntOr(Int result, Int left, Int right)`
+`IntOr(Int left, Int right)`
 
 ### IntXor
-Bitwise xors the last two arguments together and stores the result in the variable referenced by the first argument.
+Bitwise xors the two arguments together.
 
-`IntXor(Int result, Int left, Int right)`
+`IntXor(Int left, Int right)`
 
 ### IntIsEqual
-Checks to see if the last two arguments have the same integer value and stores the resulting boolean in the variable 
-referenced by the first argument.
+Checks to see if the two arguments have the same integer value.
 
-`IntIsEqual(Bool result, Int left, Int right)`
+`IntIsEqual(Int left, Int right)`
 
 ### IntIsGreater
-Checks to see if the second to last argument is greater than the last arguments and stores the resulting boolean in 
-the variable referenced by the first argument.
+Checks to see if the first argument is greater than the second argument.
 
-`IntIsGreater(Bool result, Int subject, Int basis)`
+`IntIsGreater(Int subject, Int basis)`
 
 ### IntIsGreaterOrEqual
-Checks to see if the second to last argument is greater than or equal to the last argument and stores the resulting 
-boolean in the variable referenced by the first argument.
+Checks to see if the first argument is greater than or equal to the second argument.
 
-`IntIsGreaterOrEqual(Bool result, Int subject, Int basis)`
+`IntIsGreaterOrEqual(Int subject, Int basis)`
 
 ## Real Instructions
 
 ### RealAdd
-Adds the last two arguments together and stores the result in the variable referenced by the first argument.
+Adds the two arguments together.
 
-`RealAdd(Real sum, Real leftAddend, Real rightAddend)`
+`RealAdd(Real leftAddend, Real rightAddend)`
 
 ### RealSubtract
-Subtracts the last argument from the second to last argument and stores the result in the variable referenced by the 
-first argument.
+Subtracts the second argument from the first argument.
 
-`RealSubtract(Real difference, Real minuend, Real subtrahend)`
+`RealSubtract(Real minuend, Real subtrahend)`
 
 ### RealMultiply
-Multiplies the last two arguments together and stores the result in the variable referenced by the first argument.
+Multiplies the two arguments together.
 
-`RealMultiply(Real product, Real leftFactor, Real rightFactor)`
+`RealMultiply(Real leftFactor, Real rightFactor)`
 
 ### RealDivide
-Divides the second to last argument by the last argument and stores the result in the variable referenced by the 
-first argument.
+Divides the first argument by the second argument.
 
-`RealDivide(Real quotient, Real dividend, Real divisor)`
+`RealDivide(Real dividend, Real divisor)`
 
 ### RealPower
-Raises the second to last argument to the power of the last argument and stores the result in the variable referenced
-by the first argument.
+Raises the first argument to the power of the second argument.
 
-`RealPower(Real result, Real base, Real exponent)`
+`RealPower(Real base, Real exponent)`
 
 ### RealIsEqual
-Checks to see if the last two arguments have the same real value and stores the resulting boolean in the variable 
-referenced by the first argument.
+Checks to see if the two arguments have the same real value.
 
-`RealIsEqual(Bool result, Real left, Real right)`
+`RealIsEqual(Real left, Real right)`
 
 ### RealIsGreater
-Checks to see if the second to last argument has a greater real value than the last argument and stores the resulting
-boolean in the variable referenced by the first argument.
+Checks to see if the first argument has a greater real value than the second argument.
 
-`RealIsGreater(Bool result, Real subject, Real basis)`
+`RealIsGreater(Real subject, Real basis)`
 
 ### RealIsGreaterOrEqual
-Checks to see if the second to last argument has a greater real value than or equal real value to the last argument 
-and stores the resulting boolean value in the variable referenced by the first argument.
+Checks to see if the first argument has a real value greater than or equal to the real value of the second argument.
 
-`RealIsGreaterOrEqual(Bool result, Real subject, Real basis)`
+`RealIsGreaterOrEqual(Real subject, Real basis)`
 
 ### RealComposeComplex
-Composes a complex number with the second to last argument as its real component and the last argument as its 
-imaginary component and stores it in the variable referenced by the first argument.
+Composes a complex number with the first argument as its real component and the second argument as its imaginary
+component.
 
-`RealComposeComplex(Complex complex, Real real, Real imaginary)`
+`RealComposeComplex(Real real, Real imaginary)`
 
 ## Complex Instructions
 
 ### ComplexAdd
-Adds the last two arguments together and stores the result in the variable referenced by the first argument.
+Adds the two complex numbers.
 
-`ComplexAdd(Complex sum, Complex leftAddend, Complex rightAddend)`
+`ComplexAdd(Complex leftAddend, Complex rightAddend)`
 
 ### ComplexSubtract
-Subtracts the last argument from the second to last argument and stores the result in the variable referenced by the 
-first argument.
+Subtracts the second argument from the first argument.
 
-`ComplexSubtract(Complex difference, Complex minuend, Complex subtrahend)`
+`ComplexSubtract(Complex minuend, Complex subtrahend)`
 
 ### ComplexMultiply
-Multiplies the last two arguments together and stores the result in the variable referenced by the first argument.
+Multiplies the two complex numbers.
 
-`ComplexMultiply(Complex product, Complex leftFactor, Complex rightFactor)`
+`ComplexMultiply(Complex leftFactor, Complex rightFactor)`
 
 ### ComplexDivide
-Divides the second to last argument by the last argument and stores the result in the variable referenced by the 
-first argument.
+Divides the first argument by the second argument.
 
-`ComplexDivide(Complex quotient, Complex dividend, Complex divisor)`
+`ComplexDivide(Complex dividend, Complex divisor)`
 
 ### ComplexPower
-Raises the second to last argument to the power of the last argument and stores the result in the variable referenced
-by the first argument.
+Raises the first argument to the power of the second argument.
 
-`ComplexPower(Complex result, Complex base, Complex exponent)`
+`ComplexPower(Complex base, Complex exponent)`
 
 ### ComplexGetReal
-Gets the real component of the last argument and stores it in the variable referenced by the first argument.
+Gets the real component of the argument.
 
-`ComplexGetReal(Real real, Complex complex)`
+`ComplexGetReal(Complex complex)`
 
 ### ComplexGetImaginary
-Gets the imaginary component of the last argument and stores it in the variable referenced by the first argument.
+Gets the imaginary component of the argument.
 
-`ComplexGetImaginary(Real imaginary, Complex complex)`
+`ComplexGetImaginary(Complex complex)`
 
 ### ComplexModulo
-Computes the complex modulo of the last argument and stores it in the variable referenced by the first argument. A 
-complex number's modulus is that complex number's absolute distance from the origin as computed by
-sqrt(&lt;real-component&gt;^2 + &lt;imaginary-component&gt;^2).
+Computes the complex modulo of the argument. A complex number's modulus is that complex number's absolute distance
+from the origin as computed by sqrt(&lt;real-component&gt;^2 + &lt;imaginary-component&gt;^2).
 
-`ComplexModulo(Real modulus, Complex complex)`
+`ComplexModulo(Complex complex)`
 
 ### ComplexIsEqual
 Checks to see if the two arguments have the same real and imaginary values.
@@ -274,37 +256,36 @@ Constructs a function context variable using the given function name and context
 `FunctionCreate(functionName, [ ** contextVariables ])`
 
 ### FunctionCall
-Calls the function represented by the function context that is the second argument with arguments in the list that is 
-the third argument and stores the function's return value in the variable referenced by the first argument. The 
-variable that the return value is stored in must be of the same type as the function's return value and each of the 
-arguments in the specified argument list must be the same types as the arguments in the function.
+Calls the function represented by the function context that is the first argument with arguments in the list that is
+the second argument. This instruction's return value is that of the called function, or void if the called function
+returned void. Each of the arguments in the specified argument list must be the same types as the arguments in the
+function.
 
-`FunctionCall(* result, Function(*, [ ** ]) function, [ ** arguments ])`
+`FunctionCall(Function(*, [ ** ]) function, [ ** arguments ])`
 
 ### FunctionIsEqual
-Checks to see if the last two function arguments reference the same function and hold the same context variable 
-values and stores the result in the variable referenced by the first argument.
+Checks to see if the last two function arguments reference the same function and hold the same context variable values.
 
-`FunctionIsEqual(Bool result, Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
+`FunctionIsEqual(Function(*, [ ** ]) left, Function(*, [ ** ]) right)`
 
 ## Pointer Instructions
 
 ### PointerAllocate
-Allocates data for a pointer on the language-backed heap and stores its handle in the variable referenced by the only 
-argument.
+Allocates data for a pointer on the language-backed heap. All allocations that have not been freed should be freed
+ when the program exits.
 
-`PointerAllocate(Pointer(*) pointer)`
+`PointerAllocate(type)`
 
 ### PointerFree
-Frees the data pointed to by the handle in the only argument. This also sets the pointer's handle value to NullPointer.
+Frees the data pointed to by the handle in the only argument if the current language backend supports explicitly
+freeing pointers.
 
 `PointerFree(Pointer(*) pointer)`
 
 ### PointerGet
-Retrieves the data pointed to by the handle in the second argument and stores it in the variable referenced by the 
-first argument.
+Retrieves the data pointed to by the handle in the only argument.
 
-`PointerGet(* data, Pointer(*) pointer)`
+`PointerGet(Pointer(*) pointer)`
 
 ### PointerSet
 Sets the value of the data pointed to by the handle in the first argument to the data in the second argument.
@@ -312,10 +293,9 @@ Sets the value of the data pointed to by the handle in the first argument to the
 `PointerSet(Pointer(*) pointer, * data)`
 
 ### PointerIsEqual
-Checks to see if the last two pointer arguments hold handles to the same data and stores the result in the variable 
-referenced by the first argument.
+Checks to see if the two pointer arguments hold handles to the same data.
 
-`PointerIsEqual(Bool result, Pointer(*) left, Pointer(*) right)`
+`PointerIsEqual(Pointer(*) left, Pointer(*) right)`
 
 ## Control-Flow Instructions
 

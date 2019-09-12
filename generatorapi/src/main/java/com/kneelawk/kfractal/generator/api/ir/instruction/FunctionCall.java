@@ -15,9 +15,8 @@ import java.util.List;
 /**
  * FunctionCall - Instruction. Calls the function represented by the function context that is the first argument with
  * arguments in the list that is the second argument. This instruction's return value is that of the called function,
- * or void if the called function returned void. The variable that the return value is stored in must be of the same
- * type as the function's return value and each of the arguments in the specified argument list must be the same types
- * as the arguments in the function.
+ * or void if the called function returned void. Each of the arguments in the specified argument list must be the same
+ * types as the arguments in the function.
  * <p>
  * FunctionCall(Function(*, [ ** ]) function, [ ** arguments ])
  */

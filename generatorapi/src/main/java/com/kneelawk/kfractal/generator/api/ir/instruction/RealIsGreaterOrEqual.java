@@ -7,8 +7,8 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * RealIsGreaterOrEqual - Instruction. Checks to see if the first argument has a greater real value than or equal real
- * value to the second argument.
+ * RealIsGreaterOrEqual - Instruction. Checks to see if the first argument has a real value greater than or equal to the
+ * real value of the second argument.
  * <p>
  * RealIsGreaterOrEqual(Real subject, Real basis)
  */
