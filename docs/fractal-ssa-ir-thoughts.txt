@@ -388,3 +388,22 @@ Program(
     )
 ]
 )
+
+Issue: How would global variables work?
+    One way of doing it is to simply have every global variable be a pointer to managed memory. That way it still makes
+    sense to have a method for setting global variables on engines.
+
+    Drawbacks: Interacting with a global variable requires calling pointer load & store.
+
+    Another way to do it would be to have every global variable have a small static initializer that allows for pointer
+    allocation.
+
+    Drawbacks: This is messy and it's hard to determine global pointer lifetimes.
+
+    Issue with both of these: Interacting with globals is language dependant.
+        One way to do this would be to have all global variables be mutable, simply because the ssa way of doing things
+        doesn't apply nearly as well to them. There is no order of operations outside a function, therefore trying to define
+        globals and global dependencies in an ordered way does not make sense.
+
+        Furthermore, because of the fact that global variables are language-dependent, there should be specific instructions
+        for interacting with them.
