@@ -3,8 +3,8 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -97,8 +97,8 @@ public class FunctionDefinition {
             return contextVariables;
         }
 
-        public VariableReference getNextContextVariableReference() {
-            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size());
+        public ArgumentReference getNextContextVariableReference() {
+            return ArgumentReference.create(ArgumentScope.CONTEXT, contextVariables.size());
         }
 
         public int getNextContextVariableIndex() {
@@ -119,14 +119,14 @@ public class FunctionDefinition {
             return this;
         }
 
-        public VariableReference addContextVariable(Supplier<ArgumentDeclaration> declaration) {
+        public ArgumentReference addContextVariable(Supplier<ArgumentDeclaration> declaration) {
             contextVariables.add(declaration);
-            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
+            return ArgumentReference.create(ArgumentScope.CONTEXT, contextVariables.size() - 1);
         }
 
-        public VariableReference addContextVariable(ArgumentDeclaration declaration) {
+        public ArgumentReference addContextVariable(ArgumentDeclaration declaration) {
             contextVariables.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
+            return ArgumentReference.create(ArgumentScope.CONTEXT, contextVariables.size() - 1);
         }
 
         @SafeVarargs
@@ -155,8 +155,8 @@ public class FunctionDefinition {
             return arguments;
         }
 
-        public VariableReference getNextArgumentReference() {
-            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size());
+        public ArgumentReference getNextArgumentReference() {
+            return ArgumentReference.create(ArgumentScope.ARGUMENTS, arguments.size());
         }
 
         public int getNextArgumentIndex() {
@@ -176,14 +176,14 @@ public class FunctionDefinition {
             return this;
         }
 
-        public VariableReference addArgument(Supplier<ArgumentDeclaration> declaration) {
+        public ArgumentReference addArgument(Supplier<ArgumentDeclaration> declaration) {
             arguments.add(declaration);
-            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
+            return ArgumentReference.create(ArgumentScope.ARGUMENTS, arguments.size() - 1);
         }
 
-        public VariableReference addArgument(ArgumentDeclaration declaration) {
+        public ArgumentReference addArgument(ArgumentDeclaration declaration) {
             arguments.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
+            return ArgumentReference.create(ArgumentScope.ARGUMENTS, arguments.size() - 1);
         }
 
         @SafeVarargs

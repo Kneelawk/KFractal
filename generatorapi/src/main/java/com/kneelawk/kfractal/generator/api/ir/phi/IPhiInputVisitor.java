@@ -6,10 +6,10 @@ import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.RealConstant;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 
 public interface IPhiInputVisitor<R> {
-    R visitVariableReference(VariableReference variableReference) throws FractalException;
+    R visitArgumentReference(ArgumentReference argumentReference) throws FractalException;
 
     R visitInstructionReference(InstructionReference instructionReference) throws FractalException;
 

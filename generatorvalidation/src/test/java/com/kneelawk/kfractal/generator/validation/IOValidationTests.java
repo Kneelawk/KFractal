@@ -6,8 +6,8 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.ComplexAdd;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import org.apache.commons.math3.complex.Complex;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class IOValidationTests {
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
         var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        functionBuilder.addStatement(Assign.create(a, VariableReference.create(VariableScope.LOCAL, 100)));
+        functionBuilder.addStatement(Assign.create(a, ArgumentReference.create(ArgumentScope.LOCAL, 100)));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
 
@@ -55,7 +55,8 @@ class IOValidationTests {
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
         functionBuilder.addStatement(
-                Assign.create(VariableReference.create(VariableScope.LOCAL, 100), ComplexConstant.create(new Complex(1, 1))));
+                Assign.create(
+                        ArgumentReference.create(ArgumentScope.LOCAL, 100), ComplexConstant.create(new Complex(1, 1))));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
 

@@ -10,16 +10,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class VariableReference implements IValue, IPhiInput {
-    private VariableScope scope;
+public class ArgumentReference implements IValue, IPhiInput {
+    private ArgumentScope scope;
     private int index;
 
-    private VariableReference(VariableScope scope, int index) {
+    private ArgumentReference(ArgumentScope scope, int index) {
         this.scope = scope;
         this.index = index;
     }
 
-    public VariableScope getScope() {
+    public ArgumentScope getScope() {
         return scope;
     }
 
@@ -29,12 +29,12 @@ public class VariableReference implements IValue, IPhiInput {
 
     @Override
     public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
-        return visitor.visitVariableReference(this);
+        return visitor.visitArgumentReference(this);
     }
 
     @Override
     public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
-        return visitor.visitVariableReference(this);
+        return visitor.visitArgumentReference(this);
     }
 
     @Override
@@ -45,45 +45,45 @@ public class VariableReference implements IValue, IPhiInput {
                 .toString();
     }
 
-    public VariableReference offset(int offset) {
+    public ArgumentReference offset(int offset) {
         if (index + offset < 0)
             throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
-        return new VariableReference(scope, index + offset);
+        return new ArgumentReference(scope, index + offset);
     }
 
-    public static VariableReference create(VariableScope scope, int index) {
+    public static ArgumentReference create(ArgumentScope scope, int index) {
         if (scope == null)
             throw new NullPointerException("Scope cannot be null");
         if (index < 0)
             throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
-        return new VariableReference(scope, index);
+        return new ArgumentReference(scope, index);
     }
 
     public static class Builder {
-        private VariableScope scope;
+        private ArgumentScope scope;
         private int index;
 
         public Builder() {
         }
 
-        public Builder(VariableScope scope, int index) {
+        public Builder(ArgumentScope scope, int index) {
             this.scope = scope;
             this.index = index;
         }
 
-        public VariableReference build() {
+        public ArgumentReference build() {
             if (scope == null)
                 throw new IllegalStateException("No scope specified");
             if (index < 0)
                 throw new IndexOutOfBoundsException("VariableReference index cannot be less than 0");
-            return new VariableReference(scope, index);
+            return new ArgumentReference(scope, index);
         }
 
-        public VariableScope getScope() {
+        public ArgumentScope getScope() {
             return scope;
         }
 
-        public Builder setScope(VariableScope scope) {
+        public Builder setScope(ArgumentScope scope) {
             this.scope = scope;
             return this;
         }

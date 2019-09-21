@@ -7,7 +7,7 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.instruction.PointerSet;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import org.apache.commons.math3.complex.Complex;
 
 public class ValueTypeUtils {
@@ -46,7 +46,7 @@ public class ValueTypeUtils {
             if (ValueTypes.isNullPointer(type)) {
                 return NullPointer.INSTANCE;
             } else {
-                VariableReference pointer =
+                ArgumentReference pointer =
                         programBuilder.addGlobalVariable(GlobalDeclaration.create(type, IGlobalAttribute.PREALLOCATED))
                                 .offset(globalVariableOffset);
                 functionBuilder.addStatement(PointerSet.create(pointer,

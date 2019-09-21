@@ -5,8 +5,8 @@ import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.constant.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.instruction.io.*;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +32,9 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     }
 
     @Override
-    public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
+    public ValueInfo visitVariableReference(ArgumentReference reference) throws FractalIRException {
         int index = reference.getIndex();
-        VariableScope scope = reference.getScope();
+        ArgumentScope scope = reference.getScope();
         List<GlobalDeclaration> scopeList;
         switch (scope) {
             case GLOBAL:

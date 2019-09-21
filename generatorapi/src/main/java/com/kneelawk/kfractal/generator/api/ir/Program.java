@@ -3,8 +3,6 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableScope;
-import com.kneelawk.kfractal.generator.api.ir.reference.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

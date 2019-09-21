@@ -1,6 +1,6 @@
 package com.kneelawk.kfractal.generator.api.ir.reference;
 
-public enum VariableScope {
+public enum ArgumentScope {
     CONTEXT,
     ARGUMENTS
 }
