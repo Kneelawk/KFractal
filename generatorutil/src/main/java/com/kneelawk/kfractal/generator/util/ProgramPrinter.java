@@ -3,8 +3,8 @@ package com.kneelawk.kfractal.generator.util;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
 import com.kneelawk.kfractal.generator.api.ir.Program;
-import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.GlobalDeclaration;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.util.StringUtils;
 
 public class ProgramPrinter {
@@ -14,7 +14,7 @@ public class ProgramPrinter {
         builder.append("[");
         boolean first = true;
         for (int i = 0; i < program.getGlobalVariables().size(); i++) {
-            VariableDeclaration variable = program.getGlobalVariables().get(i);
+            GlobalDeclaration variable = program.getGlobalVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
@@ -60,7 +60,7 @@ public class ProgramPrinter {
         builder.append("[");
         boolean first = true;
         for (int i = 0; i < function.getContextVariables().size(); i++) {
-            VariableDeclaration variable = function.getContextVariables().get(i);
+            GlobalDeclaration variable = function.getContextVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
@@ -80,7 +80,7 @@ public class ProgramPrinter {
         builder.append("[");
         first = true;
         for (int i = 0; i < function.getArguments().size(); i++) {
-            VariableDeclaration argument = function.getArguments().get(i);
+            GlobalDeclaration argument = function.getArguments().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
@@ -100,7 +100,7 @@ public class ProgramPrinter {
         builder.append("[");
         first = true;
         for (int i = 0; i < function.getLocalVariables().size(); i++) {
-            VariableDeclaration variable = function.getLocalVariables().get(i);
+            GlobalDeclaration variable = function.getLocalVariables().get(i);
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
@@ -145,16 +145,16 @@ public class ProgramPrinter {
         builder.append(")");
     }
 
-    private static void printVariableDeclaration(StringBuilder builder, VariableDeclaration declaration) {
+    private static void printVariableDeclaration(StringBuilder builder, GlobalDeclaration declaration) {
         builder.append("VariableDeclaration(");
         builder.append(declaration.getType().toString());
         if (declaration.getAttributes().isEmpty()) {
             builder.append(")");
         } else {
             builder.append(", [ ");
-            AttributePrinter attributePrinter = new AttributePrinter(builder);
+            GlobalAttributePrinter attributePrinter = new GlobalAttributePrinter(builder);
             boolean first = true;
-            for (IAttribute attribute : declaration.getAttributes()) {
+            for (IGlobalAttribute attribute : declaration.getAttributes()) {
                 if (!first)
                     builder.append(", ");
                 try {

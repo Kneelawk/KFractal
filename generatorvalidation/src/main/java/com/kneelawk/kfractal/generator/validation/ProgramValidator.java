@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,33 +32,33 @@ public class ProgramValidator {
         }
     }
 
-    private static void checkArguments(Collection<VariableDeclaration> arguments) throws FractalIRValidationException {
-        for (VariableDeclaration v : arguments) {
+    private static void checkArguments(Collection<GlobalDeclaration> arguments) throws FractalIRValidationException {
+        for (GlobalDeclaration v : arguments) {
             ValueType type = v.getType();
-            Set<IAttribute> attributes = v.getAttributes();
+            Set<IGlobalAttribute> attributes = v.getAttributes();
 
             // check variable types
             checkVariableType(type);
 
             // check variable attributes
-            if (attributes.contains(IAttribute.PREALLOCATED)) {
+            if (attributes.contains(IGlobalAttribute.PREALLOCATED)) {
                 throw new IllegalVariableAttributeException("Illegal argument attribute: PREALLOCATED");
             }
         }
     }
 
-    private static void checkVariables(Collection<VariableDeclaration> variables)
+    private static void checkVariables(Collection<GlobalDeclaration> variables)
             throws FractalIRValidationException {
-        for (VariableDeclaration v : variables) {
+        for (GlobalDeclaration v : variables) {
             ValueType type = v.getType();
-            Set<IAttribute> attributes = v.getAttributes();
+            Set<IGlobalAttribute> attributes = v.getAttributes();
 
             // check variable types
             checkVariableType(type);
 
             // check variable attributes
             if (!ValueTypes.isPointer(type)) {
-                if (attributes.contains(IAttribute.PREALLOCATED)) {
+                if (attributes.contains(IGlobalAttribute.PREALLOCATED)) {
                     throw new IllegalVariableAttributeException("Illegal variable attribute: PREALLOCATED");
                 }
             }

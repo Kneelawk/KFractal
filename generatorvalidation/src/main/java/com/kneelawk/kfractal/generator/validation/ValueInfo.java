@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -12,10 +12,10 @@ import java.util.List;
 class ValueInfo {
     private final boolean variable;
     private final ValueType type;
-    private final List<IAttribute> variableAttributes;
+    private final List<IGlobalAttribute> variableAttributes;
 
     private ValueInfo(boolean variable, ValueType type,
-                      List<IAttribute> variableAttributes) {
+                      List<IGlobalAttribute> variableAttributes) {
         this.variable = variable;
         this.type = type;
         this.variableAttributes = variableAttributes;
@@ -29,7 +29,7 @@ class ValueInfo {
         return type;
     }
 
-    List<IAttribute> getVariableAttributes() {
+    List<IGlobalAttribute> getVariableAttributes() {
         return variableAttributes;
     }
 
@@ -45,13 +45,13 @@ class ValueInfo {
     static class Builder {
         private boolean variable = false;
         private ValueType type;
-        private final List<IAttribute> variableAttributes = Lists.newArrayList();
+        private final List<IGlobalAttribute> variableAttributes = Lists.newArrayList();
 
         Builder() {
         }
 
         Builder(boolean variable, ValueType type,
-                Collection<IAttribute> variableAttributes) {
+                Collection<IGlobalAttribute> variableAttributes) {
             this.variable = variable;
             this.type = type;
             this.variableAttributes.addAll(variableAttributes);
@@ -79,18 +79,18 @@ class ValueInfo {
             return this;
         }
 
-        List<IAttribute> getVariableAttributes() {
+        List<IGlobalAttribute> getVariableAttributes() {
             return variableAttributes;
         }
 
         Builder setVariableAttributes(
-                Collection<IAttribute> variableAttributes) {
+                Collection<IGlobalAttribute> variableAttributes) {
             this.variableAttributes.clear();
             this.variableAttributes.addAll(variableAttributes);
             return this;
         }
 
-        Builder addVariableAttribute(IAttribute variableAttribute) {
+        Builder addVariableAttribute(IGlobalAttribute variableAttribute) {
             variableAttributes.add(variableAttribute);
             return this;
         }

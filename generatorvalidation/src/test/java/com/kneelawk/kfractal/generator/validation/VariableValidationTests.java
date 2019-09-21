@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.ImmutableSet;
 import com.kneelawk.kfractal.generator.api.ir.*;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class VariableValidationTests {
         Program.Builder program = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var v = function.addLocalVariable(VariableDeclaration.create(ValueTypes.VOID));
+        var v = function.addLocalVariable(GlobalDeclaration.create(ValueTypes.VOID));
         function.addStatement(Return.create(v));
         program.addFunction(function.build());
 
@@ -33,7 +33,7 @@ class VariableValidationTests {
         Program.Builder program = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(ValueTypes.NULL_FUNCTION));
+        function.addLocalVariable(GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         program.addFunction(function.build());
 
@@ -45,7 +45,7 @@ class VariableValidationTests {
         Program.Builder program = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(ValueTypes.NULL_POINTER));
+        function.addLocalVariable(GlobalDeclaration.create(ValueTypes.NULL_POINTER));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         program.addFunction(function.build());
 
@@ -59,7 +59,7 @@ class VariableValidationTests {
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
         function.addLocalVariable(
-                VariableDeclaration.create(variableType, ImmutableSet.of(IAttribute.PREALLOCATED)));
+                GlobalDeclaration.create(variableType, ImmutableSet.of(IGlobalAttribute.PREALLOCATED)));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         program.addFunction(function.build());
 
@@ -76,7 +76,7 @@ class VariableValidationTests {
         Program.Builder program = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(variableType);
-        var v = function.addLocalVariable(VariableDeclaration.create(variableType));
+        var v = function.addLocalVariable(GlobalDeclaration.create(variableType));
         function.addStatement(Return.create(v));
         program.addFunction(function.build());
 

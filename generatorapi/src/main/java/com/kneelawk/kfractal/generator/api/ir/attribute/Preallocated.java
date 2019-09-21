@@ -7,14 +7,14 @@ import com.kneelawk.kfractal.generator.api.FractalException;
  * a pointer is preallocated, it means that it starts as a valid memory handle to memory who's lifetime is the same as
  * this variable. When a preallocated pointer goes out of scope, its memory is released.
  */
-public class Preallocated implements IAttribute {
+public class Preallocated implements IGlobalAttribute {
     static final Preallocated INSTANCE = new Preallocated();
 
     private Preallocated() {
     }
 
     @Override
-    public <R> R accept(IAttributeVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IGlobalAttributeVisitor<R> visitor) throws FractalException {
         return visitor.visitPreallocated();
     }
 }

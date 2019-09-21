@@ -13,17 +13,17 @@ import java.util.stream.Collectors;
 
 class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<ValueInfo> {
     private List<FunctionDefinition> functions;
-    private List<VariableDeclaration> globalVariables;
-    private List<VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> arguments;
-    private List<VariableDeclaration> localVariables;
+    private List<GlobalDeclaration> globalVariables;
+    private List<GlobalDeclaration> contextVariables;
+    private List<GlobalDeclaration> arguments;
+    private List<GlobalDeclaration> localVariables;
 
     public ValidatingInstructionInputVisitor(
             List<FunctionDefinition> functions,
-            List<VariableDeclaration> globalVariables,
-            List<VariableDeclaration> contextVariables,
-            List<VariableDeclaration> arguments,
-            List<VariableDeclaration> localVariables) {
+            List<GlobalDeclaration> globalVariables,
+            List<GlobalDeclaration> contextVariables,
+            List<GlobalDeclaration> arguments,
+            List<GlobalDeclaration> localVariables) {
         this.functions = functions;
         this.globalVariables = globalVariables;
         this.contextVariables = contextVariables;
@@ -35,7 +35,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
     public ValueInfo visitVariableReference(VariableReference reference) throws FractalIRException {
         int index = reference.getIndex();
         VariableScope scope = reference.getScope();
-        List<VariableDeclaration> scopeList;
+        List<GlobalDeclaration> scopeList;
         switch (scope) {
             case GLOBAL:
                 scopeList = globalVariables;
@@ -54,7 +54,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
         }
 
         if (index < scopeList.size()) {
-            VariableDeclaration declaration = scopeList.get(index);
+            GlobalDeclaration declaration = scopeList.get(index);
             return new ValueInfo.Builder(true, declaration.getType(), declaration.getAttributes()).build();
         } else {
             throw new MissingVariableReferenceException(
@@ -94,7 +94,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
         }
 
         // compare context variable types
-        List<VariableDeclaration> targetContextVariables = target.getContextVariables();
+        List<GlobalDeclaration> targetContextVariables = target.getContextVariables();
         List<IInstructionInput> constantContextVariables = contextConstant.getContextVariables();
         int targetContextVariablesSize = targetContextVariables.size();
         int constantContextVariablesSize = constantContextVariables.size();
@@ -109,7 +109,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
                         "FunctionContextConstant is missing context variables: " +
                                 targetContextVariables.subList(i, targetContextVariablesSize));
             }
-            VariableDeclaration targetVariable = targetContextVariables.get(i);
+            GlobalDeclaration targetVariable = targetContextVariables.get(i);
             IInstructionInput constantInput = constantContextVariables.get(i);
             if (!targetVariable.getType().isAssignableFrom(constantInput.accept(this).getType())) {
                 throw new IncompatibleFunctionContextException(
@@ -120,7 +120,7 @@ class ValidatingInstructionInputVisitor implements IInstructionInputVisitor<Valu
 
         // build the function type from the target function details
         return new ValueInfo.Builder().setType(ValueTypes.FUNCTION(target.getReturnType(),
-                target.getArguments().stream().map(VariableDeclaration::getType).collect(
+                target.getArguments().stream().map(GlobalDeclaration::getType).collect(
                         Collectors.toList()))).build();
     }
 

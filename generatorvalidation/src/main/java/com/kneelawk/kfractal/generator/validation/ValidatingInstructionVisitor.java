@@ -9,10 +9,10 @@ import java.util.function.Function;
 
 class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
     private List<FunctionDefinition> functions;
-    private List<VariableDeclaration> globalVariables;
-    private List<VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> arguments;
-    private List<VariableDeclaration> localVariables;
+    private List<GlobalDeclaration> globalVariables;
+    private List<GlobalDeclaration> contextVariables;
+    private List<GlobalDeclaration> arguments;
+    private List<GlobalDeclaration> localVariables;
     private final ValueType returnType;
 
     private final ValidatingInstructionInputVisitor inputVisitor;
@@ -21,10 +21,10 @@ class ValidatingInstructionVisitor implements IInstructionVisitor<Void> {
     private boolean returned = false;
 
     public ValidatingInstructionVisitor(List<FunctionDefinition> functions,
-                                        List<VariableDeclaration> globalVariables,
-                                        List<VariableDeclaration> contextVariables,
-                                        List<VariableDeclaration> arguments,
-                                        List<VariableDeclaration> localVariables,
+                                        List<GlobalDeclaration> globalVariables,
+                                        List<GlobalDeclaration> contextVariables,
+                                        List<GlobalDeclaration> arguments,
+                                        List<GlobalDeclaration> localVariables,
                                         ValueType returnType) {
         this.functions = functions;
         this.globalVariables = globalVariables;

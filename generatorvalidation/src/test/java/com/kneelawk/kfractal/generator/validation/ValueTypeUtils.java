@@ -1,7 +1,7 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.ir.*;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.api.ir.constant.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.instruction.PointerSet;
@@ -33,7 +33,7 @@ public class ValueTypeUtils {
                 FunctionDefinition.Builder newFunction = new FunctionDefinition.Builder();
                 newFunction.setReturnType(functionType.getReturnType());
                 for (ValueType argumentType : functionType.getArgumentTypes()) {
-                    newFunction.addArgument(VariableDeclaration.create(argumentType));
+                    newFunction.addArgument(GlobalDeclaration.create(argumentType));
                 }
                 newFunction.addStatement(
                         Return.create(createConstant(programBuilder, newFunction,
@@ -47,7 +47,7 @@ public class ValueTypeUtils {
                 return NullPointer.INSTANCE;
             } else {
                 VariableReference pointer =
-                        programBuilder.addGlobalVariable(VariableDeclaration.create(type, IAttribute.PREALLOCATED))
+                        programBuilder.addGlobalVariable(GlobalDeclaration.create(type, IGlobalAttribute.PREALLOCATED))
                                 .offset(globalVariableOffset);
                 functionBuilder.addStatement(PointerSet.create(pointer,
                         createConstant(programBuilder, functionBuilder, functionOffset, globalVariableOffset,

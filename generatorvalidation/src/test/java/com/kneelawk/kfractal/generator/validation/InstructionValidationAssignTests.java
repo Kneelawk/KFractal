@@ -19,7 +19,7 @@ public class InstructionValidationAssignTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var res = function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft()));
+        var res = function.addLocalVariable(GlobalDeclaration.create(assignTypes.getLeft()));
         function.addStatement(Assign.create(res,
                 createConstant(programBuilder, function, assignTypes.getRight())));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -37,7 +37,7 @@ public class InstructionValidationAssignTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var res = function.addLocalVariable(VariableDeclaration.create(assignTypes.getLeft()));
+        var res = function.addLocalVariable(GlobalDeclaration.create(assignTypes.getLeft()));
         function.addStatement(
                 Assign.create(res,
                         createConstant(programBuilder, function, assignTypes.getRight())));

@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 public class FunctionDefinition {
     private ValueType returnType;
-    private List<VariableDeclaration> contextVariables;
-    private List<VariableDeclaration> arguments;
+    private List<ArgumentDeclaration> contextVariables;
+    private List<ArgumentDeclaration> arguments;
     private List<BasicBlock> blocks;
 
     private FunctionDefinition(ValueType returnType,
-                               List<VariableDeclaration> contextVariables,
-                               List<VariableDeclaration> arguments,
+                               List<ArgumentDeclaration> contextVariables,
+                               List<ArgumentDeclaration> arguments,
                                List<BasicBlock> blocks) {
         this.returnType = returnType;
         this.contextVariables = contextVariables;
@@ -34,11 +34,11 @@ public class FunctionDefinition {
         return returnType;
     }
 
-    public List<VariableDeclaration> getContextVariables() {
+    public List<ArgumentDeclaration> getContextVariables() {
         return contextVariables;
     }
 
-    public List<VariableDeclaration> getArguments() {
+    public List<ArgumentDeclaration> getArguments() {
         return arguments;
     }
 
@@ -58,16 +58,16 @@ public class FunctionDefinition {
 
     public static class Builder {
         private ValueType returnType;
-        private List<Supplier<VariableDeclaration>> contextVariables = Lists.newArrayList();
-        private List<Supplier<VariableDeclaration>> arguments = Lists.newArrayList();
+        private List<Supplier<ArgumentDeclaration>> contextVariables = Lists.newArrayList();
+        private List<Supplier<ArgumentDeclaration>> arguments = Lists.newArrayList();
         private List<Supplier<BasicBlock>> blocks = Lists.newArrayList();
 
         public Builder() {
         }
 
         public Builder(ValueType returnType,
-                       Collection<Supplier<VariableDeclaration>> contextVariables,
-                       Collection<Supplier<VariableDeclaration>> arguments,
+                       Collection<Supplier<ArgumentDeclaration>> contextVariables,
+                       Collection<Supplier<ArgumentDeclaration>> arguments,
                        Collection<Supplier<BasicBlock>> blocks) {
             this.returnType = returnType;
             this.contextVariables.addAll(contextVariables);
@@ -93,7 +93,7 @@ public class FunctionDefinition {
             return this;
         }
 
-        public List<Supplier<VariableDeclaration>> getContextVariables() {
+        public List<Supplier<ArgumentDeclaration>> getContextVariables() {
             return contextVariables;
         }
 
@@ -106,52 +106,52 @@ public class FunctionDefinition {
         }
 
         public Builder setContextVariableSuppliers(
-                Collection<Supplier<VariableDeclaration>> contextVariables) {
+                Collection<Supplier<ArgumentDeclaration>> contextVariables) {
             this.contextVariables.clear();
             this.contextVariables.addAll(contextVariables);
             return this;
         }
 
-        public Builder setContextVariables(Collection<VariableDeclaration> contextVariables) {
+        public Builder setContextVariables(Collection<ArgumentDeclaration> contextVariables) {
             this.contextVariables.clear();
             this.contextVariables
                     .addAll(contextVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public VariableReference addContextVariable(Supplier<VariableDeclaration> declaration) {
+        public VariableReference addContextVariable(Supplier<ArgumentDeclaration> declaration) {
             contextVariables.add(declaration);
             return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
         }
 
-        public VariableReference addContextVariable(VariableDeclaration declaration) {
+        public VariableReference addContextVariable(ArgumentDeclaration declaration) {
             contextVariables.add(Suppliers.ofInstance(declaration));
             return VariableReference.create(VariableScope.CONTEXT, contextVariables.size() - 1);
         }
 
         @SafeVarargs
-        public final Builder addContextVariables(Supplier<VariableDeclaration>... declarations) {
+        public final Builder addContextVariables(Supplier<ArgumentDeclaration>... declarations) {
             contextVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public final Builder addContextVariables(VariableDeclaration... declarations) {
+        public final Builder addContextVariables(ArgumentDeclaration... declarations) {
             contextVariables
                     .addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addContextVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
+        public Builder addContextVariableSuppliers(Collection<Supplier<ArgumentDeclaration>> declarations) {
             contextVariables.addAll(declarations);
             return this;
         }
 
-        public Builder addContextVariables(Collection<VariableDeclaration> declarations) {
+        public Builder addContextVariables(Collection<ArgumentDeclaration> declarations) {
             contextVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public List<Supplier<VariableDeclaration>> getArguments() {
+        public List<Supplier<ArgumentDeclaration>> getArguments() {
             return arguments;
         }
 
@@ -164,45 +164,45 @@ public class FunctionDefinition {
         }
 
         public Builder setArgumentSuppliers(
-                Collection<Supplier<VariableDeclaration>> arguments) {
+                Collection<Supplier<ArgumentDeclaration>> arguments) {
             this.arguments.clear();
             this.arguments.addAll(arguments);
             return this;
         }
 
-        public Builder setArguments(Collection<VariableDeclaration> arguments) {
+        public Builder setArguments(Collection<ArgumentDeclaration> arguments) {
             this.arguments.clear();
             this.arguments.addAll(arguments.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public VariableReference addArgument(Supplier<VariableDeclaration> declaration) {
+        public VariableReference addArgument(Supplier<ArgumentDeclaration> declaration) {
             arguments.add(declaration);
             return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
         }
 
-        public VariableReference addArgument(VariableDeclaration declaration) {
+        public VariableReference addArgument(ArgumentDeclaration declaration) {
             arguments.add(Suppliers.ofInstance(declaration));
             return VariableReference.create(VariableScope.ARGUMENTS, arguments.size() - 1);
         }
 
         @SafeVarargs
-        public final Builder addArguments(Supplier<VariableDeclaration>... declarations) {
+        public final Builder addArguments(Supplier<ArgumentDeclaration>... declarations) {
             arguments.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public Builder addArguments(VariableDeclaration... declarations) {
+        public Builder addArguments(ArgumentDeclaration... declarations) {
             arguments.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addArgumentSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
+        public Builder addArgumentSuppliers(Collection<Supplier<ArgumentDeclaration>> declarations) {
             arguments.addAll(declarations);
             return this;
         }
 
-        public Builder addArguments(Collection<VariableDeclaration> declarations) {
+        public Builder addArguments(Collection<ArgumentDeclaration> declarations) {
             arguments.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }

@@ -84,7 +84,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueType));
         function.addStatement(PointerAllocate.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -101,7 +101,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueType));
         function.addStatement(PointerAllocate.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -117,7 +117,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueType));
         function.addStatement(PointerFree.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -149,7 +149,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueType));
         function.addStatement(PointerFree.create(p));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(function.build());
@@ -189,7 +189,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
                 .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -207,7 +207,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
                 .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -242,7 +242,7 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
+        var p = function.addLocalVariable(GlobalDeclaration.create(valueTypes.get(0)));
         function.addStatement(PointerSet
                 .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));

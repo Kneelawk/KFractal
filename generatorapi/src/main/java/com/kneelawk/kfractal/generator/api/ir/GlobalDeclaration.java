@@ -2,7 +2,7 @@ package com.kneelawk.kfractal.generator.api.ir;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -10,12 +10,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
-public class VariableDeclaration {
+public class GlobalDeclaration {
     private ValueType type;
-    private Set<IAttribute> attributes;
+    private Set<IGlobalAttribute> attributes;
 
-    private VariableDeclaration(ValueType type,
-                                Set<IAttribute> attributes) {
+    private GlobalDeclaration(ValueType type,
+                              Set<IGlobalAttribute> attributes) {
         this.type = type;
         this.attributes = attributes;
     }
@@ -24,7 +24,7 @@ public class VariableDeclaration {
         return type;
     }
 
-    public Set<IAttribute> getAttributes() {
+    public Set<IGlobalAttribute> getAttributes() {
         return attributes;
     }
 
@@ -36,42 +36,42 @@ public class VariableDeclaration {
                 .toString();
     }
 
-    public static VariableDeclaration create(ValueType type) {
+    public static GlobalDeclaration create(ValueType type) {
         if (type == null)
             throw new NullPointerException("Type cannot be null");
-        return new VariableDeclaration(type, ImmutableSet.of());
+        return new GlobalDeclaration(type, ImmutableSet.of());
     }
 
-    public static VariableDeclaration create(ValueType type, IAttribute... attributes) {
+    public static GlobalDeclaration create(ValueType type, IGlobalAttribute... attributes) {
         if (type == null)
             throw new NullPointerException("Type cannot be null");
-        return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
+        return new GlobalDeclaration(type, ImmutableSet.copyOf(attributes));
     }
 
-    public static VariableDeclaration create(ValueType type,
-                                             Iterable<IAttribute> attributes) {
+    public static GlobalDeclaration create(ValueType type,
+                                           Iterable<IGlobalAttribute> attributes) {
         if (type == null)
             throw new NullPointerException("Type cannot be null");
-        return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
+        return new GlobalDeclaration(type, ImmutableSet.copyOf(attributes));
     }
 
     public static class Builder {
         private ValueType type;
-        private Set<IAttribute> attributes = Sets.newHashSet();
+        private Set<IGlobalAttribute> attributes = Sets.newHashSet();
 
         public Builder() {
         }
 
         public Builder(ValueType type,
-                       Collection<IAttribute> attributes) {
+                       Collection<IGlobalAttribute> attributes) {
             this.type = type;
             this.attributes.addAll(attributes);
         }
 
-        public VariableDeclaration build() {
+        public GlobalDeclaration build() {
             if (type == null)
                 throw new IllegalStateException("No type specified");
-            return new VariableDeclaration(type, ImmutableSet.copyOf(attributes));
+            return new GlobalDeclaration(type, ImmutableSet.copyOf(attributes));
         }
 
         public ValueType getType() {
@@ -83,28 +83,28 @@ public class VariableDeclaration {
             return this;
         }
 
-        public Set<IAttribute> getAttributes() {
+        public Set<IGlobalAttribute> getAttributes() {
             return attributes;
         }
 
         public Builder setAttributes(
-                Collection<IAttribute> attributes) {
+                Collection<IGlobalAttribute> attributes) {
             this.attributes.clear();
             this.attributes.addAll(attributes);
             return this;
         }
 
-        public Builder addAttribute(IAttribute attribute) {
+        public Builder addAttribute(IGlobalAttribute attribute) {
             attributes.add(attribute);
             return this;
         }
 
-        public Builder addAttributes(IAttribute... attributes) {
+        public Builder addAttributes(IGlobalAttribute... attributes) {
             this.attributes.addAll(Arrays.asList(attributes));
             return this;
         }
 
-        public Builder addAttributes(Collection<IAttribute> attributes) {
+        public Builder addAttributes(Collection<IGlobalAttribute> attributes) {
             this.attributes.addAll(attributes);
             return this;
         }

@@ -92,7 +92,7 @@ public class InstructionValidationFunctionTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
         otherFunction.setReturnType(functionType.getReturnType());
-        functionType.getArgumentTypes().stream().map(VariableDeclaration::create)
+        functionType.getArgumentTypes().stream().map(GlobalDeclaration::create)
                 .forEachOrdered(otherFunction::addArgument);
         otherFunction.addStatement(
                 Return.create(createConstant(programBuilder, otherFunction, functionType.getReturnType())));
@@ -100,7 +100,7 @@ public class InstructionValidationFunctionTests {
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
+        var ret = function.addLocalVariable(GlobalDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
                 .create(ret, FunctionCreate.create(gIndex),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))
@@ -126,7 +126,7 @@ public class InstructionValidationFunctionTests {
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var ret = function.addLocalVariable(VariableDeclaration.create(valueTypes.getLeft()));
+        var ret = function.addLocalVariable(GlobalDeclaration.create(valueTypes.getLeft()));
         function.addStatement(FunctionCall
                 .create(ret, FunctionCreate.create(gIndex),
                         ImmutableList.of()));
@@ -150,7 +150,7 @@ public class InstructionValidationFunctionTests {
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var ret = function.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var ret = function.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         function.addStatement(FunctionCall
                 .create(ret, FunctionCreate.create(gIndex, ImmutableList.of()),
                         ImmutableList.of()));
@@ -186,7 +186,7 @@ public class InstructionValidationFunctionTests {
         FunctionDefinition.Builder otherFunction = new FunctionDefinition.Builder();
         otherFunction.setReturnType(functionType.getReturnType());
         int size = functionType.getArgumentTypes().size();
-        functionType.getArgumentTypes().stream().map(VariableDeclaration::create)
+        functionType.getArgumentTypes().stream().map(GlobalDeclaration::create)
                 .forEachOrdered(otherFunction::addArgument);
         otherFunction.addStatement(
                 Return.create(createConstant(programBuilder, otherFunction, functionType.getReturnType())));
@@ -194,7 +194,7 @@ public class InstructionValidationFunctionTests {
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var ret = function.addLocalVariable(VariableDeclaration.create(functionType.getReturnType()));
+        var ret = function.addLocalVariable(GlobalDeclaration.create(functionType.getReturnType()));
         function.addStatement(FunctionCall
                 .create(ret, FunctionCreate.create(gIndex, ImmutableList.of()),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, function, v))

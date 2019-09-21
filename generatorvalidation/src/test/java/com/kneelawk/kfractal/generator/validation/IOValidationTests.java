@@ -22,7 +22,7 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         functionBuilder.addStatement(Assign.create(a, VariableReference.create(VariableScope.LOCAL, 100)));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
@@ -38,8 +38,8 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
-        var b = functionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
+        var b = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         functionBuilder.addStatement(Assign.create(a, b));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
         programBuilder.addFunction(functionBuilder.build());
@@ -70,7 +70,7 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         functionBuilder
                 .addStatement(Assign.create(a, ComplexConstant.create(new Complex(1, 1))));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -87,7 +87,7 @@ class IOValidationTests {
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
         var a = functionBuilder.addLocalVariable(
-                VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.VOID, ImmutableList.of())));
+                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.VOID, ImmutableList.of())));
         functionBuilder.addStatement(Assign.create(a,
                 FunctionCreate.create(100, ImmutableList.of())));
         functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -104,8 +104,8 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
-        var ga = gFunctionBuilder.addContextVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
-        var tmp0 = gFunctionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var ga = gFunctionBuilder.addContextVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
+        var tmp0 = gFunctionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         gFunctionBuilder.addStatement(ComplexAdd.create(tmp0, ga,
                 ComplexConstant.create(new Complex(0, 2))));
         gFunctionBuilder.addStatement(Return.create(tmp0));
@@ -114,7 +114,7 @@ class IOValidationTests {
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
         var fa = fFunctionBuilder.addLocalVariable(
-                VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
+                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
         fFunctionBuilder.addStatement(
                 Assign.create(fa, FunctionCreate.create(gIndex, ImmutableList.of())));
         fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -131,8 +131,8 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
-        var ga = gFunctionBuilder.addContextVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
-        var tmp0 = gFunctionBuilder.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
+        var ga = gFunctionBuilder.addContextVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
+        var tmp0 = gFunctionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
         gFunctionBuilder.addStatement(ComplexAdd.create(tmp0, ga,
                 ComplexConstant.create(new Complex(0, 2))));
         gFunctionBuilder.addStatement(Return.create(tmp0));
@@ -141,7 +141,7 @@ class IOValidationTests {
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
         var fa = fFunctionBuilder.addLocalVariable(
-                VariableDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
+                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
         fFunctionBuilder.addStatement(Assign.create(fa,
                 FunctionCreate.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0))))));
         fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));

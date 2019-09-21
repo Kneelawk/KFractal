@@ -16,7 +16,7 @@ public class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var res = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        var res = function.addLocalVariable(GlobalDeclaration.create(argumentTypes.get(0)));
         function.addStatement(
                 creator.create(res,
                         createConstant(programBuilder, function, argumentTypes.get(1)),
@@ -34,7 +34,7 @@ public class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var res = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        var res = function.addLocalVariable(GlobalDeclaration.create(argumentTypes.get(0)));
         function.addStatement(
                 creator.create(res,
                         createConstant(programBuilder, function, argumentTypes.get(1)),
@@ -51,7 +51,7 @@ public class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var output = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        var output = function.addLocalVariable(GlobalDeclaration.create(argumentTypes.get(0)));
         function.addStatement(creator.create(output,
                 createConstant(programBuilder, function, argumentTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));
@@ -67,7 +67,7 @@ public class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var output = function.addLocalVariable(VariableDeclaration.create(argumentTypes.get(0)));
+        var output = function.addLocalVariable(GlobalDeclaration.create(argumentTypes.get(0)));
         function.addStatement(creator.create(output,
                 createConstant(programBuilder, function, argumentTypes.get(1))));
         function.addStatement(Return.create(VoidConstant.INSTANCE));

@@ -1,11 +1,11 @@
 package com.kneelawk.kfractal.generator.util;
 
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttributeVisitor;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttributeVisitor;
 
-class AttributePrinter implements IAttributeVisitor<Void> {
+class GlobalAttributePrinter implements IGlobalAttributeVisitor<Void> {
     private final StringBuilder builder;
 
-    AttributePrinter(StringBuilder builder) {
+    GlobalAttributePrinter(StringBuilder builder) {
         this.builder = builder;
     }
 

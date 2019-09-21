@@ -36,6 +36,12 @@ public interface IValueVisitor<R> {
 
     R visitReturn(Return aReturn) throws FractalException;
 
+    /* Global Operations */
+
+    R visitGlobalGet(GlobalGet globalGet) throws FractalException;
+
+    R visitGlobalSet(GlobalSet globalSet) throws FractalException;
+
     /* Bool Operations */
 
     R visitBoolNot(BoolNot boolNot) throws FractalException;
