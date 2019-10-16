@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,19 +12,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * ComplexGetReal(Complex complex)
  */
-public class ComplexGetReal implements IValue {
-    private IValue complex;
+public class ComplexGetReal implements IProceduralValue {
+    private IProceduralValue complex;
 
-    private ComplexGetReal(IValue complex) {
+    private ComplexGetReal(IProceduralValue complex) {
         this.complex = complex;
     }
 
-    public IValue getComplex() {
+    public IProceduralValue getComplex() {
         return complex;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexGetReal(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitComplexGetReal(this);
     }
 
@@ -34,19 +41,19 @@ public class ComplexGetReal implements IValue {
                 .toString();
     }
 
-    public static ComplexGetReal create(IValue complex) {
+    public static ComplexGetReal create(IProceduralValue complex) {
         if (complex == null)
             throw new NullPointerException("Complex cannot be null");
         return new ComplexGetReal(complex);
     }
 
     public static class Builder {
-        private IValue complex;
+        private IProceduralValue complex;
 
         public Builder() {
         }
 
-        public Builder(IValue complex) {
+        public Builder(IProceduralValue complex) {
             this.complex = complex;
         }
 
@@ -56,11 +63,11 @@ public class ComplexGetReal implements IValue {
             return new ComplexGetReal(complex);
         }
 
-        public IValue getComplex() {
+        public IProceduralValue getComplex() {
             return complex;
         }
 
-        public Builder setComplex(IValue complex) {
+        public Builder setComplex(IProceduralValue complex) {
             this.complex = complex;
             return this;
         }

@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,25 +13,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * PointerSet(Pointer(*) pointer, * data)
  */
-public class PointerSet implements IValue {
-    private IValue pointer;
-    private IValue data;
+public class PointerSet implements IProceduralValue {
+    private IProceduralValue pointer;
+    private IProceduralValue data;
 
-    private PointerSet(IValue pointer, IValue data) {
+    private PointerSet(IProceduralValue pointer, IProceduralValue data) {
         this.pointer = pointer;
         this.data = data;
     }
 
-    public IValue getPointer() {
+    public IProceduralValue getPointer() {
         return pointer;
     }
 
-    public IValue getData() {
+    public IProceduralValue getData() {
         return data;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitPointerSet(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitPointerSet(this);
     }
 
@@ -42,8 +49,8 @@ public class PointerSet implements IValue {
                 .toString();
     }
 
-    public static PointerSet create(IValue pointer,
-                                    IValue data) {
+    public static PointerSet create(IProceduralValue pointer,
+                                    IProceduralValue data) {
         if (pointer == null)
             throw new NullPointerException("Pointer cannot be null");
         if (data == null)
@@ -52,14 +59,14 @@ public class PointerSet implements IValue {
     }
 
     public static class Builder {
-        private IValue pointer;
-        private IValue data;
+        private IProceduralValue pointer;
+        private IProceduralValue data;
 
         public Builder() {
         }
 
-        public Builder(IValue pointer,
-                       IValue data) {
+        public Builder(IProceduralValue pointer,
+                       IProceduralValue data) {
             this.pointer = pointer;
             this.data = data;
         }
@@ -72,20 +79,20 @@ public class PointerSet implements IValue {
             return new PointerSet(pointer, data);
         }
 
-        public IValue getPointer() {
+        public IProceduralValue getPointer() {
             return pointer;
         }
 
-        public Builder setPointer(IValue pointer) {
+        public Builder setPointer(IProceduralValue pointer) {
             this.pointer = pointer;
             return this;
         }
 
-        public IValue getData() {
+        public IProceduralValue getData() {
             return data;
         }
 
-        public Builder setData(IValue data) {
+        public Builder setData(IProceduralValue data) {
             this.data = data;
             return this;
         }

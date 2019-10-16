@@ -13,7 +13,7 @@ import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 import java.util.List;
 import java.util.function.Function;
 
-class ValidatingValueVisitor implements IValueVisitor<ValueType> {
+class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<ValueType> {
     private final List<FunctionDefinition> functions;
     private final List<GlobalDeclaration> globalVariables;
     private final List<BasicBlock> blocks;
@@ -25,12 +25,12 @@ class ValidatingValueVisitor implements IValueVisitor<ValueType> {
 
     private boolean terminated = false;
 
-    ValidatingValueVisitor(List<FunctionDefinition> functions,
-                           List<GlobalDeclaration> globalVariables,
-                           List<BasicBlock> blocks,
-                           int blockIndex, List<ArgumentDeclaration> contextVariables,
-                           List<ArgumentDeclaration> arguments,
-                           int instructionIndex, ValueType returnType) {
+    ValidatingProceduralValueVisitor(List<FunctionDefinition> functions,
+                                     List<GlobalDeclaration> globalVariables,
+                                     List<BasicBlock> blocks,
+                                     int blockIndex, List<ArgumentDeclaration> contextVariables,
+                                     List<ArgumentDeclaration> arguments,
+                                     int instructionIndex, ValueType returnType) {
         this.functions = functions;
         this.globalVariables = globalVariables;
         this.blocks = blocks;
@@ -485,7 +485,7 @@ class ValidatingValueVisitor implements IValueVisitor<ValueType> {
 
         // check the function's argument types
         List<ValueType> targetArguments = functionType.getArgumentTypes();
-        List<IValue> instructionArguments = functionCall.getArguments();
+        List<IProceduralValue> instructionArguments = functionCall.getArguments();
         int targetArgumentsSize = targetArguments.size();
         int instructionArgumentsSize = instructionArguments.size();
         int size = Math.max(targetArgumentsSize, instructionArgumentsSize);
@@ -499,7 +499,7 @@ class ValidatingValueVisitor implements IValueVisitor<ValueType> {
                         "FunctionCall is missing arguments: " + targetArguments.subList(i, targetArgumentsSize));
             }
             ValueType targetArgument = targetArguments.get(i);
-            IValue instructionArgument = instructionArguments.get(i);
+            IProceduralValue instructionArgument = instructionArguments.get(i);
             validIfTrue(targetArgument.isAssignableFrom(instructionArgument.accept(this)),
                     "Function defines argument: " + targetArgument + " but FunctionCall instruction supplies: " +
                             instructionArgument, IncompatibleFunctionArgumentException::new);

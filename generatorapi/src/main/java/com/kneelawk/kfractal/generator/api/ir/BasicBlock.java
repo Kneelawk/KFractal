@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class BasicBlock {
     private List<Phi> phis;
-    private List<IValue> body;
+    private List<IProceduralValue> body;
 
-    private BasicBlock(List<Phi> phis, List<IValue> body) {
+    private BasicBlock(List<Phi> phis, List<IProceduralValue> body) {
         this.phis = phis;
         this.body = body;
     }
@@ -28,7 +28,7 @@ public class BasicBlock {
         return phis;
     }
 
-    public List<IValue> getBody() {
+    public List<IProceduralValue> getBody() {
         return body;
     }
 
@@ -41,32 +41,32 @@ public class BasicBlock {
     }
 
     public static BasicBlock create(Phi phi,
-                                    IValue... body) {
+                                    IProceduralValue... body) {
         return new BasicBlock(ImmutableList.of(phi),
                 ImmutableList.copyOf(body));
     }
 
     public static BasicBlock create(Phi phi0, Phi phi1,
-                                    IValue... body) {
+                                    IProceduralValue... body) {
         return new BasicBlock(ImmutableList.of(phi0, phi1),
                 ImmutableList.copyOf(body));
     }
 
     public static BasicBlock create(Phi phi0, Phi phi1, Phi phi2,
-                                    IValue... body) {
+                                    IProceduralValue... body) {
         return new BasicBlock(ImmutableList.of(phi0, phi1, phi2),
                 ImmutableList.copyOf(body));
     }
 
     public static BasicBlock create(Iterable<Phi> phis,
-                                    Iterable<IValue> body) {
+                                    Iterable<IProceduralValue> body) {
         return new BasicBlock(ImmutableList.copyOf(phis),
                 ImmutableList.copyOf(body));
     }
 
     public static class Builder {
         private List<Supplier<Phi>> phis = Lists.newArrayList();
-        private List<Supplier<IValue>> body = Lists.newArrayList();
+        private List<Supplier<IProceduralValue>> body = Lists.newArrayList();
         private int blockIndex = 0;
 
         public Builder() {
@@ -76,12 +76,12 @@ public class BasicBlock {
             this.blockIndex = blockIndex;
         }
 
-        public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IValue>> body) {
+        public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IProceduralValue>> body) {
             this.phis.addAll(phis);
             this.body.addAll(body);
         }
 
-        public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IValue>> body, int blockIndex) {
+        public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IProceduralValue>> body, int blockIndex) {
             this.phis.addAll(phis);
             this.body.addAll(body);
             this.blockIndex = blockIndex;
@@ -147,7 +147,7 @@ public class BasicBlock {
             return this;
         }
 
-        public List<Supplier<IValue>> getBody() {
+        public List<Supplier<IProceduralValue>> getBody() {
             return body;
         }
 
@@ -159,45 +159,45 @@ public class BasicBlock {
             return body.size();
         }
 
-        public Builder setBodySupplier(Collection<Supplier<IValue>> body) {
+        public Builder setBodySupplier(Collection<Supplier<IProceduralValue>> body) {
             this.body.clear();
             this.body.addAll(body);
             return this;
         }
 
-        public Builder setBody(Collection<IValue> body) {
+        public Builder setBody(Collection<IProceduralValue> body) {
             this.body.clear();
             this.body.addAll(body.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public InstructionReference addValue(Supplier<IValue> value) {
+        public InstructionReference addValue(Supplier<IProceduralValue> value) {
             this.body.add(value);
             return InstructionReference.create(blockIndex, InstructionScope.BODY, body.size() - 1);
         }
 
-        public InstructionReference addValue(IValue value) {
+        public InstructionReference addValue(IProceduralValue value) {
             this.body.add(Suppliers.ofInstance(value));
             return InstructionReference.create(blockIndex, InstructionScope.BODY, body.size() - 1);
         }
 
         @SafeVarargs
-        public final Builder addValues(Supplier<IValue>... values) {
+        public final Builder addValues(Supplier<IProceduralValue>... values) {
             this.body.addAll(Arrays.asList(values));
             return this;
         }
 
-        public Builder addValues(IValue... values) {
+        public Builder addValues(IProceduralValue... values) {
             this.body.addAll(Arrays.stream(values).map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addValueSuppliers(Collection<Supplier<IValue>> values) {
+        public Builder addValueSuppliers(Collection<Supplier<IProceduralValue>> values) {
             this.body.addAll(values);
             return this;
         }
 
-        public Builder addValues(Collection<IValue> values) {
+        public Builder addValues(Collection<IProceduralValue> values) {
             this.body.addAll(values.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }

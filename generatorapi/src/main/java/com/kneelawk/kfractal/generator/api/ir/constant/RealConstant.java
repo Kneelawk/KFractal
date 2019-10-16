@@ -1,14 +1,15 @@
 package com.kneelawk.kfractal.generator.api.ir.constant;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInput;
 import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInputVisitor;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
-import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class RealConstant implements IValue, IPhiInput {
+public class RealConstant implements IProceduralValue, IPhiInput {
     private double value;
 
     private RealConstant(double value) {
@@ -21,6 +22,11 @@ public class RealConstant implements IValue, IPhiInput {
 
     @Override
     public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealConstant(this);
+    }
+
+    @Override
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
         return visitor.visitRealConstant(this);
     }
 

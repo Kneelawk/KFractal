@@ -6,11 +6,10 @@ import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.RealConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
-import com.kneelawk.kfractal.generator.api.ir.phi.Phi;
-import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 
-public interface IValueVisitor<R> {
+public interface IProceduralValueVisitor<R> {
     /* References */
 
     R visitArgumentReference(ArgumentReference argumentReference) throws FractalException;
@@ -142,8 +141,6 @@ public interface IValueVisitor<R> {
     R visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException;
 
     /* Control-Flow Operations */
-
-    R visitPhi(Phi phi) throws FractalException;
 
     R visitBranchConditional(BranchConditional branchConditional) throws FractalException;
 

@@ -2,6 +2,9 @@ package com.kneelawk.kfractal.generator.api.ir.phi;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -9,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class Phi {
+public class Phi implements IValue {
     private List<PhiBranch> branches;
 
     private Phi(List<PhiBranch> branches) {
@@ -18,6 +21,11 @@ public class Phi {
 
     public List<PhiBranch> getBranches() {
         return branches;
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitPhi(this);
     }
 
     @Override

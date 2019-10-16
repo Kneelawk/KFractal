@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * ComplexDivide(Complex dividend, Complex divisor)
  */
-public class ComplexDivide implements IValue {
-    private IValue dividend;
-    private IValue divisor;
+public class ComplexDivide implements IProceduralValue {
+    private IProceduralValue dividend;
+    private IProceduralValue divisor;
 
-    private ComplexDivide(IValue dividend, IValue divisor) {
+    private ComplexDivide(IProceduralValue dividend, IProceduralValue divisor) {
         this.dividend = dividend;
         this.divisor = divisor;
     }
 
-    public IValue getDividend() {
+    public IProceduralValue getDividend() {
         return dividend;
     }
 
-    public IValue getDivisor() {
+    public IProceduralValue getDivisor() {
         return divisor;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexDivide(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitComplexDivide(this);
     }
 
@@ -41,8 +48,8 @@ public class ComplexDivide implements IValue {
                 .toString();
     }
 
-    public static ComplexDivide create(IValue dividend,
-                                       IValue divisor) {
+    public static ComplexDivide create(IProceduralValue dividend,
+                                       IProceduralValue divisor) {
         if (dividend == null)
             throw new NullPointerException("Dividend cannot be null");
         if (divisor == null)
@@ -51,14 +58,14 @@ public class ComplexDivide implements IValue {
     }
 
     public static class Builder {
-        private IValue dividend;
-        private IValue divisor;
+        private IProceduralValue dividend;
+        private IProceduralValue divisor;
 
         public Builder() {
         }
 
-        public Builder(IValue dividend,
-                       IValue divisor) {
+        public Builder(IProceduralValue dividend,
+                       IProceduralValue divisor) {
             this.dividend = dividend;
             this.divisor = divisor;
         }
@@ -71,20 +78,20 @@ public class ComplexDivide implements IValue {
             return new ComplexDivide(dividend, divisor);
         }
 
-        public IValue getDividend() {
+        public IProceduralValue getDividend() {
             return dividend;
         }
 
-        public Builder setDividend(IValue dividend) {
+        public Builder setDividend(IProceduralValue dividend) {
             this.dividend = dividend;
             return this;
         }
 
-        public IValue getDivisor() {
+        public IProceduralValue getDivisor() {
             return divisor;
         }
 
-        public Builder setDivisor(IValue divisor) {
+        public Builder setDivisor(IProceduralValue divisor) {
             this.divisor = divisor;
             return this;
         }

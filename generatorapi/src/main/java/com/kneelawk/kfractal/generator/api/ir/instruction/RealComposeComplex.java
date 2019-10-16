@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,25 +13,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * RealComposeComplex(Real real, Real imaginary)
  */
-public class RealComposeComplex implements IValue {
-    private IValue real;
-    private IValue imaginary;
+public class RealComposeComplex implements IProceduralValue {
+    private IProceduralValue real;
+    private IProceduralValue imaginary;
 
-    private RealComposeComplex(IValue real, IValue imaginary) {
+    private RealComposeComplex(IProceduralValue real, IProceduralValue imaginary) {
         this.real = real;
         this.imaginary = imaginary;
     }
 
-    public IValue getReal() {
+    public IProceduralValue getReal() {
         return real;
     }
 
-    public IValue getImaginary() {
+    public IProceduralValue getImaginary() {
         return imaginary;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealComposeComplex(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealComposeComplex(this);
     }
 
@@ -42,8 +49,8 @@ public class RealComposeComplex implements IValue {
                 .toString();
     }
 
-    public static RealComposeComplex create(IValue real,
-                                            IValue imaginary) {
+    public static RealComposeComplex create(IProceduralValue real,
+                                            IProceduralValue imaginary) {
         if (real == null)
             throw new NullPointerException("Real cannot be null");
         if (imaginary == null)
@@ -52,14 +59,14 @@ public class RealComposeComplex implements IValue {
     }
 
     public static class Builder {
-        private IValue real;
-        private IValue imaginary;
+        private IProceduralValue real;
+        private IProceduralValue imaginary;
 
         public Builder() {
         }
 
-        public Builder(IValue real,
-                       IValue imaginary) {
+        public Builder(IProceduralValue real,
+                       IProceduralValue imaginary) {
             this.real = real;
             this.imaginary = imaginary;
         }
@@ -72,20 +79,20 @@ public class RealComposeComplex implements IValue {
             return new RealComposeComplex(real, imaginary);
         }
 
-        public IValue getReal() {
+        public IProceduralValue getReal() {
             return real;
         }
 
-        public Builder setReal(IValue real) {
+        public Builder setReal(IProceduralValue real) {
             this.real = real;
             return this;
         }
 
-        public IValue getImaginary() {
+        public IProceduralValue getImaginary() {
             return imaginary;
         }
 
-        public Builder setImaginary(IValue imaginary) {
+        public Builder setImaginary(IProceduralValue imaginary) {
             this.imaginary = imaginary;
             return this;
         }

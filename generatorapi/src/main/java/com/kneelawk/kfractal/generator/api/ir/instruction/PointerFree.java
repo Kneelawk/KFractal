@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,19 +13,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * PointerFree(Pointer(*) pointer)
  */
-public class PointerFree implements IValue {
-    private IValue pointer;
+public class PointerFree implements IProceduralValue {
+    private IProceduralValue pointer;
 
-    private PointerFree(IValue pointer) {
+    private PointerFree(IProceduralValue pointer) {
         this.pointer = pointer;
     }
 
-    public IValue getPointer() {
+    public IProceduralValue getPointer() {
         return pointer;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitPointerFree(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitPointerFree(this);
     }
 
@@ -35,19 +42,19 @@ public class PointerFree implements IValue {
                 .toString();
     }
 
-    public static PointerFree create(IValue pointer) {
+    public static PointerFree create(IProceduralValue pointer) {
         if (pointer == null)
             throw new NullPointerException("Pointer cannot be null");
         return new PointerFree(pointer);
     }
 
     public static class Builder {
-        private IValue pointer;
+        private IProceduralValue pointer;
 
         public Builder() {
         }
 
-        public Builder(IValue pointer) {
+        public Builder(IProceduralValue pointer) {
             this.pointer = pointer;
         }
 
@@ -57,11 +64,11 @@ public class PointerFree implements IValue {
             return new PointerFree(pointer);
         }
 
-        public IValue getPointer() {
+        public IProceduralValue getPointer() {
             return pointer;
         }
 
-        public Builder setPointer(IValue pointer) {
+        public Builder setPointer(IProceduralValue pointer) {
             this.pointer = pointer;
             return this;
         }

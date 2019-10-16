@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,18 +13,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * BranchConditional(Bool condition, trueBlockIndex, falseBlockIndex)
  */
-public class BranchConditional implements IValue {
-    private IValue condition;
+public class BranchConditional implements IProceduralValue {
+    private IProceduralValue condition;
     private int trueBlockIndex;
     private int falseBlockIndex;
 
-    private BranchConditional(IValue condition, int trueBlockIndex, int falseBlockIndex) {
+    private BranchConditional(IProceduralValue condition, int trueBlockIndex, int falseBlockIndex) {
         this.condition = condition;
         this.trueBlockIndex = trueBlockIndex;
         this.falseBlockIndex = falseBlockIndex;
     }
 
-    public IValue getCondition() {
+    public IProceduralValue getCondition() {
         return condition;
     }
 
@@ -36,7 +37,13 @@ public class BranchConditional implements IValue {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitBranchConditional(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitBranchConditional(this);
     }
 
@@ -49,7 +56,7 @@ public class BranchConditional implements IValue {
                 .toString();
     }
 
-    public static BranchConditional create(IValue condition, int trueBlockIndex,
+    public static BranchConditional create(IProceduralValue condition, int trueBlockIndex,
                                            int falseBlockIndex) {
         if (condition == null)
             throw new NullPointerException("Condition cannot be null");
@@ -57,14 +64,14 @@ public class BranchConditional implements IValue {
     }
 
     public static class Builder {
-        private IValue condition;
+        private IProceduralValue condition;
         private int trueBlockIndex;
         private int falseBlockIndex;
 
         public Builder() {
         }
 
-        public Builder(IValue condition, int trueBlockIndex,
+        public Builder(IProceduralValue condition, int trueBlockIndex,
                        int falseBlockIndex) {
             this.condition = condition;
             this.trueBlockIndex = trueBlockIndex;
@@ -77,11 +84,11 @@ public class BranchConditional implements IValue {
             return new BranchConditional(condition, trueBlockIndex, falseBlockIndex);
         }
 
-        public IValue getCondition() {
+        public IProceduralValue getCondition() {
             return condition;
         }
 
-        public Builder setCondition(IValue condition) {
+        public Builder setCondition(IProceduralValue condition) {
             this.condition = condition;
             return this;
         }

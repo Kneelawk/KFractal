@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,19 +14,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * ComplexModulo(Complex complex)
  */
-public class ComplexModulo implements IValue {
-    private IValue complex;
+public class ComplexModulo implements IProceduralValue {
+    private IProceduralValue complex;
 
-    private ComplexModulo(IValue complex) {
+    private ComplexModulo(IProceduralValue complex) {
         this.complex = complex;
     }
 
-    public IValue getComplex() {
+    public IProceduralValue getComplex() {
         return complex;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitComplexModulo(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitComplexModulo(this);
     }
 
@@ -36,19 +43,19 @@ public class ComplexModulo implements IValue {
                 .toString();
     }
 
-    public static ComplexModulo create(IValue complex) {
+    public static ComplexModulo create(IProceduralValue complex) {
         if (complex == null)
             throw new NullPointerException("Complex cannot be null");
         return new ComplexModulo(complex);
     }
 
     public static class Builder {
-        private IValue complex;
+        private IProceduralValue complex;
 
         public Builder() {
         }
 
-        public Builder(IValue complex) {
+        public Builder(IProceduralValue complex) {
             this.complex = complex;
         }
 
@@ -58,11 +65,11 @@ public class ComplexModulo implements IValue {
             return new ComplexModulo(complex);
         }
 
-        public IValue getComplex() {
+        public IProceduralValue getComplex() {
             return complex;
         }
 
-        public Builder setComplex(IValue complex) {
+        public Builder setComplex(IProceduralValue complex) {
             this.complex = complex;
             return this;
         }
