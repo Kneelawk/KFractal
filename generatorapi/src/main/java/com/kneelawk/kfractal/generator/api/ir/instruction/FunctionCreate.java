@@ -3,7 +3,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,12 +19,12 @@ import java.util.List;
  * <p>
  * FunctionCreate(functionName, [ ** contextVariables ])
  */
-public class FunctionCreate implements IValue {
+public class FunctionCreate implements IProceduralValue {
     private int functionIndex;
-    private List<IValue> contextVariables;
+    private List<IProceduralValue> contextVariables;
 
     private FunctionCreate(int functionIndex,
-                           List<IValue> contextVariables) {
+                           List<IProceduralValue> contextVariables) {
         this.functionIndex = functionIndex;
         this.contextVariables = contextVariables;
     }
@@ -32,12 +33,18 @@ public class FunctionCreate implements IValue {
         return functionIndex;
     }
 
-    public List<IValue> getContextVariables() {
+    public List<IProceduralValue> getContextVariables() {
         return contextVariables;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitFunctionCreate(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitFunctionCreate(this);
     }
 
@@ -56,14 +63,14 @@ public class FunctionCreate implements IValue {
     }
 
     public static FunctionCreate create(int functionIndex,
-                                        IValue... contextVariables) {
+                                        IProceduralValue... contextVariables) {
         if (functionIndex < 0)
             throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         return new FunctionCreate(functionIndex, ImmutableList.copyOf(contextVariables));
     }
 
     public static FunctionCreate create(int functionIndex,
-                                        List<IValue> contextVariables) {
+                                        List<IProceduralValue> contextVariables) {
         if (functionIndex < 0)
             throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
         return new FunctionCreate(functionIndex, ImmutableList.copyOf(contextVariables));
@@ -71,14 +78,14 @@ public class FunctionCreate implements IValue {
 
     public static class Builder {
         private int functionIndex;
-        private List<IValue>
+        private List<IProceduralValue>
                 contextVariables = Lists.newArrayList();
 
         public Builder() {
         }
 
         public Builder(int functionIndex,
-                       Collection<IValue> contextVariables) {
+                       Collection<IProceduralValue> contextVariables) {
             this.functionIndex = functionIndex;
             this.contextVariables.addAll(contextVariables);
         }
@@ -98,28 +105,28 @@ public class FunctionCreate implements IValue {
             return this;
         }
 
-        public List<IValue> getContextVariables() {
+        public List<IProceduralValue> getContextVariables() {
             return contextVariables;
         }
 
         public Builder setContextVariables(
-                List<IValue> contextVariables) {
+                List<IProceduralValue> contextVariables) {
             this.contextVariables.clear();
             contextVariables.addAll(contextVariables);
             return this;
         }
 
-        public Builder addContextVariable(IValue contextVariable) {
+        public Builder addContextVariable(IProceduralValue contextVariable) {
             contextVariables.add(contextVariable);
             return this;
         }
 
-        public Builder addContextVariables(IValue... contextVariables) {
+        public Builder addContextVariables(IProceduralValue... contextVariables) {
             this.contextVariables.addAll(Arrays.asList(contextVariables));
             return this;
         }
 
-        public Builder addContextVariables(Collection<IValue> contextVariables) {
+        public Builder addContextVariables(Collection<IProceduralValue> contextVariables) {
             this.contextVariables.addAll(contextVariables);
             return this;
         }

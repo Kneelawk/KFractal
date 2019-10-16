@@ -3,7 +3,8 @@ package com.kneelawk.kfractal.generator.api.ir.instruction;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,25 +21,31 @@ import java.util.List;
  * <p>
  * FunctionCall(Function(*, [ ** ]) function, [ ** arguments ])
  */
-public class FunctionCall implements IValue {
-    private IValue function;
-    private List<IValue> arguments;
+public class FunctionCall implements IProceduralValue {
+    private IProceduralValue function;
+    private List<IProceduralValue> arguments;
 
-    private FunctionCall(IValue function, List<IValue> arguments) {
+    private FunctionCall(IProceduralValue function, List<IProceduralValue> arguments) {
         this.function = function;
         this.arguments = arguments;
     }
 
-    public IValue getFunction() {
+    public IProceduralValue getFunction() {
         return function;
     }
 
-    public List<IValue> getArguments() {
+    public List<IProceduralValue> getArguments() {
         return arguments;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitFunctionCall(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitFunctionCall(this);
     }
 
@@ -50,36 +57,36 @@ public class FunctionCall implements IValue {
                 .toString();
     }
 
-    public static FunctionCall create(IValue function) {
+    public static FunctionCall create(IProceduralValue function) {
         if (function == null)
             throw new NullPointerException("Function cannot be null");
         return new FunctionCall(function, ImmutableList.of());
     }
 
-    public static FunctionCall create(IValue function,
-                                      IValue... arguments) {
+    public static FunctionCall create(IProceduralValue function,
+                                      IProceduralValue... arguments) {
         if (function == null)
             throw new NullPointerException("Function cannot be null");
         return new FunctionCall(function, ImmutableList.copyOf(arguments));
     }
 
-    public static FunctionCall create(IValue function,
-                                      Iterable<IValue> arguments) {
+    public static FunctionCall create(IProceduralValue function,
+                                      Iterable<IProceduralValue> arguments) {
         if (function == null)
             throw new NullPointerException("Function cannot be null");
         return new FunctionCall(function, ImmutableList.copyOf(arguments));
     }
 
     public static class Builder {
-        private IValue function;
-        private List<IValue> arguments =
+        private IProceduralValue function;
+        private List<IProceduralValue> arguments =
                 Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(IValue function,
-                       Collection<IValue> arguments) {
+        public Builder(IProceduralValue function,
+                       Collection<IProceduralValue> arguments) {
             this.function = function;
             this.arguments.addAll(arguments);
         }
@@ -90,36 +97,36 @@ public class FunctionCall implements IValue {
             return new FunctionCall(function, ImmutableList.copyOf(arguments));
         }
 
-        public IValue getFunction() {
+        public IProceduralValue getFunction() {
             return function;
         }
 
-        public Builder setFunction(IValue function) {
+        public Builder setFunction(IProceduralValue function) {
             this.function = function;
             return this;
         }
 
-        public List<IValue> getArguments() {
+        public List<IProceduralValue> getArguments() {
             return arguments;
         }
 
-        public Builder setArguments(Collection<IValue> arguments) {
+        public Builder setArguments(Collection<IProceduralValue> arguments) {
             this.arguments.clear();
             this.arguments.addAll(arguments);
             return this;
         }
 
-        public Builder addArgument(IValue argument) {
+        public Builder addArgument(IProceduralValue argument) {
             arguments.add(argument);
             return this;
         }
 
-        public Builder addArguments(IValue... arguments) {
+        public Builder addArguments(IProceduralValue... arguments) {
             this.arguments.addAll(Arrays.asList(arguments));
             return this;
         }
 
-        public Builder addArguments(Collection<IValue> arguments) {
+        public Builder addArguments(Collection<IProceduralValue> arguments) {
             this.arguments.addAll(arguments);
             return this;
         }

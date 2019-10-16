@@ -82,12 +82,12 @@ public class ProgramValidator {
                     returnType));
         }
 
-        List<IValue> body = block.getBody();
+        List<IProceduralValue> body = block.getBody();
         int size = body.size();
         for (int i = 0; i < size; i++) {
-            IValue value = body.get(i);
-            ValidatingValueVisitor visitor =
-                    new ValidatingValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
+            IProceduralValue value = body.get(i);
+            ValidatingProceduralValueVisitor visitor =
+                    new ValidatingProceduralValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
                             arguments,
                             i, returnType);
             value.accept(visitor);

@@ -1,17 +1,18 @@
 package com.kneelawk.kfractal.generator.api.ir.constant;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInput;
 import com.kneelawk.kfractal.generator.api.ir.phi.IPhiInputVisitor;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
-import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Created by Kneelawk on 5/27/19.
  */
-public class BoolConstant implements IValue, IPhiInput {
+public class BoolConstant implements IProceduralValue, IPhiInput {
     private boolean value;
 
     private BoolConstant(boolean value) {
@@ -24,6 +25,11 @@ public class BoolConstant implements IValue, IPhiInput {
 
     @Override
     public <R> R accept(IPhiInputVisitor<R> visitor) throws FractalException {
+        return visitor.visitBoolConstant(this);
+    }
+
+    @Override
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
         return visitor.visitBoolConstant(this);
     }
 

@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * RealMultiply(Real leftFactor, Real rightFactor)
  */
-public class RealMultiply implements IValue {
-    private IValue leftFactor;
-    private IValue rightFactor;
+public class RealMultiply implements IProceduralValue {
+    private IProceduralValue leftFactor;
+    private IProceduralValue rightFactor;
 
-    private RealMultiply(IValue leftFactor, IValue rightFactor) {
+    private RealMultiply(IProceduralValue leftFactor, IProceduralValue rightFactor) {
         this.leftFactor = leftFactor;
         this.rightFactor = rightFactor;
     }
 
-    public IValue getLeftFactor() {
+    public IProceduralValue getLeftFactor() {
         return leftFactor;
     }
 
-    public IValue getRightFactor() {
+    public IProceduralValue getRightFactor() {
         return rightFactor;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealMultiply(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealMultiply(this);
     }
 
@@ -41,8 +48,8 @@ public class RealMultiply implements IValue {
                 .toString();
     }
 
-    public static RealMultiply create(IValue leftFactor,
-                                      IValue rightFactor) {
+    public static RealMultiply create(IProceduralValue leftFactor,
+                                      IProceduralValue rightFactor) {
         if (leftFactor == null)
             throw new NullPointerException("LeftFactor cannot be null");
         if (rightFactor == null)
@@ -51,14 +58,14 @@ public class RealMultiply implements IValue {
     }
 
     public static class Builder {
-        private IValue leftFactor;
-        private IValue rightFactor;
+        private IProceduralValue leftFactor;
+        private IProceduralValue rightFactor;
 
         public Builder() {
         }
 
-        public Builder(IValue leftFactor,
-                       IValue rightFactor) {
+        public Builder(IProceduralValue leftFactor,
+                       IProceduralValue rightFactor) {
             this.leftFactor = leftFactor;
             this.rightFactor = rightFactor;
         }
@@ -71,20 +78,20 @@ public class RealMultiply implements IValue {
             return new RealMultiply(leftFactor, rightFactor);
         }
 
-        public IValue getLeftFactor() {
+        public IProceduralValue getLeftFactor() {
             return leftFactor;
         }
 
-        public Builder setLeftFactor(IValue leftFactor) {
+        public Builder setLeftFactor(IProceduralValue leftFactor) {
             this.leftFactor = leftFactor;
             return this;
         }
 
-        public IValue getRightFactor() {
+        public IProceduralValue getRightFactor() {
             return rightFactor;
         }
 
-        public Builder setRightFactor(IValue rightFactor) {
+        public Builder setRightFactor(IProceduralValue rightFactor) {
             this.rightFactor = rightFactor;
             return this;
         }

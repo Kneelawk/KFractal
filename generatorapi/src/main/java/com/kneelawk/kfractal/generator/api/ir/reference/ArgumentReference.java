@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Created by Kneelawk on 5/26/19.
  */
-public class ArgumentReference implements IValue, IPhiInput {
+public class ArgumentReference implements IProceduralValue, IPhiInput {
     private ArgumentScope scope;
     private int index;
 
@@ -33,7 +33,13 @@ public class ArgumentReference implements IValue, IPhiInput {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitArgumentReference(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitArgumentReference(this);
     }
 

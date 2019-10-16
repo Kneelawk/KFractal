@@ -1,16 +1,17 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class GlobalSet implements IValue {
+public class GlobalSet implements IProceduralValue {
     private int globalIndex;
-    private IValue data;
+    private IProceduralValue data;
 
-    private GlobalSet(int globalIndex, IValue data) {
+    private GlobalSet(int globalIndex, IProceduralValue data) {
         this.globalIndex = globalIndex;
         this.data = data;
     }
@@ -19,12 +20,18 @@ public class GlobalSet implements IValue {
         return globalIndex;
     }
 
-    public IValue getData() {
+    public IProceduralValue getData() {
         return data;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitGlobalSet(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitGlobalSet(this);
     }
 
@@ -36,7 +43,7 @@ public class GlobalSet implements IValue {
                 .toString();
     }
 
-    public static GlobalSet create(int globalIndex, IValue data) {
+    public static GlobalSet create(int globalIndex, IProceduralValue data) {
         if (data == null)
             throw new NullPointerException("Data cannot be null");
         return new GlobalSet(globalIndex, data);
@@ -44,12 +51,12 @@ public class GlobalSet implements IValue {
 
     public static class Builder {
         private int globalIndex;
-        private IValue data;
+        private IProceduralValue data;
 
         public Builder() {
         }
 
-        public Builder(int globalIndex, IValue data) {
+        public Builder(int globalIndex, IProceduralValue data) {
             this.globalIndex = globalIndex;
             this.data = data;
         }
@@ -69,11 +76,11 @@ public class GlobalSet implements IValue {
             return this;
         }
 
-        public IValue getData() {
+        public IProceduralValue getData() {
             return data;
         }
 
-        public Builder setData(IValue data) {
+        public Builder setData(IProceduralValue data) {
             this.data = data;
             return this;
         }

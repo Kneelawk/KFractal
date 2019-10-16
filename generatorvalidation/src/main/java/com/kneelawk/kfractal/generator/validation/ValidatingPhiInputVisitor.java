@@ -68,8 +68,8 @@ public class ValidatingPhiInputVisitor implements IPhiInputVisitor<ValueType> {
                 Phi phi = block.getPhis().get(instructionIndex);
                 return getPhiValueType(phi);
             case BODY:
-                ValidatingValueVisitor valueVisitor =
-                        new ValidatingValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
+                ValidatingProceduralValueVisitor valueVisitor =
+                        new ValidatingProceduralValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
                                 arguments, instructionIndex, returnType);
                 return block.getBody().get(instructionIndex).accept(valueVisitor);
             default:

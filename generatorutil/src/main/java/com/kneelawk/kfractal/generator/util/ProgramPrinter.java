@@ -185,14 +185,14 @@ public class ProgramPrinter {
         builder.append("],").append(System.lineSeparator());
 
         // print instructions
-        ValuePrinter printer = new ValuePrinter(builder);
+        ProceduralValuePrinter printer = new ProceduralValuePrinter(builder);
 
         StringUtils.indent(builder, 4);
         builder.append("[");
-        List<IValue> body = basicBlock.getBody();
+        List<IProceduralValue> body = basicBlock.getBody();
         size = body.size();
         for (index = 0; index < size; index++) {
-            IValue value = body.get(index);
+            IProceduralValue value = body.get(index);
             if (index > 0)
                 builder.append(",");
             builder.append(System.lineSeparator());

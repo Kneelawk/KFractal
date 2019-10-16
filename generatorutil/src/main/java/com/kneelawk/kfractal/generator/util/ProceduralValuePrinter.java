@@ -1,8 +1,8 @@
 package com.kneelawk.kfractal.generator.util;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
-import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.constant.BoolConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
@@ -11,10 +11,10 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 
-class ValuePrinter implements IValueVisitor<Void> {
+class ProceduralValuePrinter implements IProceduralValueVisitor<Void> {
     private final StringBuilder builder;
 
-    ValuePrinter(StringBuilder builder) {
+    ProceduralValuePrinter(StringBuilder builder) {
         this.builder = builder;
     }
 
@@ -441,7 +441,7 @@ class ValuePrinter implements IValueVisitor<Void> {
     public Void visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
         builder.append("FunctionCreate(").append(functionCreate.getFunctionIndex()).append(", [ ");
         boolean first = true;
-        for (IValue input : functionCreate.getContextVariables()) {
+        for (IProceduralValue input : functionCreate.getContextVariables()) {
             if (!first)
                 builder.append(", ");
             input.accept(this);
@@ -457,7 +457,7 @@ class ValuePrinter implements IValueVisitor<Void> {
         functionCall.getFunction().accept(this);
         builder.append(", [ ");
         boolean first = true;
-        for (IValue input : functionCall.getArguments()) {
+        for (IProceduralValue input : functionCall.getArguments()) {
             if (!first)
                 builder.append(", ");
             input.accept(this);

@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * RealAdd(Real leftAddend, Real rightAddend)
  */
-public class RealAdd implements IValue {
-    private IValue leftAddend;
-    private IValue rightAddend;
+public class RealAdd implements IProceduralValue {
+    private IProceduralValue leftAddend;
+    private IProceduralValue rightAddend;
 
-    private RealAdd(IValue leftAddend, IValue rightAddend) {
+    private RealAdd(IProceduralValue leftAddend, IProceduralValue rightAddend) {
         this.leftAddend = leftAddend;
         this.rightAddend = rightAddend;
     }
 
-    public IValue getLeftAddend() {
+    public IProceduralValue getLeftAddend() {
         return leftAddend;
     }
 
-    public IValue getRightAddend() {
+    public IProceduralValue getRightAddend() {
         return rightAddend;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealAdd(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealAdd(this);
     }
 
@@ -41,8 +48,8 @@ public class RealAdd implements IValue {
                 .toString();
     }
 
-    public static RealAdd create(IValue leftAddend,
-                                 IValue rightAddend) {
+    public static RealAdd create(IProceduralValue leftAddend,
+                                 IProceduralValue rightAddend) {
         if (leftAddend == null)
             throw new NullPointerException("LeftAddend cannot be null");
         if (rightAddend == null)
@@ -51,14 +58,14 @@ public class RealAdd implements IValue {
     }
 
     public static class Builder {
-        private IValue leftAddend;
-        private IValue rightAddend;
+        private IProceduralValue leftAddend;
+        private IProceduralValue rightAddend;
 
         public Builder() {
         }
 
-        public Builder(IValue leftAddend,
-                       IValue rightAddend) {
+        public Builder(IProceduralValue leftAddend,
+                       IProceduralValue rightAddend) {
             this.leftAddend = leftAddend;
             this.rightAddend = rightAddend;
         }
@@ -71,20 +78,20 @@ public class RealAdd implements IValue {
             return new RealAdd(leftAddend, rightAddend);
         }
 
-        public IValue getLeftAddend() {
+        public IProceduralValue getLeftAddend() {
             return leftAddend;
         }
 
-        public Builder setLeftAddend(IValue leftAddend) {
+        public Builder setLeftAddend(IProceduralValue leftAddend) {
             this.leftAddend = leftAddend;
             return this;
         }
 
-        public IValue getRightAddend() {
+        public IProceduralValue getRightAddend() {
             return rightAddend;
         }
 
-        public Builder setRightAddend(IValue rightAddend) {
+        public Builder setRightAddend(IProceduralValue rightAddend) {
             this.rightAddend = rightAddend;
             return this;
         }

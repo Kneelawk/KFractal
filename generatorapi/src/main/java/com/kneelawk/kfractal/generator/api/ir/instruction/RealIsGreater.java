@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * RealIsGreater(Real subject, Real basis)
  */
-public class RealIsGreater implements IValue {
-    private IValue subject;
-    private IValue basis;
+public class RealIsGreater implements IProceduralValue {
+    private IProceduralValue subject;
+    private IProceduralValue basis;
 
-    private RealIsGreater(IValue subject, IValue basis) {
+    private RealIsGreater(IProceduralValue subject, IProceduralValue basis) {
         this.subject = subject;
         this.basis = basis;
     }
 
-    public IValue getSubject() {
+    public IProceduralValue getSubject() {
         return subject;
     }
 
-    public IValue getBasis() {
+    public IProceduralValue getBasis() {
         return basis;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealIsGreater(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealIsGreater(this);
     }
 
@@ -41,8 +48,8 @@ public class RealIsGreater implements IValue {
                 .toString();
     }
 
-    public static RealIsGreater create(IValue subject,
-                                       IValue basis) {
+    public static RealIsGreater create(IProceduralValue subject,
+                                       IProceduralValue basis) {
         if (subject == null)
             throw new NullPointerException("Subject cannot be null");
         if (basis == null)
@@ -51,14 +58,14 @@ public class RealIsGreater implements IValue {
     }
 
     public static class Builder {
-        private IValue subject;
-        private IValue basis;
+        private IProceduralValue subject;
+        private IProceduralValue basis;
 
         public Builder() {
         }
 
-        public Builder(IValue subject,
-                       IValue basis) {
+        public Builder(IProceduralValue subject,
+                       IProceduralValue basis) {
             this.subject = subject;
             this.basis = basis;
         }
@@ -71,20 +78,20 @@ public class RealIsGreater implements IValue {
             return new RealIsGreater(subject, basis);
         }
 
-        public IValue getSubject() {
+        public IProceduralValue getSubject() {
             return subject;
         }
 
-        public Builder setSubject(IValue subject) {
+        public Builder setSubject(IProceduralValue subject) {
             this.subject = subject;
             return this;
         }
 
-        public IValue getBasis() {
+        public IProceduralValue getBasis() {
             return basis;
         }
 
-        public Builder setBasis(IValue basis) {
+        public Builder setBasis(IProceduralValue basis) {
             this.basis = basis;
             return this;
         }

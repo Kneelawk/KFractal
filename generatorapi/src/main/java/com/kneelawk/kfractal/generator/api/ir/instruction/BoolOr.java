@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * BoolOr(Bool left, Bool right)
  */
-public class BoolOr implements IValue {
-    private IValue left;
-    private IValue right;
+public class BoolOr implements IProceduralValue {
+    private IProceduralValue left;
+    private IProceduralValue right;
 
-    private BoolOr(IValue left, IValue right) {
+    private BoolOr(IProceduralValue left, IProceduralValue right) {
         this.left = left;
         this.right = right;
     }
 
-    public IValue getLeft() {
+    public IProceduralValue getLeft() {
         return left;
     }
 
-    public IValue getRight() {
+    public IProceduralValue getRight() {
         return right;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitBoolOr(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitBoolOr(this);
     }
 
@@ -41,8 +48,8 @@ public class BoolOr implements IValue {
                 .toString();
     }
 
-    public static BoolOr create(IValue left,
-                                IValue right) {
+    public static BoolOr create(IProceduralValue left,
+                                IProceduralValue right) {
         if (left == null)
             throw new NullPointerException("Left cannot be null");
         if (right == null)
@@ -51,14 +58,14 @@ public class BoolOr implements IValue {
     }
 
     public static class Builder {
-        private IValue left;
-        private IValue right;
+        private IProceduralValue left;
+        private IProceduralValue right;
 
         public Builder() {
         }
 
-        public Builder(IValue left,
-                       IValue right) {
+        public Builder(IProceduralValue left,
+                       IProceduralValue right) {
             this.left = left;
             this.right = right;
         }
@@ -71,20 +78,20 @@ public class BoolOr implements IValue {
             return new BoolOr(left, right);
         }
 
-        public IValue getLeft() {
+        public IProceduralValue getLeft() {
             return left;
         }
 
-        public Builder setLeft(IValue left) {
+        public Builder setLeft(IProceduralValue left) {
             this.left = left;
             return this;
         }
 
-        public IValue getRight() {
+        public IProceduralValue getRight() {
             return right;
         }
 
-        public Builder setRight(IValue right) {
+        public Builder setRight(IProceduralValue right) {
             this.right = right;
             return this;
         }

@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
@@ -13,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * PointerAllocate(type)
  */
-public class PointerAllocate implements IValue {
+public class PointerAllocate implements IProceduralValue {
     private ValueType type;
 
     private PointerAllocate(ValueType type) {
@@ -25,7 +26,13 @@ public class PointerAllocate implements IValue {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitPointerAllocate(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitPointerAllocate(this);
     }
 

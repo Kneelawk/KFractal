@@ -1,7 +1,8 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.IValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
 import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,25 +12,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * <p>
  * RealPower(Real base, Real exponent)
  */
-public class RealPower implements IValue {
-    private IValue base;
-    private IValue exponent;
+public class RealPower implements IProceduralValue {
+    private IProceduralValue base;
+    private IProceduralValue exponent;
 
-    private RealPower(IValue base, IValue exponent) {
+    private RealPower(IProceduralValue base, IProceduralValue exponent) {
         this.base = base;
         this.exponent = exponent;
     }
 
-    public IValue getBase() {
+    public IProceduralValue getBase() {
         return base;
     }
 
-    public IValue getExponent() {
+    public IProceduralValue getExponent() {
         return exponent;
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealPower(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealPower(this);
     }
 
@@ -41,8 +48,8 @@ public class RealPower implements IValue {
                 .toString();
     }
 
-    public static RealPower create(IValue base,
-                                   IValue exponent) {
+    public static RealPower create(IProceduralValue base,
+                                   IProceduralValue exponent) {
         if (base == null)
             throw new NullPointerException("Base cannot be null");
         if (exponent == null)
@@ -51,14 +58,14 @@ public class RealPower implements IValue {
     }
 
     public static class Builder {
-        private IValue base;
-        private IValue exponent;
+        private IProceduralValue base;
+        private IProceduralValue exponent;
 
         public Builder() {
         }
 
-        public Builder(IValue base,
-                       IValue exponent) {
+        public Builder(IProceduralValue base,
+                       IProceduralValue exponent) {
             this.base = base;
             this.exponent = exponent;
         }
@@ -71,20 +78,20 @@ public class RealPower implements IValue {
             return new RealPower(base, exponent);
         }
 
-        public IValue getBase() {
+        public IProceduralValue getBase() {
             return base;
         }
 
-        public Builder setBase(IValue base) {
+        public Builder setBase(IProceduralValue base) {
             this.base = base;
             return this;
         }
 
-        public IValue getExponent() {
+        public IProceduralValue getExponent() {
             return exponent;
         }
 
-        public Builder setExponent(IValue exponent) {
+        public Builder setExponent(IProceduralValue exponent) {
             this.exponent = exponent;
             return this;
         }
