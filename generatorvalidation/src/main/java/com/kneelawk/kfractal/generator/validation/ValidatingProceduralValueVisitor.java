@@ -8,41 +8,23 @@ import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.RealConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
 import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
+import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 
 import java.util.List;
 import java.util.function.Function;
 
-class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<ValueType> {
-    private final List<FunctionDefinition> functions;
-    private final List<GlobalDeclaration> globalVariables;
-    private final List<BasicBlock> blocks;
-    private final int blockIndex;
-    private final List<ArgumentDeclaration> contextVariables;
-    private final List<ArgumentDeclaration> arguments;
-    private final int instructionIndex;
-    private final ValueType returnType;
+class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<ValidatingVisitorResult> {
+    private final TypeCache cache;
+    private final ValidatingVisitorContext context;
 
-    private boolean terminated = false;
-
-    ValidatingProceduralValueVisitor(List<FunctionDefinition> functions,
-                                     List<GlobalDeclaration> globalVariables,
-                                     List<BasicBlock> blocks,
-                                     int blockIndex, List<ArgumentDeclaration> contextVariables,
-                                     List<ArgumentDeclaration> arguments,
-                                     int instructionIndex, ValueType returnType) {
-        this.functions = functions;
-        this.globalVariables = globalVariables;
-        this.blocks = blocks;
-        this.blockIndex = blockIndex;
-        this.contextVariables = contextVariables;
-        this.arguments = arguments;
-        this.instructionIndex = instructionIndex;
-        this.returnType = returnType;
+    ValidatingProceduralValueVisitor(TypeCache cache, ValidatingVisitorContext context) {
+        this.cache = cache;
+        this.context = context;
     }
 
-    private void checkState() throws FractalIRException {
-        if (terminated) {
+    private void checkState(ValidatingVisitorResult result) throws FractalIRException {
+        if (result.isTerminated()) {
             throw new FractalIRValidationException(
                     "This set of instructions has already reached a terminator statement");
         }
@@ -62,421 +44,550 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<ValueT
         }
     }
 
-    boolean isTerminated() {
-        return terminated;
+    private void tryVisit(IProceduralValue parent, IProceduralValue child) throws FractalException {
+        if (!context.getTraversedNodes().contains(parent)) {
+            ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
+            ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
+            checkState(child.accept(visitor));
+        }
+    }
+
+    private void tryVisit(IProceduralValue parent, IProceduralValue child1, IProceduralValue child2)
+            throws FractalException {
+        if (!context.getTraversedNodes().contains(parent)) {
+            ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
+            ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
+            checkState(child1.accept(visitor));
+            checkState(child2.accept(visitor));
+        }
+    }
+
+    private void tryVisit(IProceduralValue parent, Iterable<IProceduralValue> children) throws FractalException {
+        if (!context.getTraversedNodes().contains(parent)) {
+            ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
+            ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
+            for (IProceduralValue child : children) {
+                checkState(child.accept(visitor));
+            }
+        }
     }
 
     @Override
-    public ValueType visitArgumentReference(ArgumentReference argumentReference) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitArgumentReference(ArgumentReference argumentReference) throws FractalException {
+        ArgumentScope argumentScope = argumentReference.getScope();
+        int argumentIndex = argumentReference.getIndex();
+
+        List<ArgumentDeclaration> scope;
+        switch (argumentScope) {
+            case CONTEXT:
+                scope = context.getFunction().getContextVariables();
+                break;
+            case ARGUMENTS:
+                scope = context.getFunction().getArguments();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + argumentScope);
+        }
+
+        if (argumentIndex < 0 || argumentIndex >= scope.size()) {
+            throw new FractalIRValidationException("Invalid argument reference index");
+        }
+
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitInstructionReference(InstructionReference instructionReference) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitInstructionReference(InstructionReference instructionReference)
+            throws FractalException {
+        List<BasicBlock> blocks = context.getFunction().getBlocks();
+        int blockIndex = instructionReference.getBlockIndex();
+
+        if (blockIndex < 0 || blockIndex >= blocks.size()) {
+            throw new MissingVariableReferenceException("Invalid instruction reference block index");
+        }
+
+        if (blockIndex > context.getBlockIndex()) {
+            throw new MissingVariableReferenceException(
+                    "Normal instructions cannot reference instructions from subsequent blocks");
+        }
+
+        BasicBlock block = blocks.get(blockIndex);
+        int instructionIndex = instructionReference.getInstructionIndex();
+
+        if (blockIndex == context.getBlockIndex() && instructionIndex > context.getInstructionIndex()) {
+            throw new MissingVariableReferenceException("Normal instructions cannot reference subsequent instructions");
+        }
+
+        switch (instructionReference.getScope()) {
+            case PHI:
+                if (instructionIndex < 0 || instructionIndex >= block.getPhis().size()) {
+                    throw new MissingVariableReferenceException("Invalid instruction reference instruction index");
+                }
+                break;
+            case BODY:
+                if (instructionIndex < 0 || instructionIndex >= block.getBody().size()) {
+                    throw new MissingVariableReferenceException("Invalid instruction reference instruction index");
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + instructionReference.getScope());
+        }
+
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitBoolConstant(BoolConstant constant) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitBoolConstant(BoolConstant constant) {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntConstant(IntConstant constant) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitIntConstant(IntConstant constant) {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealConstant(RealConstant constant) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitRealConstant(RealConstant constant) {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexConstant(ComplexConstant constant) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitComplexConstant(ComplexConstant constant) {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitNullPointer() throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitNullPointer() {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitNullFunction() throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitNullFunction() {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitVoid() throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitVoid() {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitGlobalGet(GlobalGet globalGet) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitGlobalGet(GlobalGet globalGet) throws FractalException {
+        if (globalGet.getGlobalIndex() < 0 ||
+                globalGet.getGlobalIndex() >= context.getProgram().getGlobalVariables().size()) {
+            throw new FractalIRValidationException("Invalid global index");
+        }
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitGlobalSet(GlobalSet globalSet) throws FractalException {
-        return null;
+    public ValidatingVisitorResult visitGlobalSet(GlobalSet globalSet) throws FractalException {
+        int globalIndex = globalSet.getGlobalIndex();
+        if (globalIndex < 0 || globalIndex >= context.getProgram().getGlobalVariables().size()) {
+            throw new FractalIRValidationException("Invalid global index");
+        }
+        validValueTypeIfTrue(context.getProgram().getGlobalVariables().get(globalIndex).getType()
+                        .isAssignableFrom(cache.getType(globalSet.getData(), context)),
+                "GlobalSet global and data are of incompatible types");
+        tryVisit(globalSet, globalSet.getData());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexIsEqual(ComplexIsEqual complexIsEqual) throws FractalException {
-        return null;
-    }
-
-    @Override
-    public ValueType visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
-        return null;
-    }
-
-    @Override
-    public ValueType visitReturn(Return aReturn) throws FractalException {
-        checkState();
-        terminated = true;
-        ValueType returnValue = aReturn.getReturnValue().accept(this);
-        validValueTypeIfTrue(returnType.isAssignableFrom(returnValue),
+    public ValidatingVisitorResult visitReturn(Return aReturn) throws FractalException {
+        ValueType returnValue = cache.getType(aReturn.getReturnValue(), context);
+        validValueTypeIfTrue(context.getFunction().getReturnType().isAssignableFrom(returnValue),
                 "Unable to return incompatible type");
-        return ValueTypes.VOID;
+        tryVisit(aReturn, aReturn.getReturnValue());
+        return ValidatingVisitorResult.create(true);
     }
 
     @Override
-    public ValueType visitBoolNot(BoolNot boolNot) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isBool(boolNot.getInput().accept(this)),
+    public ValidatingVisitorResult visitBoolNot(BoolNot boolNot) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolNot.getInput(), context)),
                 "BoolNot input is not a bool");
-        return ValueTypes.BOOL;
+        tryVisit(boolNot, boolNot.getInput());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitBoolAnd(BoolAnd boolAnd) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isBool(boolAnd.getLeft().accept(this)),
+    public ValidatingVisitorResult visitBoolAnd(BoolAnd boolAnd) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolAnd.getLeft(), context)),
                 "BoolAnd left is not a bool");
-        validValueTypeIfTrue(ValueTypes.isBool(boolAnd.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolAnd.getRight(), context)),
                 "BoolAnd right is not a bool");
-        return ValueTypes.BOOL;
+        tryVisit(boolAnd, boolAnd.getLeft(), boolAnd.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitBoolOr(BoolOr boolOr) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isBool(boolOr.getLeft().accept(this)),
+    public ValidatingVisitorResult visitBoolOr(BoolOr boolOr) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolOr.getLeft(), context)),
                 "BoolOr left is not a bool");
-        validValueTypeIfTrue(ValueTypes.isBool(boolOr.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolOr.getRight(), context)),
                 "BoolOr right is not a bool");
-        return ValueTypes.BOOL;
+        tryVisit(boolOr, boolOr.getLeft(), boolOr.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isBool(boolIsEqual.getLeft().accept(this)),
+    public ValidatingVisitorResult visitBoolIsEqual(BoolIsEqual boolIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolIsEqual.getLeft(), context)),
                 "BoolIsEqual left is not a bool");
-        validValueTypeIfTrue(ValueTypes.isBool(boolIsEqual.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isBool(cache.getType(boolIsEqual.getRight(), context)),
                 "BoolIsEqual right is not a bool");
-        return ValueTypes.BOOL;
+        tryVisit(boolIsEqual, boolIsEqual.getLeft(), boolIsEqual.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntAdd(IntAdd intAdd) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intAdd.getLeftAddend().accept(this)),
+    public ValidatingVisitorResult visitIntAdd(IntAdd intAdd) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intAdd.getLeftAddend(), context)),
                 "IntAdd left addend is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intAdd.getRightAddend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intAdd.getRightAddend(), context)),
                 "IntAdd right addend is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intAdd, intAdd.getLeftAddend(), intAdd.getRightAddend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntSubtract(IntSubtract intSubtract) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intSubtract.getMinuend().accept(this)),
+    public ValidatingVisitorResult visitIntSubtract(IntSubtract intSubtract) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intSubtract.getMinuend(), context)),
                 "IntSubtract minuend is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intSubtract.getSubtrahend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intSubtract.getSubtrahend(), context)),
                 "IntSubtract subtrahend is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intSubtract, intSubtract.getMinuend(), intSubtract.getSubtrahend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntMultiply(IntMultiply intMultiply) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intMultiply.getLeftFactor().accept(this)),
+    public ValidatingVisitorResult visitIntMultiply(IntMultiply intMultiply) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intMultiply.getLeftFactor(), context)),
                 "IntMultiply left factor is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intMultiply.getRightFactor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intMultiply.getRightFactor(), context)),
                 "IntMultiply right factor is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intMultiply, intMultiply.getLeftFactor(), intMultiply.getRightFactor());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntDivide(IntDivide intDivide) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intDivide.getDividend().accept(this)),
+    public ValidatingVisitorResult visitIntDivide(IntDivide intDivide) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intDivide.getDividend(), context)),
                 "IntDivide dividend is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intDivide.getDivisor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intDivide.getDivisor(), context)),
                 "IntDivide divisor is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intDivide, intDivide.getDivisor(), intDivide.getDividend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntModulo(IntModulo intModulo) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intModulo.getLeft().accept(this)),
+    public ValidatingVisitorResult visitIntModulo(IntModulo intModulo) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intModulo.getLeft(), context)),
                 "IntModulo left is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intModulo.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intModulo.getRight(), context)),
                 "IntModulo right is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intModulo, intModulo.getLeft(), intModulo.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntPower(IntPower intPower) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intPower.getBase().accept(this)),
+    public ValidatingVisitorResult visitIntPower(IntPower intPower) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intPower.getBase(), context)),
                 "IntPower base is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intPower.getExponent().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intPower.getExponent(), context)),
                 "IntPower exponent is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intPower, intPower.getBase(), intPower.getExponent());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntNot(IntNot intNot) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intNot.getInput().accept(this)),
+    public ValidatingVisitorResult visitIntNot(IntNot intNot) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intNot.getInput(), context)),
                 "IntNot input is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intNot, intNot.getInput());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntAnd(IntAnd intAnd) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intAnd.getLeft().accept(this)),
+    public ValidatingVisitorResult visitIntAnd(IntAnd intAnd) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intAnd.getLeft(), context)),
                 "IntAnd left is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intAnd.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intAnd.getRight(), context)),
                 "IntAnd right is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intAnd, intAnd.getLeft(), intAnd.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntOr(IntOr intOr) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intOr.getLeft().accept(this)),
+    public ValidatingVisitorResult visitIntOr(IntOr intOr) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intOr.getLeft(), context)),
                 "IntOr left is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intOr.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intOr.getRight(), context)),
                 "IntOr right is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intOr, intOr.getLeft(), intOr.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntXor(IntXor intXor) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intXor.getLeft().accept(this)),
+    public ValidatingVisitorResult visitIntXor(IntXor intXor) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intXor.getLeft(), context)),
                 "IntXor left is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intXor.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intXor.getRight(), context)),
                 "IntXor right is not an Int");
-        return ValueTypes.INT;
+        tryVisit(intXor, intXor.getLeft(), intXor.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntIsEqual(IntIsEqual intIsEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intIsEqual.getLeft().accept(this)),
+    public ValidatingVisitorResult visitIntIsEqual(IntIsEqual intIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsEqual.getLeft(), context)),
                 "IntIsEqual left is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intIsEqual.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsEqual.getRight(), context)),
                 "IntIsEqual right is not an Int");
-        return ValueTypes.BOOL;
+        tryVisit(intIsEqual, intIsEqual.getLeft(), intIsEqual.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntIsGreater(IntIsGreater intIsGreater) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intIsGreater.getSubject().accept(this)),
+    public ValidatingVisitorResult visitIntIsGreater(IntIsGreater intIsGreater) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsGreater.getSubject(), context)),
                 "IntIsGreater subject is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intIsGreater.getBasis().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsGreater.getBasis(), context)),
                 "IntIsGreater basis is not an Int");
-        return ValueTypes.BOOL;
+        tryVisit(intIsGreater, intIsGreater.getSubject(), intIsGreater.getBasis());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isInt(intIsGreaterOrEqual.getSubject().accept(this)),
+    public ValidatingVisitorResult visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual)
+            throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsGreaterOrEqual.getSubject(), context)),
                 "IntIsGreaterOrEqual subject is not an Int");
-        validValueTypeIfTrue(ValueTypes.isInt(intIsGreaterOrEqual.getBasis().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isInt(cache.getType(intIsGreaterOrEqual.getBasis(), context)),
                 "IntIsGreaterOrEqual is not an Int");
-        return ValueTypes.BOOL;
+        tryVisit(intIsGreaterOrEqual, intIsGreaterOrEqual.getSubject(), intIsGreaterOrEqual.getBasis());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealAdd(RealAdd realAdd) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realAdd.getLeftAddend().accept(this)),
+    public ValidatingVisitorResult visitRealAdd(RealAdd realAdd) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realAdd.getLeftAddend(), context)),
                 "RealAdd left addend is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realAdd.getRightAddend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realAdd.getRightAddend(), context)),
                 "RealAdd right addend is not a Real");
-        return ValueTypes.REAL;
+        tryVisit(realAdd, realAdd.getLeftAddend(), realAdd.getRightAddend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealSubtract(RealSubtract realSubtract) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realSubtract.getMinuend().accept(this)),
+    public ValidatingVisitorResult visitRealSubtract(RealSubtract realSubtract) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realSubtract.getMinuend(), context)),
                 "RealSubtract minuend is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realSubtract.getSubtrahend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realSubtract.getSubtrahend(), context)),
                 "RealSubtract subtract is not a Real");
-        return ValueTypes.REAL;
+        tryVisit(realSubtract, realSubtract.getMinuend(), realSubtract.getSubtrahend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealMultiply(RealMultiply realMultiply) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realMultiply.getLeftFactor().accept(this)),
+    public ValidatingVisitorResult visitRealMultiply(RealMultiply realMultiply) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realMultiply.getLeftFactor(), context)),
                 "RealMultiply left factor is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realMultiply.getRightFactor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realMultiply.getRightFactor(), context)),
                 "RealMultiply right factor is not a Real");
-        return ValueTypes.REAL;
+        tryVisit(realMultiply, realMultiply.getLeftFactor(), realMultiply.getRightFactor());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealDivide(RealDivide realDivide) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realDivide.getDividend().accept(this)),
+    public ValidatingVisitorResult visitRealDivide(RealDivide realDivide) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realDivide.getDividend(), context)),
                 "RealDivide dividend is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realDivide.getDivisor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realDivide.getDivisor(), context)),
                 "RealDivide divisor is not a Real");
-        return ValueTypes.REAL;
+        tryVisit(realDivide, realDivide.getDividend(), realDivide.getDivisor());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealPower(RealPower realPower) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realPower.getBase().accept(this)),
+    public ValidatingVisitorResult visitRealPower(RealPower realPower) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realPower.getBase(), context)),
                 "RealPower base is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realPower.getExponent().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realPower.getExponent(), context)),
                 "RealPower exponent is not a Real");
-        return ValueTypes.REAL;
+        tryVisit(realPower, realPower.getBase(), realPower.getExponent());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealIsEqual(RealIsEqual realIsEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realIsEqual.getLeft().accept(this)),
+    public ValidatingVisitorResult visitRealIsEqual(RealIsEqual realIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsEqual.getLeft(), context)),
                 "RealIsEqual left is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realIsEqual.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsEqual.getRight(), context)),
                 "RealIsEqual right is not a Real");
-        return ValueTypes.BOOL;
+        tryVisit(realIsEqual, realIsEqual.getLeft(), realIsEqual.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealIsGreater(RealIsGreater realIsGreater) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realIsGreater.getSubject().accept(this)),
+    public ValidatingVisitorResult visitRealIsGreater(RealIsGreater realIsGreater) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsGreater.getSubject(), context)),
                 "RealIsGreater subject is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realIsGreater.getBasis().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsGreater.getBasis(), context)),
                 "RealIsGreater basis is not a Real");
-        return ValueTypes.BOOL;
+        tryVisit(realIsGreater, realIsGreater.getSubject(), realIsGreater.getBasis());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realIsGreaterOrEqual.getSubject().accept(this)),
+    public ValidatingVisitorResult visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual)
+            throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsGreaterOrEqual.getSubject(), context)),
                 "RealIsGreaterOrEqual subject is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realIsGreaterOrEqual.getBasis().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realIsGreaterOrEqual.getBasis(), context)),
                 "RealIsGreaterOrEqual basis is not a Real");
-        return ValueTypes.BOOL;
+        tryVisit(realIsGreaterOrEqual, realIsGreaterOrEqual.getSubject(), realIsGreaterOrEqual.getBasis());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitRealComposeComplex(RealComposeComplex realComposeComplex) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isReal(realComposeComplex.getReal().accept(this)),
+    public ValidatingVisitorResult visitRealComposeComplex(RealComposeComplex realComposeComplex)
+            throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realComposeComplex.getReal(), context)),
                 "RealComposeComplex real is not a Real");
-        validValueTypeIfTrue(ValueTypes.isReal(realComposeComplex.getImaginary().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isReal(cache.getType(realComposeComplex.getImaginary(), context)),
                 "RealComposeComplex imaginary is not a Real");
-        return ValueTypes.COMPLEX;
+        tryVisit(realComposeComplex, realComposeComplex.getReal(), realComposeComplex.getImaginary());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexAdd(ComplexAdd complexAdd) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexAdd.getLeftAddend().accept(this)),
+    public ValidatingVisitorResult visitComplexAdd(ComplexAdd complexAdd) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexAdd.getLeftAddend(), context)),
                 "ComplexAdd left addend is not a Complex");
-        validValueTypeIfTrue(ValueTypes.isComplex(complexAdd.getRightAddend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexAdd.getRightAddend(), context)),
                 "ComplexAdd right addend is not a Complex");
-        return ValueTypes.COMPLEX;
+        tryVisit(complexAdd, complexAdd.getLeftAddend(), complexAdd.getRightAddend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexSubtract.getMinuend().accept(this)),
+    public ValidatingVisitorResult visitComplexSubtract(ComplexSubtract complexSubtract) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexSubtract.getMinuend(), context)),
                 "ComplexSubtract minuend is not a Complex");
-        validValueTypeIfTrue(ValueTypes.isComplex(complexSubtract.getSubtrahend().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexSubtract.getSubtrahend(), context)),
                 "ComplexSubtract subtrahend is not a Complex");
-        return ValueTypes.COMPLEX;
+        tryVisit(complexSubtract, complexSubtract.getMinuend(), complexSubtract.getSubtrahend());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexMultiply.getLeftFactor().accept(this)),
+    public ValidatingVisitorResult visitComplexMultiply(ComplexMultiply complexMultiply) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexMultiply.getLeftFactor(), context)),
                 "ComplexMultiply left factor is not a Complex");
-        validValueTypeIfTrue(ValueTypes.isComplex(complexMultiply.getRightFactor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexMultiply.getRightFactor(), context)),
                 "ComplexMultiply right factor is not a Complex");
-        return ValueTypes.COMPLEX;
+        tryVisit(complexMultiply, complexMultiply.getLeftFactor(), complexMultiply.getRightFactor());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexDivide(ComplexDivide complexDivide) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexDivide.getDividend().accept(this)),
+    public ValidatingVisitorResult visitComplexDivide(ComplexDivide complexDivide) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexDivide.getDividend(), context)),
                 "ComplexDivide dividend is not a Complex");
-        validValueTypeIfTrue(ValueTypes.isComplex(complexDivide.getDivisor().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexDivide.getDivisor(), context)),
                 "ComplexDivide divisor is not a Complex");
-        return ValueTypes.COMPLEX;
+        tryVisit(complexDivide, complexDivide.getDividend(), complexDivide.getDivisor());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexPower(ComplexPower complexPower) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexPower.getBase().accept(this)),
+    public ValidatingVisitorResult visitComplexPower(ComplexPower complexPower) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexPower.getBase(), context)),
                 "ComplexPower base is not a Complex");
-        validValueTypeIfTrue(ValueTypes.isComplex(complexPower.getExponent().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexPower.getExponent(), context)),
                 "ComplexPower exponent is not a Complex");
-        return ValueTypes.COMPLEX;
+        tryVisit(complexPower, complexPower.getBase(), complexPower.getExponent());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexGetReal.getComplex().accept(this)),
+    public ValidatingVisitorResult visitComplexGetReal(ComplexGetReal complexGetReal) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexGetReal.getComplex(), context)),
                 "ComplexGetReal complex is not a complex");
-        return ValueTypes.REAL;
+        tryVisit(complexGetReal, complexGetReal.getComplex());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexGetImaginary.getComplex().accept(this)),
+    public ValidatingVisitorResult visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary)
+            throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexGetImaginary.getComplex(), context)),
                 "ComplexGetReal complex is not a complex");
-        return ValueTypes.REAL;
+        tryVisit(complexGetImaginary, complexGetImaginary.getComplex());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitComplexModulo(ComplexModulo complexModulo) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isComplex(complexModulo.getComplex().accept(this)),
+    public ValidatingVisitorResult visitComplexModulo(ComplexModulo complexModulo) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexModulo.getComplex(), context)),
                 "ComplexGetReal complex is not a complex");
-        return ValueTypes.REAL;
+        tryVisit(complexModulo, complexModulo.getComplex());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitFunctionCall(FunctionCall functionCall) throws FractalException {
-        checkState();
+    public ValidatingVisitorResult visitComplexIsEqual(ComplexIsEqual complexIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexIsEqual.getLeft(), context)),
+                "ComplexIsEqual left is not a complex");
+        validValueTypeIfTrue(ValueTypes.isComplex(cache.getType(complexIsEqual.getRight(), context)),
+                "ComplexIsEqual right is not a complex");
+        tryVisit(complexIsEqual, complexIsEqual.getLeft(), complexIsEqual.getRight());
+        return ValidatingVisitorResult.create();
+    }
+
+    @Override
+    public ValidatingVisitorResult visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
+        int functionIndex = functionCreate.getFunctionIndex();
+        if (functionIndex < 0 || functionIndex >= context.getProgram().getFunctions().size()) {
+            throw new MissingFunctionReferenceException("Invalid function create function index");
+        }
+
+        // compare context variable types
+        FunctionDefinition target = context.getProgram().getFunctions().get(functionIndex);
+        List<ArgumentDeclaration> targetContextVariables = target.getContextVariables();
+        List<IProceduralValue> createContextVariables = functionCreate.getContextVariables();
+        int targetContextVariablesSize = targetContextVariables.size();
+        int createContextVariablesSize = createContextVariables.size();
+        int size = Math.max(targetContextVariablesSize, createContextVariablesSize);
+        for (int i = 0; i < size; i++) {
+            if (i >= targetContextVariablesSize) {
+                throw new IncompatibleFunctionContextException("FunctionContextConstant has extra context variables: " +
+                        createContextVariables.subList(i, createContextVariablesSize));
+            }
+            if (i >= createContextVariablesSize) {
+                throw new IncompatibleFunctionContextException(
+                        "FunctionContextConstant is missing context variables: " +
+                                targetContextVariables.subList(i, targetContextVariablesSize));
+            }
+            ArgumentDeclaration targetVariable = targetContextVariables.get(i);
+            IValue constantInput = createContextVariables.get(i);
+            if (!targetVariable.getType().isAssignableFrom(cache.getType(constantInput, context))) {
+                throw new IncompatibleFunctionContextException(
+                        "Function defines context variable: " + targetVariable + " but constant supplies: " +
+                                constantInput);
+            }
+        }
+
+        tryVisit(functionCreate, createContextVariables);
+        return ValidatingVisitorResult.create();
+    }
+
+    @Override
+    public ValidatingVisitorResult visitFunctionCall(FunctionCall functionCall) throws FractalException {
 
         // check the function argument
-        ValueType functionArg = functionCall.getFunction().accept(this);
+        ValueType functionArg = cache.getType(functionCall.getFunction(), context);
         validValueTypeIfTrue(ValueTypes.isFunction(functionArg),
                 "FunctionCall function argument is not a Function");
         validValueTypeIfTrue(!ValueTypes.isNullFunction(functionArg),
@@ -500,88 +611,84 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<ValueT
             }
             ValueType targetArgument = targetArguments.get(i);
             IProceduralValue instructionArgument = instructionArguments.get(i);
-            validIfTrue(targetArgument.isAssignableFrom(instructionArgument.accept(this)),
+            validIfTrue(targetArgument.isAssignableFrom(cache.getType(instructionArgument, context)),
                     "Function defines argument: " + targetArgument + " but FunctionCall instruction supplies: " +
                             instructionArgument, IncompatibleFunctionArgumentException::new);
         }
 
-        return functionType.getReturnType();
+        tryVisit(functionCall, instructionArguments);
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isFunction(functionIsEqual.getLeft().accept(this)),
+    public ValidatingVisitorResult visitFunctionIsEqual(FunctionIsEqual functionIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isFunction(cache.getType(functionIsEqual.getLeft(), context)),
                 "FunctionIsEqual left is not a function");
-        validValueTypeIfTrue(ValueTypes.isFunction(functionIsEqual.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isFunction(cache.getType(functionIsEqual.getRight(), context)),
                 "FunctionIsEqual right is not a function");
-
-        return null;
+        tryVisit(functionIsEqual, functionIsEqual.getLeft(), functionIsEqual.getRight());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitPointerAllocate(PointerAllocate pointerAllocate) throws FractalException {
-        checkState();
-        return ValueTypes.POINTER(pointerAllocate.getType());
+    public ValidatingVisitorResult visitPointerAllocate(PointerAllocate pointerAllocate) {
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitPointerFree(PointerFree pointerFree) throws FractalException {
-        checkState();
-        ValueType pointerType = pointerFree.getPointer().accept(this);
+    public ValidatingVisitorResult visitPointerFree(PointerFree pointerFree) throws FractalException {
+        ValueType pointerType = cache.getType(pointerFree.getPointer(), context);
         validValueTypeIfTrue(ValueTypes.isPointer(pointerType),
                 "PointerFree pointer argument is not a Pointer");
         validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
                 "PointerFree cannot free the null-pointer");
-        return ValueTypes.VOID;
+        tryVisit(pointerFree, pointerFree.getPointer());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitPointerGet(PointerGet pointerGet) throws FractalException {
-        checkState();
-        ValueType pointerArg = pointerGet.getPointer().accept(this);
+    public ValidatingVisitorResult visitPointerGet(PointerGet pointerGet) throws FractalException {
+        ValueType pointerArg = cache.getType(pointerGet.getPointer(), context);
         validValueTypeIfTrue(ValueTypes.isPointer(pointerArg),
                 "PointerGet pointer argument is not a Pointer");
         ValueTypes.PointerType pointerType = ValueTypes.toPointer(pointerArg);
         validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
                 "PointerGet cannot get the value of the null-pointer");
-        return pointerType.getPointerType();
+        tryVisit(pointerGet, pointerGet.getPointer());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitPointerSet(PointerSet pointerSet) throws FractalException {
-        checkState();
-        ValueType pointerArg = pointerSet.getPointer().accept(this);
+    public ValidatingVisitorResult visitPointerSet(PointerSet pointerSet) throws FractalException {
+        ValueType pointerArg = cache.getType(pointerSet.getPointer(), context);
         validValueTypeIfTrue(ValueTypes.isPointer(pointerArg),
                 "PointerSet pointer argument is not a Pointer");
         ValueTypes.PointerType pointerType = ValueTypes.toPointer(pointerArg);
         validValueTypeIfTrue(!ValueTypes.isNullPointer(pointerType),
                 "PointerSet cannot set the value of the null-pointer");
         validValueTypeIfTrue(
-                pointerType.getPointerType().isAssignableFrom(pointerSet.getData().accept(this)),
+                pointerType.getPointerType().isAssignableFrom(cache.getType(pointerSet.getData(), context)),
                 "PointerSet pointer type and data type are incompatible");
-        return ValueTypes.VOID;
+        tryVisit(pointerSet, pointerSet.getPointer(), pointerSet.getData());
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException {
-        checkState();
-        validValueTypeIfTrue(ValueTypes.isPointer(pointerIsEqual.getLeft().accept(this)),
+    public ValidatingVisitorResult visitPointerIsEqual(PointerIsEqual pointerIsEqual) throws FractalException {
+        validValueTypeIfTrue(ValueTypes.isPointer(cache.getType(pointerIsEqual.getLeft(), context)),
                 "PointerIsEqual left is not a Pointer");
-        validValueTypeIfTrue(ValueTypes.isPointer(pointerIsEqual.getRight().accept(this)),
+        validValueTypeIfTrue(ValueTypes.isPointer(cache.getType(pointerIsEqual.getRight(), context)),
                 "PointerIsEqual right is not a Pointer");
-        return ValueTypes.BOOL;
+        return ValidatingVisitorResult.create();
     }
 
     @Override
-    public ValueType visitBranchConditional(BranchConditional branchConditional) throws FractalException {
-        terminated = true;
-        return ValueTypes.VOID;
+    public ValidatingVisitorResult visitBranchConditional(BranchConditional branchConditional) {
+        return ValidatingVisitorResult.create(true);
     }
 
     @Override
-    public ValueType visitBranch(Branch branch) throws FractalException {
-        terminated = true;
-        return ValueTypes.VOID;
+    public ValidatingVisitorResult visitBranch(Branch branch) {
+        return ValidatingVisitorResult.create(true);
     }
 }

@@ -1,7 +1,9 @@
 package com.kneelawk.kfractal.generator.validation;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.ArgumentDeclaration;
+import com.kneelawk.kfractal.generator.api.ir.BasicBlock;
+import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.constant.BoolConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
@@ -15,77 +17,114 @@ import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 
 import java.util.List;
 
-public class ValidatingPhiInputVisitor implements IPhiInputVisitor<ValueType> {
-    private final List<FunctionDefinition> functions;
-    private final List<GlobalDeclaration> globalVariables;
-    private final List<BasicBlock> blocks;
-    private final int blockIndex;
-    private final List<ArgumentDeclaration> contextVariables;
-    private final List<ArgumentDeclaration> arguments;
-    private final ValueType returnType;
+class ValidatingPhiInputVisitor implements IPhiInputVisitor<Void> {
+    private final ValidatingVisitorContext context;
 
-    public ValidatingPhiInputVisitor(List<FunctionDefinition> functions,
-                                     List<GlobalDeclaration> globalVariables,
-                                     List<BasicBlock> blocks,
-                                     int blockIndex, List<ArgumentDeclaration> contextVariables,
-                                     List<ArgumentDeclaration> arguments,
-                                     ValueType returnType) {
-        this.functions = functions;
-        this.globalVariables = globalVariables;
-        this.blocks = blocks;
-        this.blockIndex = blockIndex;
-        this.contextVariables = contextVariables;
-        this.arguments = arguments;
-        this.returnType = returnType;
+    private ValidatingPhiInputVisitor(ValidatingVisitorContext context) {
+        this.context = context;
     }
 
     @Override
-    public ValueType visitArgumentReference(ArgumentReference argumentReference) throws FractalException {
+    public Void visitArgumentReference(ArgumentReference argumentReference) throws FractalException {
         ArgumentScope argumentScope = argumentReference.getScope();
         int argumentIndex = argumentReference.getIndex();
 
         List<ArgumentDeclaration> scope;
         switch (argumentScope) {
             case CONTEXT:
-                scope = contextVariables;
+                scope = context.getFunction().getContextVariables();
                 break;
             case ARGUMENTS:
-                scope = arguments;
+                scope = context.getFunction().getArguments();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + argumentScope);
         }
 
-        return scope.get(argumentIndex).getType();
+        if (argumentIndex < 0 || argumentIndex >= scope.size()) {
+            throw new FractalIRValidationException("Invalid argument reference index");
+        }
+
+        return null;
     }
 
     @Override
-    public ValueType visitInstructionReference(InstructionReference instructionReference) throws FractalException {
-        BasicBlock block = blocks.get(instructionReference.getBlockIndex());
+    public Void visitInstructionReference(InstructionReference instructionReference) throws FractalException {
+        List<BasicBlock> blocks = context.getFunction().getBlocks();
+        int blockIndex = instructionReference.getBlockIndex();
+
+        if (blockIndex < 0 || blockIndex >= blocks.size()) {
+            throw new FractalIRValidationException("Invalid instruction reference block index");
+        }
+
+        BasicBlock block = blocks.get(blockIndex);
         int instructionIndex = instructionReference.getInstructionIndex();
         switch (instructionReference.getScope()) {
             case PHI:
-                Phi phi = block.getPhis().get(instructionIndex);
-                return getPhiValueType(phi);
+                if (instructionIndex < 0 || instructionIndex >= block.getPhis().size()) {
+                    throw new FractalIRValidationException("Invalid instruction reference instruction index");
+                }
+                break;
             case BODY:
-                ValidatingProceduralValueVisitor valueVisitor =
-                        new ValidatingProceduralValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
-                                arguments, instructionIndex, returnType);
-                return block.getBody().get(instructionIndex).accept(valueVisitor);
+                if (instructionIndex < 0 || instructionIndex >= block.getBody().size()) {
+                    throw new FractalIRValidationException("Invalid instruction reference instruction index");
+                }
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + instructionReference.getScope());
         }
+
+        return null;
     }
 
-    private ValueType getPhiValueType(Phi phi) throws FractalException {
-        ValueType phiType = null;
+    @Override
+    public Void visitBoolConstant(BoolConstant constant) {
+        return null;
+    }
 
+    @Override
+    public Void visitIntConstant(IntConstant constant) {
+        return null;
+    }
+
+    @Override
+    public Void visitRealConstant(RealConstant constant) {
+        return null;
+    }
+
+    @Override
+    public Void visitComplexConstant(ComplexConstant constant) {
+        return null;
+    }
+
+    @Override
+    public Void visitNullPointer() {
+        return null;
+    }
+
+    @Override
+    public Void visitNullFunction() {
+        return null;
+    }
+
+    @Override
+    public Void visitVoid() {
+        return null;
+    }
+
+    static void checkPhi(Phi phi, TypeCache cache, ValidatingVisitorContext context)
+            throws FractalException {
+        ValidatingPhiInputVisitor phiInputVisitor =
+                new ValidatingPhiInputVisitor(context);
+
+        ValueType phiType = null;
         for (PhiBranch branch : phi.getBranches()) {
-            if (branch.getPreviousBlockIndex() < 0 || branch.getPreviousBlockIndex() > blocks.size()) {
+            if (branch.getPreviousBlockIndex() < 0 ||
+                    branch.getPreviousBlockIndex() > context.getFunction().getBlocks().size()) {
                 throw new PhiInputValidationException("PhiBranch references BasicBlock that does not exist");
             }
 
-            ValueType branchType = branch.getValue().accept(this);
+            ValueType branchType = cache.getType(branch.getValue(), context);
             if (phiType == null) {
                 phiType = branchType;
             } else {
@@ -93,47 +132,12 @@ public class ValidatingPhiInputVisitor implements IPhiInputVisitor<ValueType> {
                     throw new PhiInputValidationException("Phi has branches that are different types");
                 }
             }
+
+            branch.getValue().accept(phiInputVisitor);
         }
 
         if (phiType == null) {
             throw new PhiInputValidationException("Phi does not contain any branches");
         }
-
-        return phiType;
-    }
-
-    @Override
-    public ValueType visitBoolConstant(BoolConstant constant) throws FractalException {
-        return ValueTypes.BOOL;
-    }
-
-    @Override
-    public ValueType visitIntConstant(IntConstant constant) throws FractalException {
-        return ValueTypes.INT;
-    }
-
-    @Override
-    public ValueType visitRealConstant(RealConstant constant) throws FractalException {
-        return ValueTypes.REAL;
-    }
-
-    @Override
-    public ValueType visitComplexConstant(ComplexConstant constant) throws FractalException {
-        return ValueTypes.COMPLEX;
-    }
-
-    @Override
-    public ValueType visitNullPointer() throws FractalException {
-        return ValueTypes.NULL_POINTER;
-    }
-
-    @Override
-    public ValueType visitNullFunction() throws FractalException {
-        return ValueTypes.NULL_FUNCTION;
-    }
-
-    @Override
-    public ValueType visitVoid() throws FractalException {
-        return ValueTypes.VOID;
     }
 }

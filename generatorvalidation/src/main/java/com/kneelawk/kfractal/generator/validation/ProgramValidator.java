@@ -1,11 +1,10 @@
 package com.kneelawk.kfractal.generator.validation;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.api.ir.phi.Phi;
-import com.kneelawk.kfractal.generator.api.ir.phi.PhiBranch;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,25 +15,7 @@ public class ProgramValidator {
         checkGlobals(program.getGlobalVariables());
 
         for (FunctionDefinition function : program.getFunctions()) {
-            // setup local variable scope
-            checkArguments(function.getContextVariables());
-            checkArguments(function.getArguments());
-
-            List<BasicBlock> blocks = function.getBlocks();
-            int size = blocks.size();
-            for (int i = 0; i < size; i++) {
-                checkBasicBlock(blocks, i, program.getFunctions(), program.getGlobalVariables(),
-                        function.getContextVariables(), function.getArguments(), function.getReturnType());
-            }
-        }
-    }
-
-    private static void checkArguments(Collection<ArgumentDeclaration> arguments) throws FractalIRValidationException {
-        for (ArgumentDeclaration v : arguments) {
-            ValueType type = v.getType();
-
-            // check variable types
-            checkVariableType(type);
+            checkFunction(function, program);
         }
     }
 
@@ -56,6 +37,30 @@ public class ProgramValidator {
         }
     }
 
+    private static void checkFunction(FunctionDefinition function, Program program)
+            throws FractalException {
+        // setup local variable scope
+        checkArguments(function.getContextVariables());
+        checkArguments(function.getArguments());
+
+        TypeCache cache = new TypeCache();
+
+        List<BasicBlock> blocks = function.getBlocks();
+        int size = blocks.size();
+        for (int i = 0; i < size; i++) {
+            checkBasicBlock(program, function, i, cache);
+        }
+    }
+
+    private static void checkArguments(Collection<ArgumentDeclaration> arguments) throws FractalIRValidationException {
+        for (ArgumentDeclaration v : arguments) {
+            ValueType type = v.getType();
+
+            // check variable types
+            checkVariableType(type);
+        }
+    }
+
     private static void checkVariableType(ValueType type) throws FractalIRValidationException {
         if (ValueTypes.isVoid(type)) {
             throw new IllegalVariableTypeException("Illegal variable type: VOID");
@@ -70,16 +75,15 @@ public class ProgramValidator {
         }
     }
 
-    private static void checkBasicBlock(List<BasicBlock> blocks, int blockIndex, List<FunctionDefinition> functions,
-                                        List<GlobalDeclaration> globalVariables,
-                                        List<ArgumentDeclaration> contextVariables, List<ArgumentDeclaration> arguments,
-                                        ValueType returnType) throws FractalException {
-        BasicBlock block = blocks.get(blockIndex);
+    private static void checkBasicBlock(Program program, FunctionDefinition function, int blockIndex, TypeCache cache)
+            throws FractalException {
+        BasicBlock block = function.getBlocks().get(blockIndex);
 
-        List<ValueType> phiTypes = Lists.newArrayList();
-        for (Phi phi : block.getPhis()) {
-            phiTypes.add(checkPhi(phi, functions, globalVariables, blocks, blockIndex, contextVariables, arguments,
-                    returnType));
+        List<Phi> phis = block.getPhis();
+        int phisSize = phis.size();
+        for (int i = 0; i < phisSize; i++) {
+            ValidatingPhiInputVisitor.checkPhi(phis.get(i), cache,
+                    ValidatingVisitorContext.create(ImmutableSet.of(), program, function, blockIndex, i));
         }
 
         List<IProceduralValue> body = block.getBody();
@@ -87,50 +91,16 @@ public class ProgramValidator {
         for (int i = 0; i < size; i++) {
             IProceduralValue value = body.get(i);
             ValidatingProceduralValueVisitor visitor =
-                    new ValidatingProceduralValueVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
-                            arguments,
-                            i, returnType);
-            value.accept(visitor);
+                    new ValidatingProceduralValueVisitor(cache,
+                            ValidatingVisitorContext.create(ImmutableSet.of(), program, function, blockIndex, i));
+            ValidatingVisitorResult result = value.accept(visitor);
 
-            if (visitor.isTerminated() && i < size - 1) {
+            if (result.isTerminated() && i < size - 1) {
                 throw new FractalIRValidationException(
                         "BasicBlock contains instructions after a terminator statement.");
-            } else if (!visitor.isTerminated() && i == size - 1) {
+            } else if (!result.isTerminated() && i == size - 1) {
                 throw new FractalIRValidationException("BasicBlock is lacking a terminator statement.");
             }
         }
-    }
-
-    private static ValueType checkPhi(Phi phi, List<FunctionDefinition> functions,
-                                      List<GlobalDeclaration> globalVariables, List<BasicBlock> blocks, int blockIndex,
-                                      List<ArgumentDeclaration> contextVariables,
-                                      List<ArgumentDeclaration> arguments, ValueType returnType)
-            throws FractalException {
-        ValidatingPhiInputVisitor phiInputVisitor =
-                new ValidatingPhiInputVisitor(functions, globalVariables, blocks, blockIndex, contextVariables,
-                        arguments,
-                        returnType);
-
-        ValueType phiType = null;
-        for (PhiBranch branch : phi.getBranches()) {
-            if (branch.getPreviousBlockIndex() < 0 || branch.getPreviousBlockIndex() > blocks.size()) {
-                throw new PhiInputValidationException("PhiBranch references BasicBlock that does not exist");
-            }
-
-            ValueType branchType = branch.getValue().accept(phiInputVisitor);
-            if (phiType == null) {
-                phiType = branchType;
-            } else {
-                if (branchType != phiType) {
-                    throw new PhiInputValidationException("Phi has branches that are different types");
-                }
-            }
-        }
-
-        if (phiType == null) {
-            throw new PhiInputValidationException("Phi does not contain any branches");
-        }
-
-        return phiType;
     }
 }
