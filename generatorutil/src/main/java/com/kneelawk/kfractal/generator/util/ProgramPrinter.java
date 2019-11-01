@@ -107,6 +107,7 @@ public class ProgramPrinter {
         builder.append("],").append(System.lineSeparator());
 
         // print basic blocks
+        StringUtils.indent(builder, 2);
         builder.append("[");
         List<BasicBlock> blocks = function.getBlocks();
         size = blocks.size();
