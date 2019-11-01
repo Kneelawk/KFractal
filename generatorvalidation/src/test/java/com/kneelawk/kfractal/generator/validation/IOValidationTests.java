@@ -3,12 +3,14 @@ package com.kneelawk.kfractal.generator.validation;
 import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.ComplexAdd;
+import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCall;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.constant.ComplexConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.FunctionCreate;
 import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
 import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 import org.apache.commons.math3.complex.Complex;
 import org.junit.jupiter.api.Test;
 
@@ -16,70 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IOValidationTests {
-    @Test
-    void testInvalidInputVariableReference() {
-        // create the program
-        Program.Builder programBuilder = new Program.Builder();
-        FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
-        functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        functionBuilder.addStatement(Assign.create(a, ArgumentReference.create(ArgumentScope.LOCAL, 100)));
-        functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(functionBuilder.build());
-
-        // test the validator
-        assertThrows(MissingVariableReferenceException.class,
-                () -> ProgramValidator.checkValidity(programBuilder.build()));
-    }
-
-    @Test
-    void testValidInputVariableReference() {
-        // create the program
-        Program.Builder programBuilder = new Program.Builder();
-        FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
-        functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        var b = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        functionBuilder.addStatement(Assign.create(a, b));
-        functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(functionBuilder.build());
-
-        // test the validator
-        assertDoesNotThrow(() -> ProgramValidator.checkValidity(programBuilder.build()));
-    }
-
-    @Test
-    void testInvalidOutputVariableReference() {
-        // create the program
-        Program.Builder programBuilder = new Program.Builder();
-        FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
-        functionBuilder.setReturnType(ValueTypes.VOID);
-        functionBuilder.addStatement(
-                Assign.create(
-                        ArgumentReference.create(ArgumentScope.LOCAL, 100), ComplexConstant.create(new Complex(1, 1))));
-        functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(functionBuilder.build());
-
-        // test the validator
-        assertThrows(MissingVariableReferenceException.class,
-                () -> ProgramValidator.checkValidity(programBuilder.build()));
-    }
-
-    @Test
-    void testValidOutputVariableReference() {
-        // create the program
-        Program.Builder programBuilder = new Program.Builder();
-        FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
-        functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        functionBuilder
-                .addStatement(Assign.create(a, ComplexConstant.create(new Complex(1, 1))));
-        functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
-        programBuilder.addFunction(functionBuilder.build());
-
-        // test the validator
-        assertDoesNotThrow(() -> ProgramValidator.checkValidity(programBuilder.build()));
-    }
+    // TODO: Do validation for new InstructionReferences.
+    // This involves both invalid block and invalid index.
+    // This also involves references in phi instructions.
+    // Phi instruction block references should probably be in their own test though.
 
     @Test
     void testMissingFunctionReference() {
@@ -87,11 +29,10 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
-        var a = functionBuilder.addLocalVariable(
-                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.VOID, ImmutableList.of())));
-        functionBuilder.addStatement(Assign.create(a,
-                FunctionCreate.create(100, ImmutableList.of())));
-        functionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(FunctionCall.create(FunctionCreate.create(100)));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        functionBuilder.addBlock(block.build());
         programBuilder.addFunction(functionBuilder.build());
 
         // test the validator
@@ -105,20 +46,18 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
-        var ga = gFunctionBuilder.addContextVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        var tmp0 = gFunctionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        gFunctionBuilder.addStatement(ComplexAdd.create(tmp0, ga,
-                ComplexConstant.create(new Complex(0, 2))));
-        gFunctionBuilder.addStatement(Return.create(tmp0));
+        var ga = gFunctionBuilder.addContextVariable(ArgumentDeclaration.create(ValueTypes.COMPLEX));
+        BasicBlock.Builder gBlock = new BasicBlock.Builder();
+        gBlock.addValue(Return.create(ComplexAdd.create(ga, ComplexConstant.create(new Complex(0, 2)))));
+        gFunctionBuilder.addBlock(gBlock.build());
         int gIndex = programBuilder.addFunction(gFunctionBuilder.build());
 
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
-        var fa = fFunctionBuilder.addLocalVariable(
-                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
-        fFunctionBuilder.addStatement(
-                Assign.create(fa, FunctionCreate.create(gIndex, ImmutableList.of())));
-        fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder fBlock = new BasicBlock.Builder();
+        fBlock.addValue(FunctionCreate.create(gIndex));
+        fBlock.addValue(Return.create(VoidConstant.INSTANCE));
+        fFunctionBuilder.addBlock(fBlock.build());
         programBuilder.addFunction(fFunctionBuilder.build());
 
         // test the validator
@@ -132,20 +71,18 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
-        var ga = gFunctionBuilder.addContextVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        var tmp0 = gFunctionBuilder.addLocalVariable(GlobalDeclaration.create(ValueTypes.COMPLEX));
-        gFunctionBuilder.addStatement(ComplexAdd.create(tmp0, ga,
-                ComplexConstant.create(new Complex(0, 2))));
-        gFunctionBuilder.addStatement(Return.create(tmp0));
+        var ga = gFunctionBuilder.addContextVariable(ArgumentDeclaration.create(ValueTypes.COMPLEX));
+        BasicBlock.Builder gBlock = new BasicBlock.Builder();
+        gBlock.addValue(Return.create(ComplexAdd.create(ga, ComplexConstant.create(new Complex(0, 2)))));
+        gFunctionBuilder.addBlock(gBlock.build());
         int gIndex = programBuilder.addFunction(gFunctionBuilder.build());
 
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
-        var fa = fFunctionBuilder.addLocalVariable(
-                GlobalDeclaration.create(ValueTypes.FUNCTION(ValueTypes.COMPLEX, ImmutableList.of())));
-        fFunctionBuilder.addStatement(Assign.create(fa,
-                FunctionCreate.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0))))));
-        fFunctionBuilder.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder fBlock = new BasicBlock.Builder();
+        fBlock.addValue(FunctionCreate.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0)))));
+        fBlock.addValue(Return.create(VoidConstant.INSTANCE));
+        fFunctionBuilder.addBlock(fBlock.build());
         programBuilder.addFunction(fFunctionBuilder.build());
 
         // test the validator

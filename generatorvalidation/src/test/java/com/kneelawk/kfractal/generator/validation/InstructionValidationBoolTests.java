@@ -3,7 +3,10 @@ package com.kneelawk.kfractal.generator.validation;
 import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
-import com.kneelawk.kfractal.generator.api.ir.instruction.*;
+import com.kneelawk.kfractal.generator.api.ir.instruction.BoolAnd;
+import com.kneelawk.kfractal.generator.api.ir.instruction.BoolIsEqual;
+import com.kneelawk.kfractal.generator.api.ir.instruction.BoolNot;
+import com.kneelawk.kfractal.generator.api.ir.instruction.BoolOr;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,8 +16,11 @@ import java.util.stream.Stream;
 
 public class InstructionValidationBoolTests {
     private static final List<ValueType> twoBoolValueTypes = ImmutableList.of(ValueTypes.BOOL, ValueTypes.BOOL);
-    private static final List<ValueType> threeBoolValueTypes =
-            ImmutableList.of(ValueTypes.BOOL, ValueTypes.BOOL, ValueTypes.BOOL);
+
+    private static Stream<ValueType> notOneBoolValueType() {
+        return VariableValueTypesProvider.variableValueTypes()
+                .filter(l -> !l.equals(ValueTypes.BOOL));
+    }
 
     private static Stream<ImmutableList<ValueType>> notTwoBoolValueTypes() {
         return VariableValueTypesProvider.variableValueTypes()
@@ -23,66 +29,47 @@ public class InstructionValidationBoolTests {
                 .filter(l -> !l.equals(twoBoolValueTypes));
     }
 
-    private static Stream<ImmutableList<ValueType>> notThreeBoolValueTypes() {
-        return VariableValueTypesProvider.variableValueTypes()
-                .flatMap(a -> VariableValueTypesProvider.variableValueTypes()
-                        .flatMap(b -> VariableValueTypesProvider.variableValueTypes()
-                                .map(c -> ImmutableList.of(a, b, c))))
-                .filter(l -> !l.equals(threeBoolValueTypes));
-    }
-
     @ParameterizedTest(name = "testIncompatibleBoolNotTypes({arguments})")
-    @MethodSource("notTwoBoolValueTypes")
-    void testIncompatibleBoolNotTypes(List<ValueType> argumentTypes) {
-        ValueTypeAsserts.assertTwoIncompatibleValueTypes(argumentTypes, BoolNot::create);
+    @MethodSource("notOneBoolValueType")
+    void testIncompatibleBoolNotTypes(ValueType argumentTypes) {
+        ValueTypeAsserts.assertOneIncompatibleValueType(argumentTypes, BoolNot::create);
     }
 
     @Test
     void testCompatibleBoolNotTypes() {
-        ValueTypeAsserts.assertTwoCompatibleValueTypes(twoBoolValueTypes, BoolNot::create);
+        ValueTypeAsserts.assertOneCompatibleValueType(ValueTypes.BOOL, BoolNot::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleBoolAndTypes({arguments})")
-    @MethodSource("notThreeBoolValueTypes")
+    @MethodSource("notTwoBoolValueTypes")
     void testIncompatibleBoolAndTypes(List<ValueType> argumentTypes) {
-        ValueTypeAsserts.assertThreeIncompatibleValueTypes(argumentTypes, BoolAnd::create);
+        ValueTypeAsserts.assertTwoIncompatibleValueTypes(argumentTypes, BoolAnd::create);
     }
 
     @Test
     void testCompatibleBoolAndTypes() {
-        ValueTypeAsserts.assertThreeCompatibleValueTypes(threeBoolValueTypes, BoolAnd::create);
+        ValueTypeAsserts.assertTwoCompatibleValueTypes(twoBoolValueTypes, BoolAnd::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleBoolOrTypes({arguments})")
-    @MethodSource("notThreeBoolValueTypes")
+    @MethodSource("notTwoBoolValueTypes")
     void testIncompatibleBoolOrTypes(List<ValueType> argumentTypes) {
-        ValueTypeAsserts.assertThreeIncompatibleValueTypes(argumentTypes, BoolOr::create);
+        ValueTypeAsserts.assertTwoIncompatibleValueTypes(argumentTypes, BoolOr::create);
     }
 
     @Test
     void testCompatibleBoolOrTypes() {
-        ValueTypeAsserts.assertThreeCompatibleValueTypes(threeBoolValueTypes, BoolOr::create);
+        ValueTypeAsserts.assertTwoCompatibleValueTypes(twoBoolValueTypes, BoolOr::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleBoolIsEqualTypes({arguments})")
-    @MethodSource("notThreeBoolValueTypes")
+    @MethodSource("notTwoBoolValueTypes")
     void testIncompatibleBoolIsEqualTypes(List<ValueType> argumentTypes) {
-        ValueTypeAsserts.assertThreeIncompatibleValueTypes(argumentTypes, BoolIsEqual::create);
+        ValueTypeAsserts.assertTwoIncompatibleValueTypes(argumentTypes, BoolIsEqual::create);
     }
 
     @Test
     void testCompatibleBoolIsEqualTypes() {
-        ValueTypeAsserts.assertThreeCompatibleValueTypes(threeBoolValueTypes, BoolIsEqual::create);
-    }
-
-    @ParameterizedTest(name = "testIncompatibleBoolIsNotEqualTypes({arguments})")
-    @MethodSource("notThreeBoolValueTypes")
-    void testIncompatibleBoolIsNotEqualTypes(List<ValueType> argumentTypes) {
-        ValueTypeAsserts.assertThreeIncompatibleValueTypes(argumentTypes, BoolIsNotEqual::create);
-    }
-
-    @Test
-    void testCompatibleBoolIsNotEqualTypes() {
-        ValueTypeAsserts.assertThreeCompatibleValueTypes(threeBoolValueTypes, BoolIsNotEqual::create);
+        ValueTypeAsserts.assertTwoCompatibleValueTypes(twoBoolValueTypes, BoolIsEqual::create);
     }
 }

@@ -16,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class VariableValidationTests {
+    // TODO: Investigate local "variable" usages
+
     @Test
     void testIllegalVoidVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        var v = function.addLocalVariable(GlobalDeclaration.create(ValueTypes.VOID));
-        function.addStatement(Return.create(v));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.VOID));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -31,11 +29,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullFunctionVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -43,11 +37,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullPointerVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(GlobalDeclaration.create(ValueTypes.NULL_POINTER));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_POINTER));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -56,12 +46,8 @@ class VariableValidationTests {
     @MethodSource("nonPointerValueTypes")
     void testIllegalPreallocatedAnnotation(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(
+        program.addGlobalVariable(
                 GlobalDeclaration.create(variableType, ImmutableSet.of(IGlobalAttribute.PREALLOCATED)));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
 
         assertThrows(IllegalVariableAttributeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -74,11 +60,7 @@ class VariableValidationTests {
     @ArgumentsSource(VariableValueTypesProvider.class)
     void testVariableDeclaration(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(variableType);
-        var v = function.addLocalVariable(GlobalDeclaration.create(variableType));
-        function.addStatement(Return.create(v));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(variableType));
 
         assertDoesNotThrow(() -> ProgramValidator.checkValidity(program.build()));
     }
