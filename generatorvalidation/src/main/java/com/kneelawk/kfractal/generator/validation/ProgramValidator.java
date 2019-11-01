@@ -47,6 +47,10 @@ public class ProgramValidator {
 
         List<BasicBlock> blocks = function.getBlocks();
         int size = blocks.size();
+        if (size < 1) {
+            throw new FractalIRValidationException("Function contains no basic blocks");
+        }
+
         for (int i = 0; i < size; i++) {
             checkBasicBlock(program, function, i, cache);
         }
@@ -88,6 +92,7 @@ public class ProgramValidator {
 
         List<IProceduralValue> body = block.getBody();
         int size = body.size();
+        boolean terminated = false;
         for (int i = 0; i < size; i++) {
             IProceduralValue value = body.get(i);
             ValidatingProceduralValueVisitor visitor =
@@ -98,9 +103,11 @@ public class ProgramValidator {
             if (result.isTerminated() && i < size - 1) {
                 throw new FractalIRValidationException(
                         "BasicBlock contains instructions after a terminator statement.");
-            } else if (!result.isTerminated() && i == size - 1) {
-                throw new FractalIRValidationException("BasicBlock is lacking a terminator statement.");
             }
+            terminated = result.isTerminated();
+        }
+        if (!terminated) {
+            throw new FractalIRValidationException("BasicBlock is lacking a terminator statement.");
         }
     }
 }

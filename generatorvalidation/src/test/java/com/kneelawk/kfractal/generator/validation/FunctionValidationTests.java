@@ -17,7 +17,7 @@ class FunctionValidationTests {
     // should the incompatible context variable tests be moved here?
 
     @Test
-    void testIllegalMissingReturnType() {
+    void testIllegalEmptyFunction() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
@@ -26,8 +26,21 @@ class FunctionValidationTests {
         Program program = programBuilder.build();
 
         assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
-                () -> ProgramPrinter
-                        .printProgram(program));
+                () -> ProgramPrinter.printProgram(program));
+    }
+
+    @Test
+    void testIllegalBasicBlockMissingTerminator() {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setReturnType(ValueTypes.VOID);
+        function.addBlock(new BasicBlock.Builder().build());
+        programBuilder.addFunction(function.build());
+
+        Program program = programBuilder.build();
+
+        assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter.printProgram(program));
     }
 
     @ParameterizedTest(name = "testIncompatibleFunctionReturnType({arguments})")
