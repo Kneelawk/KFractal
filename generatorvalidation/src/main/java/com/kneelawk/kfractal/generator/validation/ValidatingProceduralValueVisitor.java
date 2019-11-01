@@ -45,29 +45,51 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<Valida
     }
 
     private void tryVisit(IProceduralValue parent, IProceduralValue child) throws FractalException {
-        if (!context.getTraversedNodes().contains(parent)) {
+        if (context.getTraversedNodes().contains(parent)) {
+            throw new CyclicProceduralInstructionException("Attempting to traverse a node that is its own ancestor");
+        } else {
             ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
             ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
-            checkState(child.accept(visitor));
+            if (newContext.getTraversedNodes().contains(child)) {
+                throw new CyclicProceduralInstructionException("Attempting to traverse a node with an ancestor as one of its children");
+            } else {
+                checkState(child.accept(visitor));
+            }
         }
     }
 
     private void tryVisit(IProceduralValue parent, IProceduralValue child1, IProceduralValue child2)
             throws FractalException {
-        if (!context.getTraversedNodes().contains(parent)) {
+        if (context.getTraversedNodes().contains(parent)) {
+            throw new CyclicProceduralInstructionException("Attempting to traverse a node that is its own ancestor");
+        } else {
             ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
             ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
-            checkState(child1.accept(visitor));
-            checkState(child2.accept(visitor));
+            if (newContext.getTraversedNodes().contains(child1)) {
+                throw new CyclicProceduralInstructionException("Attempting to traverse a node with an ancestor as one of its children");
+            } else {
+                checkState(child1.accept(visitor));
+            }
+            if (newContext.getTraversedNodes().contains(child2)) {
+                throw new CyclicProceduralInstructionException("Attempting to traverse a node with an ancestor as one of its children");
+            } else {
+                checkState(child2.accept(visitor));
+            }
         }
     }
 
     private void tryVisit(IProceduralValue parent, Iterable<IProceduralValue> children) throws FractalException {
-        if (!context.getTraversedNodes().contains(parent)) {
+        if (context.getTraversedNodes().contains(parent)) {
+            throw new CyclicProceduralInstructionException("Attempting to traverse a node that is its own ancestor");
+        } else {
             ValidatingVisitorContext newContext = context.builder().addTraversedNode(parent).build();
             ValidatingProceduralValueVisitor visitor = new ValidatingProceduralValueVisitor(cache, newContext);
             for (IProceduralValue child : children) {
-                checkState(child.accept(visitor));
+                if (!newContext.getTraversedNodes().contains(child)) {
+                    checkState(child.accept(visitor));
+                } else {
+                    throw new CyclicProceduralInstructionException("Attempting to traverse a node with an ancestor as one of its children");
+                }
             }
         }
     }
