@@ -653,7 +653,15 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<Valida
     }
 
     @Override
-    public ValidatingVisitorResult visitPointerAllocate(PointerAllocate pointerAllocate) {
+    public ValidatingVisitorResult visitPointerAllocate(PointerAllocate pointerAllocate)
+            throws FractalException {
+        ValueType pointerType = pointerAllocate.getType();
+        if (ValueTypes.isVoid(pointerType)) {
+            throw new IncompatibleValueTypeException("PointerAllocate cannot allocate a pointer of type VOID");
+        }
+        if (ValueTypes.isNullFunction(pointerType) || ValueTypes.isNullPointer(pointerType)) {
+            throw new IncompatibleValueTypeException("PointerAllocate cannot allocate a pointer to a null-type");
+        }
         return ValidatingVisitorResult.create();
     }
 
