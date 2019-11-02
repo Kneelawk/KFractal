@@ -16,7 +16,7 @@ import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 
 import java.util.List;
 
-class TypeLookupValueVisitor implements IValueVisitor<TypeLookupResult> {
+class TypeLookupValueVisitor implements IValueVisitor<ValueType> {
     private final TypeCache cache;
     private final TypeLookupVisitorContext context;
 
@@ -27,7 +27,7 @@ class TypeLookupValueVisitor implements IValueVisitor<TypeLookupResult> {
     }
 
     @Override
-    public TypeLookupResult visitArgumentReference(ArgumentReference argumentReference) {
+    public ValueType visitArgumentReference(ArgumentReference argumentReference) {
         ArgumentScope argumentScope = argumentReference.getScope();
         int argumentIndex = argumentReference.getIndex();
 
@@ -43,15 +43,15 @@ class TypeLookupValueVisitor implements IValueVisitor<TypeLookupResult> {
                 throw new IllegalStateException("Unexpected value: " + argumentScope);
         }
 
-        return new TypeLookupResult.Found(scope.get(argumentIndex).getType());
+        return scope.get(argumentIndex).getType();
     }
 
     @Override
-    public TypeLookupResult visitInstructionReference(InstructionReference instructionReference)
+    public ValueType visitInstructionReference(InstructionReference instructionReference)
             throws FractalException {
         // This node's type depends on others, therefore, it must be checked for reference loops
         if (context.getTraversedNodes().contains(instructionReference)) {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.REFERENCE_LOOP);
+            throw new CyclicTypeLookupException("InstructionReference references one of its ancestors");
         }
 
         TypeLookupVisitorContext newContext = context.builder().addTraversedNode(instructionReference).build();
@@ -68,329 +68,334 @@ class TypeLookupValueVisitor implements IValueVisitor<TypeLookupResult> {
     }
 
     @Override
-    public TypeLookupResult visitBoolConstant(BoolConstant constant) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitBoolConstant(BoolConstant constant) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitIntConstant(IntConstant constant) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntConstant(IntConstant constant) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitRealConstant(RealConstant constant) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealConstant(RealConstant constant) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitComplexConstant(ComplexConstant constant) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexConstant(ComplexConstant constant) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitNullPointer() {
-        return new TypeLookupResult.Found(ValueTypes.NULL_POINTER);
+    public ValueType visitNullPointer() {
+        return ValueTypes.NULL_POINTER;
     }
 
     @Override
-    public TypeLookupResult visitNullFunction() {
-        return new TypeLookupResult.Found(ValueTypes.NULL_FUNCTION);
+    public ValueType visitNullFunction() {
+        return ValueTypes.NULL_FUNCTION;
     }
 
     @Override
-    public TypeLookupResult visitVoid() {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitVoid() {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitReturn(Return aReturn) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitReturn(Return aReturn) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitGlobalGet(GlobalGet globalGet) {
-        return new TypeLookupResult.Found(
-                context.getProgram().getGlobalVariables().get(globalGet.getGlobalIndex()).getType());
+    public ValueType visitGlobalGet(GlobalGet globalGet) {
+        return
+                context.getProgram().getGlobalVariables().get(globalGet.getGlobalIndex()).getType();
     }
 
     @Override
-    public TypeLookupResult visitGlobalSet(GlobalSet globalSet) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitGlobalSet(GlobalSet globalSet) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitBoolNot(BoolNot boolNot) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitBoolNot(BoolNot boolNot) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitBoolAnd(BoolAnd boolAnd) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitBoolAnd(BoolAnd boolAnd) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitBoolOr(BoolOr boolOr) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitBoolOr(BoolOr boolOr) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitBoolIsEqual(BoolIsEqual boolIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitBoolIsEqual(BoolIsEqual boolIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitIntAdd(IntAdd intAdd) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntAdd(IntAdd intAdd) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntSubtract(IntSubtract intSubtract) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntSubtract(IntSubtract intSubtract) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntMultiply(IntMultiply intMultiply) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntMultiply(IntMultiply intMultiply) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntDivide(IntDivide intDivide) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntDivide(IntDivide intDivide) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntModulo(IntModulo intModulo) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntModulo(IntModulo intModulo) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntPower(IntPower intPower) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntPower(IntPower intPower) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntNot(IntNot intNot) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntNot(IntNot intNot) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntAnd(IntAnd intAnd) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntAnd(IntAnd intAnd) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntOr(IntOr intOr) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntOr(IntOr intOr) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntXor(IntXor intXor) {
-        return new TypeLookupResult.Found(ValueTypes.INT);
+    public ValueType visitIntXor(IntXor intXor) {
+        return ValueTypes.INT;
     }
 
     @Override
-    public TypeLookupResult visitIntIsEqual(IntIsEqual intIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitIntIsEqual(IntIsEqual intIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitIntIsGreater(IntIsGreater intIsGreater) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitIntIsGreater(IntIsGreater intIsGreater) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitIntIsGreaterOrEqual(IntIsGreaterOrEqual intIsGreaterOrEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitRealAdd(RealAdd realAdd) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealAdd(RealAdd realAdd) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitRealSubtract(RealSubtract realSubtract) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealSubtract(RealSubtract realSubtract) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitRealMultiply(RealMultiply realMultiply) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealMultiply(RealMultiply realMultiply) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitRealDivide(RealDivide realDivide) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealDivide(RealDivide realDivide) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitRealPower(RealPower realPower) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitRealPower(RealPower realPower) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitRealIsEqual(RealIsEqual realIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitRealIsEqual(RealIsEqual realIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitRealIsGreater(RealIsGreater realIsGreater) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitRealIsGreater(RealIsGreater realIsGreater) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitRealIsGreaterOrEqual(RealIsGreaterOrEqual realIsGreaterOrEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitRealComposeComplex(RealComposeComplex realComposeComplex) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitRealComposeComplex(RealComposeComplex realComposeComplex) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexAdd(ComplexAdd complexAdd) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexAdd(ComplexAdd complexAdd) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexSubtract(ComplexSubtract complexSubtract) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexSubtract(ComplexSubtract complexSubtract) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexMultiply(ComplexMultiply complexMultiply) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexMultiply(ComplexMultiply complexMultiply) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexDivide(ComplexDivide complexDivide) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexDivide(ComplexDivide complexDivide) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexPower(ComplexPower complexPower) {
-        return new TypeLookupResult.Found(ValueTypes.COMPLEX);
+    public ValueType visitComplexPower(ComplexPower complexPower) {
+        return ValueTypes.COMPLEX;
     }
 
     @Override
-    public TypeLookupResult visitComplexGetReal(ComplexGetReal complexGetReal) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitComplexGetReal(ComplexGetReal complexGetReal) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitComplexGetImaginary(ComplexGetImaginary complexGetImaginary) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitComplexModulo(ComplexModulo complexModulo) {
-        return new TypeLookupResult.Found(ValueTypes.REAL);
+    public ValueType visitComplexModulo(ComplexModulo complexModulo) {
+        return ValueTypes.REAL;
     }
 
     @Override
-    public TypeLookupResult visitComplexIsEqual(ComplexIsEqual complexIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitComplexIsEqual(ComplexIsEqual complexIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitFunctionCreate(FunctionCreate functionCreate) {
+    public ValueType visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
+        int index = functionCreate.getFunctionIndex();
+        if (index < 0 || index > context.getProgram().getFunctions().size()) {
+            throw new MissingFunctionReferenceException("Cannot determine type of a function that does not exist");
+        }
+
         FunctionDefinition function = context.getProgram().getFunctions().get(functionCreate.getFunctionIndex());
         ImmutableList.Builder<ValueType> arguments = ImmutableList.builder();
         for (ArgumentDeclaration argument : function.getArguments()) {
             arguments.add(argument.getType());
         }
-        return new TypeLookupResult.Found(ValueTypes.FUNCTION(function.getReturnType(), arguments.build()));
+        return ValueTypes.FUNCTION(function.getReturnType(), arguments.build());
     }
 
     @Override
-    public TypeLookupResult visitFunctionCall(FunctionCall functionCall) throws FractalException {
+    public ValueType visitFunctionCall(FunctionCall functionCall) throws FractalException {
         if (context.getTraversedNodes().contains(functionCall)) {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.REFERENCE_LOOP);
+            throw new CyclicTypeLookupException("FunctionCall type depends on that of one of its ancestors");
         }
-        TypeLookupResult result =
+        ValueType result =
                 cache.getType(functionCall.getFunction(), context.builder().addTraversedNode(functionCall).build());
-        if (!result.isFound()) {
-            return result;
-        }
-        if (ValueTypes.isFunction(result.getType())) {
-            return new TypeLookupResult.Found(ValueTypes.toFunction(result.getType()).getReturnType());
+        if (ValueTypes.isFunction(result)) {
+            return ValueTypes.toFunction(result).getReturnType();
         } else {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.INVALID_TYPE);
+            throw new IncompatibleValueTypeException("FunctionCall cannot get the return type of something that is not a function");
         }
     }
 
     @Override
-    public TypeLookupResult visitFunctionIsEqual(FunctionIsEqual functionIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitFunctionIsEqual(FunctionIsEqual functionIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitPointerAllocate(PointerAllocate pointerAllocate) {
-        return new TypeLookupResult.Found(ValueTypes.POINTER(pointerAllocate.getType()));
+    public ValueType visitPointerAllocate(PointerAllocate pointerAllocate) {
+        return ValueTypes.POINTER(pointerAllocate.getType());
     }
 
     @Override
-    public TypeLookupResult visitPointerFree(PointerFree pointerFree) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitPointerFree(PointerFree pointerFree) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitPointerGet(PointerGet pointerGet) throws FractalException {
+    public ValueType visitPointerGet(PointerGet pointerGet) throws FractalException {
         if (context.getTraversedNodes().contains(pointerGet)) {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.REFERENCE_LOOP);
+            throw new CyclicTypeLookupException("PointerGet type depends on that of one of its ancestors");
         }
-        TypeLookupResult result =
+        ValueType result =
                 cache.getType(pointerGet.getPointer(), context.builder().addTraversedNode(pointerGet).build());
-        if (!result.isFound()) {
-            return result;
-        }
-        if (ValueTypes.isPointer(result.getType())) {
-            return new TypeLookupResult.Found(ValueTypes.toPointer(result.getType()).getPointerType());
+        if (ValueTypes.isPointer(result)) {
+            return ValueTypes.toPointer(result).getPointerType();
         } else {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.INVALID_TYPE);
+            throw new IncompatibleValueTypeException("PointerGet cannot get the enclosed type of something that is not a pointer");
         }
     }
 
     @Override
-    public TypeLookupResult visitPointerSet(PointerSet pointerSet) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitPointerSet(PointerSet pointerSet) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitPointerIsEqual(PointerIsEqual pointerIsEqual) {
-        return new TypeLookupResult.Found(ValueTypes.BOOL);
+    public ValueType visitPointerIsEqual(PointerIsEqual pointerIsEqual) {
+        return ValueTypes.BOOL;
     }
 
     @Override
-    public TypeLookupResult visitBranchConditional(BranchConditional branchConditional) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitBranchConditional(BranchConditional branchConditional) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitBranch(Branch branch) {
-        return new TypeLookupResult.Found(ValueTypes.VOID);
+    public ValueType visitBranch(Branch branch) {
+        return ValueTypes.VOID;
     }
 
     @Override
-    public TypeLookupResult visitPhi(Phi phi) throws FractalException {
+    public ValueType visitPhi(Phi phi) throws FractalException {
         if (context.getTraversedNodes().contains(phi)) {
-            return new TypeLookupResult.Error(TypeLookupResult.ErrorType.REFERENCE_LOOP);
+            throw new CyclicTypeLookupException("Phi instruction is one of its own ancestors");
         }
 
         TypeLookupVisitorContext newContext = context.builder().addTraversedNode(phi).build();
 
-        TypeLookupResult branchType = new TypeLookupResult.Error(TypeLookupResult.ErrorType.INVALID_INSTRUCTION);
+        ValueType branchType = null;
+        PhiInputValidationException exception = new PhiInputValidationException("Unable to determine phi instruction type");
         for (PhiBranch branch : phi.getBranches()) {
             if (branch.getPreviousBlockIndex() < 0 ||
                     branch.getPreviousBlockIndex() > context.getFunction().getBlocks().size()) {
                 continue;
             }
 
-            branchType = cache.getType(phi, newContext);
-            if (branchType.isFound()) {
-                return branchType;
+            try {
+                branchType = cache.getType(phi, newContext);
+            } catch (FractalIRValidationException e) {
+                exception.addSuppressed(e);
             }
+        }
+
+        if (branchType == null) {
+            throw exception;
         }
 
         return branchType;

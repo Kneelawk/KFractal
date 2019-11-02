@@ -11,6 +11,7 @@ import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentScope;
 import com.kneelawk.kfractal.generator.api.ir.reference.ArgumentReference;
 import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
+import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.math3.complex.Complex;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +36,11 @@ class IOValidationTests {
         functionBuilder.addBlock(block.build());
         programBuilder.addFunction(functionBuilder.build());
 
+        Program program = programBuilder.build();
+
         // test the validator
         assertThrows(MissingFunctionReferenceException.class,
-                () -> ProgramValidator.checkValidity(programBuilder.build()));
+                () -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
     }
 
     @Test

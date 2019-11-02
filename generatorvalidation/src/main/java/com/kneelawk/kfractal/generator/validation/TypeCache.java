@@ -21,26 +21,18 @@ class TypeCache {
             throws FractalException {
         TypeLookupVisitorContext context =
                 TypeLookupVisitorContext.create(ImmutableSet.of(), program, functionDefinition);
-        TypeLookupResult result = getType(instruction, context);
-        if (result.isFound()) {
-            return result.getType();
-        } else {
-            throw new FractalIRValidationException("Unable to determine instruction type, " + result.getErrorType());
-        }
+       return getType(instruction, context);
     }
 
-    TypeLookupResult getType(IValue instruction, TypeLookupVisitorContext context)
+    ValueType getType(IValue instruction, TypeLookupVisitorContext context)
             throws FractalException {
         if (types.containsKey(instruction)) {
-            return new TypeLookupResult.Found(types.get(instruction));
+            return types.get(instruction);
         }
 
         TypeLookupValueVisitor visitor = new TypeLookupValueVisitor(this, context);
-        TypeLookupResult result = instruction.accept(visitor);
-        if (result.isFound()) {
-            types.put(instruction, result.getType());
-        }
+        ValueType result = instruction.accept(visitor);
+        types.put(instruction, result);
         return result;
-
     }
 }
