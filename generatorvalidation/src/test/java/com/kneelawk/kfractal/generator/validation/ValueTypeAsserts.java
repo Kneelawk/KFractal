@@ -20,6 +20,7 @@ class ValueTypeAsserts {
         block.addValue(creator.create(createConstant(programBuilder, block, argumentTypes.get(0)),
                 createConstant(programBuilder, block, argumentTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();

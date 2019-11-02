@@ -107,6 +107,7 @@ public class InstructionValidationPointerTests {
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(PointerAllocate.create(valueType));
         block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
