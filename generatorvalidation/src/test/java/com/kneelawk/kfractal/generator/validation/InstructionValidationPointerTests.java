@@ -2,9 +2,9 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.constant.NullPointer;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.NullPointer;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class InstructionValidationPointerTests {
     private static Stream<ValueType> notPointerValueTypes() {
         return VariableValueTypesProvider.variableValueTypes().filter(v -> !ValueTypes.isPointer(v));
+    }
+
+    private static Stream<ValueType> invalidPointerValueTypes() {
+        return Stream.of(ValueTypes.VOID, ValueTypes.NULL_FUNCTION, ValueTypes.NULL_POINTER);
     }
 
     private static Stream<ValueType> pointerValueTypes() {
@@ -63,30 +67,29 @@ public class InstructionValidationPointerTests {
                 .map(p -> ImmutableList.of(ValueTypes.POINTER(p.getLeft()), p.getRight()));
     }
 
-    private static Stream<ImmutableList<ValueType>> notOneBoolAndTwoPointerValueTypes() {
+    private static Stream<ImmutableList<ValueType>> notTwoPointerValueTypes() {
         return VariableValueTypesProvider.variableValueTypes()
                 .flatMap(a -> VariableValueTypesProvider.variableValueTypes()
-                        .flatMap(b -> VariableValueTypesProvider.variableValueTypes()
-                                .map(c -> ImmutableList.of(a, b, c))))
-                .filter(l -> !ValueTypes.isBool(l.get(0)) || !ValueTypes.isPointer(l.get(1)) ||
-                        !ValueTypes.isPointer(l.get(2)));
+                        .map(b -> ImmutableList.of(a, b)))
+                .filter(l -> !ValueTypes.isPointer(l.get(0)) || !ValueTypes.isPointer(l.get(1)));
     }
 
-    private static Stream<ImmutableList<ValueType>> oneBoolAndTwoPointerValueTypes() {
+    private static Stream<ImmutableList<ValueType>> twoPointerValueTypes() {
         return VariableValueTypesProvider.variableValueTypes().filter(ValueTypes::isPointer).flatMap(
                 a -> VariableValueTypesProvider.variableValueTypes().filter(ValueTypes::isPointer)
-                        .map(b -> ImmutableList.of(ValueTypes.BOOL, a, b)));
+                        .map(b -> ImmutableList.of(a, b)));
     }
 
     @ParameterizedTest(name = "testIncompatiblePointerAllocateTypes({arguments})")
-    @MethodSource("notPointerValueTypes")
+    @MethodSource("invalidPointerValueTypes")
     void testIncompatiblePointerAllocateTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
-        function.addStatement(PointerAllocate.create(p));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerAllocate.create(valueType));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -96,14 +99,15 @@ public class InstructionValidationPointerTests {
     }
 
     @ParameterizedTest(name = "testCompatiblePointerAllocateTypes({arguments})")
-    @MethodSource("pointerValueTypes")
+    @ArgumentsSource(VariableValueTypesProvider.class)
     void testCompatiblePointerAllocateTypes(ValueType valueType) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
-        function.addStatement(PointerAllocate.create(p));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerAllocate.create(valueType));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -117,9 +121,10 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
-        function.addStatement(PointerFree.create(p));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -133,8 +138,10 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        function.addStatement(PointerFree.create(NullPointer.INSTANCE));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerFree.create(NullPointer.INSTANCE));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -149,9 +156,10 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueType));
-        function.addStatement(PointerFree.create(p));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -160,27 +168,20 @@ public class InstructionValidationPointerTests {
     }
 
     @ParameterizedTest(name = "testIncompatiblePointerGetNotPointerTypes({arguments})")
-    @MethodSource("notSecondPointerValueTypes")
-    void testIncompatiblePointerGetNotPointerTypes(List<ValueType> valueTypes) {
-        assertTwoIncompatibleValueTypes(valueTypes, PointerGet::create);
+    @MethodSource("notPointerValueTypes")
+    void testIncompatiblePointerGetNotPointerTypes(ValueType valueTypes) {
+        assertOneIncompatibleValueType(valueTypes, PointerGet::create);
     }
 
-    @ParameterizedTest(name = "testIncompatiblePointerGetIncompatibleTypes({arguments})")
-    @MethodSource("incompatibleValueAndPointerTypes")
-    void testIncompatiblePointerGetIncompatibleTypes(List<ValueType> valueTypes) {
-        assertTwoIncompatibleValueTypes(valueTypes, PointerGet::create);
-    }
-
-    @ParameterizedTest(name = "testIncompatiblePointerGetNullPointerTypes({arguments})")
-    @ArgumentsSource(VariableValueTypesProvider.class)
-    void testIncompatiblePointerGetNullPointerTypes(ValueType valueType) {
-        assertTwoIncompatibleValueTypes(ImmutableList.of(valueType, ValueTypes.NULL_POINTER), PointerGet::create);
+    @Test
+    void testIncompatiblePointerGetNullPointerTypes() {
+        assertOneIncompatibleValueType(ValueTypes.NULL_POINTER, PointerGet::create);
     }
 
     @ParameterizedTest(name = "testCompatiblePointerGetTypes({arguments})")
-    @MethodSource("compatibleValueAndPointerTypes")
-    void testCompatiblePointerGetTypes(List<ValueType> valueTypes) {
-        assertTwoCompatibleValueTypes(valueTypes, PointerGet::create);
+    @MethodSource("pointerValueTypes")
+    void testCompatiblePointerGetTypes(ValueType valueTypes) {
+        assertOneCompatibleValueType(valueTypes, PointerGet::create);
     }
 
     @ParameterizedTest(name = "testIncompatiblePointerSetNotPointerTypes({arguments})")
@@ -189,10 +190,12 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
-        function.addStatement(PointerSet
-                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(PointerSet
+                .create(createConstant(programBuilder, block, valueTypes.get(0)),
+                        createConstant(programBuilder, block, valueTypes.get(1))));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -202,15 +205,18 @@ public class InstructionValidationPointerTests {
     }
 
     @ParameterizedTest(name = "testIncompatiblePointerSetIncompatibleTypes({arguments})")
-    @MethodSource("incompatiblePointerAndValueTypes")
-    void testIncompatiblePointerSetIncompatibleTypes(List<ValueType> valueTypes) {
+    @ArgumentsSource(IncompatibleValueTypesProvider.class)
+    void testIncompatiblePointerSetIncompatibleTypes(Pair<ValueType, ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
-        function.addStatement(PointerSet
-                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        var p = block.addValue(PointerAllocate.create(valueTypes.getLeft()));
+        block.addValue(PointerSet
+                .create(p, createConstant(programBuilder, block, valueTypes.getRight())));
+        block.addValue(PointerFree.create(p));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -225,9 +231,11 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        function.addStatement(
-                PointerSet.create(NullPointer.INSTANCE, createConstant(programBuilder, function, valueType)));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(
+                PointerSet.create(NullPointer.INSTANCE, createConstant(programBuilder, block, valueType)));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -237,15 +245,17 @@ public class InstructionValidationPointerTests {
     }
 
     @ParameterizedTest(name = "testCompatiblePointerSetTypes({arguments})")
-    @MethodSource("compatiblePointerAndValueTypes")
-    void testCompatiblePointerSetTypes(List<ValueType> valueTypes) {
+    @ArgumentsSource(CompatibleValueTypesProvider.class)
+    void testCompatiblePointerSetTypes(Pair<ValueType, ValueType> valueTypes) {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        var p = function.addLocalVariable(VariableDeclaration.create(valueTypes.get(0)));
-        function.addStatement(PointerSet
-                .create(p, createConstant(programBuilder, function, valueTypes.get(1))));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        var p = block.addValue(PointerAllocate.create(valueTypes.getLeft()));
+        block.addValue(PointerSet
+                .create(p, createConstant(programBuilder, block, valueTypes.getRight())));
+        block.addValue(Return.create(VoidConstant.INSTANCE));
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -254,26 +264,14 @@ public class InstructionValidationPointerTests {
     }
 
     @ParameterizedTest(name = "testIncompatiblePointerIsEqualTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoPointerValueTypes")
+    @MethodSource("notTwoPointerValueTypes")
     void testIncompatiblePointerIsEqualTypes(List<ValueType> valueTypes) {
-        assertThreeIncompatibleValueTypes(valueTypes, PointerIsEqual::create);
+        assertTwoIncompatibleValueTypes(valueTypes, PointerIsEqual::create);
     }
 
     @ParameterizedTest(name = "testCompatiblePointerIsEqualTypes({arguments})")
-    @MethodSource("oneBoolAndTwoPointerValueTypes")
+    @MethodSource("twoPointerValueTypes")
     void testCompatiblePointerIsEqualTypes(List<ValueType> valueTypes) {
-        assertThreeCompatibleValueTypes(valueTypes, PointerIsEqual::create);
-    }
-
-    @ParameterizedTest(name = "testIncompatiblePointerIsNotEqualTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoPointerValueTypes")
-    void testIncompatiblePointerIsNotEqualTypes(List<ValueType> valueTypes) {
-        assertThreeIncompatibleValueTypes(valueTypes, PointerIsNotEqual::create);
-    }
-
-    @ParameterizedTest(name = "testCompatiblePointerIsNotEqualTypes({arguments})")
-    @MethodSource("oneBoolAndTwoPointerValueTypes")
-    void testCompatiblePointerIsNotEqualTypes(List<ValueType> valueTypes) {
-        assertThreeCompatibleValueTypes(valueTypes, PointerIsNotEqual::create);
+        assertTwoCompatibleValueTypes(valueTypes, PointerIsEqual::create);
     }
 }

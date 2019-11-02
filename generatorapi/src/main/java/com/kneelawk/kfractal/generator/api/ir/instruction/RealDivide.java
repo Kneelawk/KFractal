@@ -1,117 +1,97 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * RealDivide - Instruction. Divides the second to last argument by the last argument and stores the result in the
- * variable referenced by the first argument.
+ * RealDivide - Instruction. Divides the first argument by the second argument.
  * <p>
- * RealDivide(Real quotient, Real dividend, Real divisor)
+ * RealDivide(Real dividend, Real divisor)
  */
-public class RealDivide implements IInstruction {
-    private IInstructionOutput quotient;
-    private IInstructionInput dividend;
-    private IInstructionInput divisor;
+public class RealDivide implements IProceduralValue {
+    private IProceduralValue dividend;
+    private IProceduralValue divisor;
 
-    private RealDivide(IInstructionOutput quotient,
-                       IInstructionInput dividend,
-                       IInstructionInput divisor) {
-        this.quotient = quotient;
+    private RealDivide(IProceduralValue dividend, IProceduralValue divisor) {
         this.dividend = dividend;
         this.divisor = divisor;
     }
 
-    public IInstructionOutput getQuotient() {
-        return quotient;
-    }
-
-    public IInstructionInput getDividend() {
+    public IProceduralValue getDividend() {
         return dividend;
     }
 
-    public IInstructionInput getDivisor() {
+    public IProceduralValue getDivisor() {
         return divisor;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealDivide(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealDivide(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("quotient", quotient)
                 .append("dividend", dividend)
                 .append("divisor", divisor)
                 .toString();
     }
 
-    public static RealDivide create(IInstructionOutput quotient,
-                                    IInstructionInput dividend,
-                                    IInstructionInput divisor) {
-        if (quotient == null)
-            throw new NullPointerException("Quotient cannot be null");
+    public static RealDivide create(IProceduralValue dividend,
+                                    IProceduralValue divisor) {
         if (dividend == null)
             throw new NullPointerException("Dividend cannot be null");
         if (divisor == null)
             throw new NullPointerException("Divisor cannot be null");
-        return new RealDivide(quotient, dividend, divisor);
+        return new RealDivide(dividend, divisor);
     }
 
     public static class Builder {
-        private IInstructionOutput quotient;
-        private IInstructionInput dividend;
-        private IInstructionInput divisor;
+        private IProceduralValue dividend;
+        private IProceduralValue divisor;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput quotient,
-                       IInstructionInput dividend,
-                       IInstructionInput divisor) {
-            this.quotient = quotient;
+        public Builder(IProceduralValue dividend,
+                       IProceduralValue divisor) {
             this.dividend = dividend;
             this.divisor = divisor;
         }
 
         public RealDivide build() {
-            if (quotient == null)
-                throw new IllegalStateException("No quotient specified");
             if (dividend == null)
                 throw new IllegalStateException("No dividend specified");
             if (divisor == null)
                 throw new IllegalStateException("No divisor specified");
-            return new RealDivide(quotient, dividend, divisor);
+            return new RealDivide(dividend, divisor);
         }
 
-        public IInstructionOutput getQuotient() {
-            return quotient;
-        }
-
-        public Builder setQuotient(IInstructionOutput quotient) {
-            this.quotient = quotient;
-            return this;
-        }
-
-        public IInstructionInput getDividend() {
+        public IProceduralValue getDividend() {
             return dividend;
         }
 
-        public Builder setDividend(IInstructionInput dividend) {
+        public Builder setDividend(IProceduralValue dividend) {
             this.dividend = dividend;
             return this;
         }
 
-        public IInstructionInput getDivisor() {
+        public IProceduralValue getDivisor() {
             return divisor;
         }
 
-        public Builder setDivisor(IInstructionInput divisor) {
+        public Builder setDivisor(IProceduralValue divisor) {
             this.divisor = divisor;
             return this;
         }

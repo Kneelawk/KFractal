@@ -13,12 +13,13 @@ import java.util.stream.Stream;
 
 import static com.kneelawk.kfractal.generator.validation.ValueTypeAsserts.*;
 
-public class InstructionValidationIntTests {
+class InstructionValidationIntTests {
     private static final List<ValueType> twoIntValueTypes = ImmutableList.of(ValueTypes.INT, ValueTypes.INT);
-    private static final List<ValueType> oneBoolAndTwoIntValueTypes =
-            ImmutableList.of(ValueTypes.BOOL, ValueTypes.INT, ValueTypes.INT);
-    private static final List<ValueType> threeIntValueTypes =
-            ImmutableList.of(ValueTypes.INT, ValueTypes.INT, ValueTypes.INT);
+
+    private static Stream<ValueType> notOneIntValueType() {
+        return VariableValueTypesProvider.variableValueTypes()
+                .filter(l -> !l.equals(ValueTypes.INT));
+    }
 
     private static Stream<ImmutableList<ValueType>> notTwoIntValueTypes() {
         return VariableValueTypesProvider.variableValueTypes()
@@ -27,173 +28,146 @@ public class InstructionValidationIntTests {
                 .filter(l -> !l.equals(twoIntValueTypes));
     }
 
-    private static Stream<ImmutableList<ValueType>> notOneBoolAndTwoIntValueTypes() {
-        return VariableValueTypesProvider.variableValueTypes()
-                .flatMap(a -> VariableValueTypesProvider.variableValueTypes()
-                        .flatMap(b -> VariableValueTypesProvider.variableValueTypes()
-                                .map(c -> ImmutableList.of(a, b, c))))
-                .filter(l -> !l.equals(oneBoolAndTwoIntValueTypes));
-    }
-
-    private static Stream<ImmutableList<ValueType>> notThreeIntValueTypes() {
-        return VariableValueTypesProvider.variableValueTypes()
-                .flatMap(a -> VariableValueTypesProvider.variableValueTypes()
-                        .flatMap(b -> VariableValueTypesProvider.variableValueTypes()
-                                .map(c -> ImmutableList.of(a, b, c))))
-                .filter(l -> !l.equals(threeIntValueTypes));
-    }
-
     @ParameterizedTest(name = "testIncompatibleIntAddTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntAddTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntAdd::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntAdd::create);
     }
 
     @Test
     void testCompatibleIntAddTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntAdd::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntAdd::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntSubtractTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntSubtractTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntSubtract::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntSubtract::create);
     }
 
     @Test
     void testCompatibleIntSubtractTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntSubtract::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntSubtract::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntMultiplyTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntMultiplyTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntMultiply::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntMultiply::create);
     }
 
     @Test
     void testCompatibleIntMultiplyTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntMultiply::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntMultiply::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntDivideTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntDivideTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntDivide::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntDivide::create);
     }
 
     @Test
     void testCompatibleIntDivideTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntDivide::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntDivide::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntModuloTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntModuloTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntModulo::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntModulo::create);
     }
 
     @Test
     void testCompatibleIntModuloTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntModulo::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntModulo::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntPowerTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntPowerTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntPower::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntPower::create);
     }
 
     @Test
     void testCompatibleIntPowerTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntPower::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntPower::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntNotTypes({arguments})")
-    @MethodSource("notTwoIntValueTypes")
-    void testIncompatibleIntNotTypes(List<ValueType> variableTypes) {
-        assertTwoIncompatibleValueTypes(variableTypes, IntNot::create);
+    @MethodSource("notOneIntValueType")
+    void testIncompatibleIntNotTypes(ValueType variableTypes) {
+        assertOneIncompatibleValueType(variableTypes, IntNot::create);
     }
 
     @Test
     void testCompatibleIntNotTypes() {
-        assertTwoCompatibleValueTypes(twoIntValueTypes, IntNot::create);
+        assertOneCompatibleValueType(ValueTypes.INT, IntNot::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntAndTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntAndTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntAnd::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntAnd::create);
     }
 
     @Test
     void testCompatibleIntAndTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntAnd::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntAnd::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntOrTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntOrTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntOr::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntOr::create);
     }
 
     @Test
     void testCompatibleIntOrTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntOr::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntOr::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntXorTypes({arguments})")
-    @MethodSource("notThreeIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntXorTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntXor::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntXor::create);
     }
 
     @Test
     void testCompatibleIntXorTypes() {
-        assertThreeCompatibleValueTypes(threeIntValueTypes, IntXor::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntXor::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntIsEqualTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntIsEqualTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntIsEqual::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntIsEqual::create);
     }
 
     @Test
     void testCompatibleIntIsEqualTypes() {
-        assertThreeCompatibleValueTypes(oneBoolAndTwoIntValueTypes, IntIsEqual::create);
-    }
-
-    @ParameterizedTest(name = "testIncompatibleIntIsNotEqualTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoIntValueTypes")
-    void testIncompatibleIntIsNotEqualTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntIsNotEqual::create);
-    }
-
-    @Test
-    void testCompatibleIntIsNotEqualTypes() {
-        assertThreeCompatibleValueTypes(oneBoolAndTwoIntValueTypes, IntIsNotEqual::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntIsEqual::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntIsGreaterTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntIsGreaterTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntIsGreater::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntIsGreater::create);
     }
 
     @Test
     void testCompatibleIntIsGreaterTypes() {
-        assertThreeCompatibleValueTypes(oneBoolAndTwoIntValueTypes, IntIsGreater::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntIsGreater::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleIntIsGreaterOrEqualTypes({arguments})")
-    @MethodSource("notOneBoolAndTwoIntValueTypes")
+    @MethodSource("notTwoIntValueTypes")
     void testIncompatibleIntIsGreaterOrEqualTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, IntIsGreaterOrEqual::create);
+        assertTwoIncompatibleValueTypes(variableTypes, IntIsGreaterOrEqual::create);
     }
 
     @Test
     void testCompatibleIntIsGreaterOrEqualTypes() {
-        assertThreeCompatibleValueTypes(oneBoolAndTwoIntValueTypes, IntIsGreaterOrEqual::create);
+        assertTwoCompatibleValueTypes(twoIntValueTypes, IntIsGreaterOrEqual::create);
     }
 }

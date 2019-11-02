@@ -3,7 +3,6 @@ package com.kneelawk.kfractal.generator.api.ir;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VariableReference;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -17,16 +16,16 @@ import java.util.stream.Collectors;
  * Created by Kneelawk on 5/25/19.
  */
 public class Program {
-    private List<VariableDeclaration> globalVariables;
+    private List<GlobalDeclaration> globalVariables;
     private List<FunctionDefinition> functions;
 
-    private Program(List<VariableDeclaration> globalVariables,
+    private Program(List<GlobalDeclaration> globalVariables,
                     List<FunctionDefinition> functions) {
         this.globalVariables = globalVariables;
         this.functions = functions;
     }
 
-    public List<VariableDeclaration> getGlobalVariables() {
+    public List<GlobalDeclaration> getGlobalVariables() {
         return globalVariables;
     }
 
@@ -43,19 +42,19 @@ public class Program {
     }
 
     public static Program create(
-            List<VariableDeclaration> globalVariables,
+            List<GlobalDeclaration> globalVariables,
             List<FunctionDefinition> functions) {
         return new Program(ImmutableList.copyOf(globalVariables), ImmutableList.copyOf(functions));
     }
 
     public static class Builder {
-        private List<Supplier<VariableDeclaration>> globalVariables = Lists.newArrayList();
+        private List<Supplier<GlobalDeclaration>> globalVariables = Lists.newArrayList();
         private List<Supplier<FunctionDefinition>> functions = Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(Collection<Supplier<VariableDeclaration>> globalVariables,
+        public Builder(Collection<Supplier<GlobalDeclaration>> globalVariables,
                        Collection<Supplier<FunctionDefinition>> functions) {
             this.globalVariables.addAll(globalVariables);
             this.functions.addAll(functions);
@@ -66,12 +65,8 @@ public class Program {
                     functions.stream().map(Supplier::get).collect(ImmutableList.toImmutableList()));
         }
 
-        public List<Supplier<VariableDeclaration>> getGlobalVariables() {
+        public List<Supplier<GlobalDeclaration>> getGlobalVariables() {
             return globalVariables;
-        }
-
-        public VariableReference getNextGlobalVariableReference() {
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size());
         }
 
         public int getNextGlobalVariableIndex() {
@@ -79,46 +74,46 @@ public class Program {
         }
 
         public Builder setGlobalVariableSuppliers(
-                Collection<Supplier<VariableDeclaration>> globalVariables) {
+                Collection<Supplier<GlobalDeclaration>> globalVariables) {
             this.globalVariables.clear();
             this.globalVariables.addAll(globalVariables);
             return this;
         }
 
-        public Builder setGlobalVariables(Collection<VariableDeclaration> globalVariables) {
+        public Builder setGlobalVariables(Collection<GlobalDeclaration> globalVariables) {
             this.globalVariables.clear();
             this.globalVariables
                     .addAll(globalVariables.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public VariableReference addGlobalVariable(Supplier<VariableDeclaration> declaration) {
+        public int addGlobalVariable(Supplier<GlobalDeclaration> declaration) {
             globalVariables.add(declaration);
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+            return globalVariables.size() - 1;
         }
 
-        public VariableReference addGlobalVariable(VariableDeclaration declaration) {
+        public int addGlobalVariable(GlobalDeclaration declaration) {
             globalVariables.add(Suppliers.ofInstance(declaration));
-            return VariableReference.create(Scope.GLOBAL, globalVariables.size() - 1);
+            return globalVariables.size() - 1;
         }
 
         @SafeVarargs
-        public final Builder addGlobalVariables(Supplier<VariableDeclaration>... declarations) {
+        public final Builder addGlobalVariables(Supplier<GlobalDeclaration>... declarations) {
             globalVariables.addAll(Arrays.asList(declarations));
             return this;
         }
 
-        public final Builder addGlobalVariables(VariableDeclaration... declarations) {
+        public final Builder addGlobalVariables(GlobalDeclaration... declarations) {
             globalVariables.addAll(Arrays.stream(declarations).map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }
 
-        public Builder addGlobalVariableSuppliers(Collection<Supplier<VariableDeclaration>> declarations) {
+        public Builder addGlobalVariableSuppliers(Collection<Supplier<GlobalDeclaration>> declarations) {
             globalVariables.addAll(declarations);
             return this;
         }
 
-        public Builder addGlobalVariables(Collection<VariableDeclaration> declarations) {
+        public Builder addGlobalVariables(Collection<GlobalDeclaration> declarations) {
             globalVariables.addAll(declarations.stream().map(Suppliers::ofInstance).collect(Collectors.toList()));
             return this;
         }

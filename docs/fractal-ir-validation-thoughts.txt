@@ -1,0 +1,42 @@
+The issue with the validation system is that it needs to be able to navigate a node graph.
+
+My plan is to navigate it using a depth-first search, with a set to keep track of which nodes have been encountered
+before so as to avoid loops. It makes sense to keep track of individual nodes instead of just indices within basic
+blocks because, due to the nature of java objects where one instance can be shared between parents, it is possible to
+encounter an already encountered node inside another node's graph.
+
+I am currently using a container similar to optional to indicate encountering a node that's already been visited.
+
+Question: How should I be handling state? In visitors, should they create child visitors with new immutable sets of
+nodes visited? Should they return complete result objects instead of indicating parts of their situation through state?
+
+Stateless:
+    Pros:
+        Thread-safe
+        Clean
+    Cons:
+        Slower
+        Requires creating new objects for every new state.
+Stated:
+    Pros:
+        Fast
+        Memory efficient
+    Cons:
+        Not Thread-safe
+        Messy (hard to make sure state does not get shared between objects that it shouldn't be shared between)
+
+The stateless visitor path seems more enticing at the moment simply because there is less risk of state-use collisions.
+
+ISSUE: How would I type-check a program with a looping type dependency?
+    If the current system of discarding any results of nodes that have already been visited and backtracking until the
+    visitor reaches a node that has other sources supplying it's type would not be able to detect any problems with a
+    type dependency loop.
+    For example: a Phi instruction is at the beginning of a basic block taking a reference to a PointerGet as its first
+    potential input and an argument as its second, and the reference PointerGet instruction references the Phi
+    instruction as its input. When the Phi was visited, it would ask for the type of the PointerGet instruction which in
+    turn would ask for the type of the Phi instruction again, resulting in a NODE_ALREADY_TRAVERSED TypeLookupResult.
+    This would then percolate back to the original lookup of the Phi's type and the fact that the PointerGet had a type
+    incompatible with that of the Phi would be ignored.
+    One potential way around this would be to have two phases (possibly lazily calculated), the first phase calculates
+    the type of each instruction without doing any other verification and raises an error if it was not possible to
+    calculate a node's type (e.g. looping type dependency).

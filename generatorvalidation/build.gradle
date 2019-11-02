@@ -3,3 +3,9 @@ dependencies {
     implementation project(':util')
     implementation project(':generatorutil')
 }
+
+test {
+    moduleOptions {
+        addOpens = ['com.kneelawk.kfractal.generator.api/com.kneelawk.kfractal.generator.api.ir.instruction': 'com.kneelawk.kfractal.generator.validation']
+    }
+}

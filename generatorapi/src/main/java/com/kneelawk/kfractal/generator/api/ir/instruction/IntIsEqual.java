@@ -1,116 +1,97 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntIsEqual - Instruction. Checks to see if the last two arguments have the same integer value and stores the boolean
- * result in the variable referenced by the first argument.
+ * IntIsEqual - Instruction. Checks to see if the two arguments have the same integer value.
  * <p>
- * IntIsEqual(Bool result, Int left, Int right)
+ * IntIsEqual(Int left, Int right)
  */
-public class IntIsEqual implements IInstruction {
-    private IInstructionOutput result;
-    private IInstructionInput left;
-    private IInstructionInput right;
+public class IntIsEqual implements IProceduralValue {
+    private IProceduralValue left;
+    private IProceduralValue right;
 
-    private IntIsEqual(IInstructionOutput result, IInstructionInput left,
-                       IInstructionInput right) {
-        this.result = result;
+    private IntIsEqual(IProceduralValue left, IProceduralValue right) {
         this.left = left;
         this.right = right;
     }
 
-    public IInstructionOutput getResult() {
-        return result;
-    }
-
-    public IInstructionInput getLeft() {
+    public IProceduralValue getLeft() {
         return left;
     }
 
-    public IInstructionInput getRight() {
+    public IProceduralValue getRight() {
         return right;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitIntIsEqual(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitIntIsEqual(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("result", result)
                 .append("left", left)
                 .append("right", right)
                 .toString();
     }
 
-    public static IntIsEqual create(IInstructionOutput result,
-                                    IInstructionInput left,
-                                    IInstructionInput right) {
-        if (result == null)
-            throw new NullPointerException("Result cannot be null");
+    public static IntIsEqual create(IProceduralValue left,
+                                    IProceduralValue right) {
         if (left == null)
             throw new NullPointerException("Left cannot be null");
         if (right == null)
             throw new NullPointerException("Right cannot be null");
-        return new IntIsEqual(result, left, right);
+        return new IntIsEqual(left, right);
     }
 
     public static class Builder {
-        private IInstructionOutput result;
-        private IInstructionInput left;
-        private IInstructionInput right;
+        private IProceduralValue left;
+        private IProceduralValue right;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput result,
-                       IInstructionInput left,
-                       IInstructionInput right) {
-            this.result = result;
+        public Builder(IProceduralValue left,
+                       IProceduralValue right) {
             this.left = left;
             this.right = right;
         }
 
         public IntIsEqual build() {
-            if (result == null)
-                throw new IllegalStateException("No result specified");
             if (left == null)
                 throw new IllegalStateException("No left specified");
             if (right == null)
                 throw new IllegalStateException("No right specified");
-            return new IntIsEqual(result, left, right);
+            return new IntIsEqual(left, right);
         }
 
-        public IInstructionOutput getResult() {
-            return result;
-        }
-
-        public Builder setResult(IInstructionOutput result) {
-            this.result = result;
-            return this;
-        }
-
-        public IInstructionInput getLeft() {
+        public IProceduralValue getLeft() {
             return left;
         }
 
-        public Builder setLeft(IInstructionInput left) {
+        public Builder setLeft(IProceduralValue left) {
             this.left = left;
             return this;
         }
 
-        public IInstructionInput getRight() {
+        public IProceduralValue getRight() {
             return right;
         }
 
-        public Builder setRight(IInstructionInput right) {
+        public Builder setRight(IProceduralValue right) {
             this.right = right;
             return this;
         }
