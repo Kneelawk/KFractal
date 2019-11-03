@@ -5,18 +5,18 @@ import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 public class ProceduralValueVisitorResult {
     private final boolean terminated;
     private final BlockTerminationType terminationType;
-    private final IEngineValue valueType;
-    private final IEngineValue returnType;
+    private final IEngineValue resultValue;
+    private final IEngineValue returnValue;
     private final int jumpBlockIndex;
 
     private ProceduralValueVisitorResult(boolean terminated,
-                                        BlockTerminationType terminationType,
-                                        IEngineValue valueType,
-                                        IEngineValue returnType, int jumpBlockIndex) {
+                                         BlockTerminationType terminationType,
+                                         IEngineValue resultValue,
+                                         IEngineValue returnValue, int jumpBlockIndex) {
         this.terminated = terminated;
         this.terminationType = terminationType;
-        this.valueType = valueType;
-        this.returnType = returnType;
+        this.resultValue = resultValue;
+        this.returnValue = returnValue;
         this.jumpBlockIndex = jumpBlockIndex;
     }
 
@@ -28,12 +28,12 @@ public class ProceduralValueVisitorResult {
         return terminationType;
     }
 
-    public IEngineValue getValueType() {
-        return valueType;
+    public IEngineValue getResultValue() {
+        return resultValue;
     }
 
-    public IEngineValue getReturnType() {
-        return returnType;
+    public IEngineValue getReturnValue() {
+        return returnValue;
     }
 
     public int getJumpBlockIndex() {
@@ -50,8 +50,8 @@ public class ProceduralValueVisitorResult {
     public static class Builder {
         private boolean terminated;
         private BlockTerminationType terminationType = null;
-        private IEngineValue valueType;
-        private IEngineValue returnType = null;
+        private IEngineValue resultValue;
+        private IEngineValue returnValue = null;
         private int jumpBlockIndex = -1;
 
         public Builder() {
@@ -59,19 +59,19 @@ public class ProceduralValueVisitorResult {
 
         public Builder(boolean terminated,
                        BlockTerminationType terminationType,
-                       IEngineValue valueType,
-                       IEngineValue returnType, int jumpBlockIndex) {
+                       IEngineValue resultValue,
+                       IEngineValue returnValue, int jumpBlockIndex) {
             this.terminated = terminated;
             this.terminationType = terminationType;
-            this.valueType = valueType;
-            this.returnType = returnType;
+            this.resultValue = resultValue;
+            this.returnValue = returnValue;
             this.jumpBlockIndex = jumpBlockIndex;
         }
 
         public ProceduralValueVisitorResult build() {
-            if (valueType == null)
+            if (resultValue == null)
                 throw new IllegalStateException("No valueType specified");
-            return new ProceduralValueVisitorResult(terminated, terminationType, valueType, returnType, jumpBlockIndex);
+            return new ProceduralValueVisitorResult(terminated, terminationType, resultValue, returnValue, jumpBlockIndex);
         }
 
         public boolean isTerminated() {
@@ -93,21 +93,21 @@ public class ProceduralValueVisitorResult {
             return this;
         }
 
-        public IEngineValue getValueType() {
-            return valueType;
+        public IEngineValue getResultValue() {
+            return resultValue;
         }
 
-        public Builder setValueType(IEngineValue valueType) {
-            this.valueType = valueType;
+        public Builder setResultValue(IEngineValue resultValue) {
+            this.resultValue = resultValue;
             return this;
         }
 
-        public IEngineValue getReturnType() {
-            return returnType;
+        public IEngineValue getReturnValue() {
+            return returnValue;
         }
 
-        public Builder setReturnType(IEngineValue returnType) {
-            this.returnType = returnType;
+        public Builder setReturnValue(IEngineValue returnValue) {
+            this.returnValue = returnValue;
             return this;
         }
 

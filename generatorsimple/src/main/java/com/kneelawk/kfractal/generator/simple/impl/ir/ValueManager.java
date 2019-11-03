@@ -39,7 +39,7 @@ public class ValueManager {
             ProceduralValueVisitorResult result = generateValue(proceduralValue, proceduralValueVisitorContext);
             if (result.isTerminated()) {
                 return new BasicBlockResult.Builder().setTerminationType(result.getTerminationType())
-                        .setReturnValue(result.getReturnType()).setJumpBlockIndex(result.getJumpBlockIndex()).build();
+                        .setReturnValue(result.getReturnValue()).setJumpBlockIndex(result.getJumpBlockIndex()).build();
             }
         }
 
@@ -83,7 +83,9 @@ public class ValueManager {
 
     private ProceduralValueVisitorResult generateValue(IProceduralValue value, ProceduralValueVisitorContext context)
             throws FractalException {
-        return value.accept(new ProceduralValueVisitor(this, context));
+        ProceduralValueVisitorResult result = value.accept(new ProceduralValueVisitor(this, context));
+        values.put(value, result.getResultValue());
+        return result;
     }
 
     private void clearValues(Iterable<? extends IValue> values) {

@@ -36,7 +36,7 @@ public class ProceduralValueVisitor implements IProceduralValueVisitor<Procedura
         if (result.isTerminated()) {
             throw new FractalEngineException("Encountered an unexpected terminating value");
         }
-        return result.getValueType();
+        return result.getResultValue();
     }
 
     @Override
@@ -123,8 +123,8 @@ public class ProceduralValueVisitor implements IProceduralValueVisitor<Procedura
     @Override
     public ProceduralValueVisitorResult visitReturn(Return aReturn) throws FractalException {
         IEngineValue returnValue = shouldNotTerminate(valueManager.getOrGenerateValue(aReturn.getReturnValue(), context));
-        return new ProceduralValueVisitorResult.Builder().setTerminated(true)
-                .setTerminationType(BlockTerminationType.RETURNED).setReturnType(returnValue).build();
+        return new ProceduralValueVisitorResult.Builder().setResultValue(SimpleVoidValue.INSTANCE).setTerminated(true)
+                .setTerminationType(BlockTerminationType.RETURNED).setReturnValue(returnValue).build();
     }
 
     @Override
@@ -522,13 +522,13 @@ public class ProceduralValueVisitor implements IProceduralValueVisitor<Procedura
         } else {
             blockIndex = branchConditional.getFalseBlockIndex();
         }
-        return new ProceduralValueVisitorResult.Builder().setTerminated(true)
+        return new ProceduralValueVisitorResult.Builder().setResultValue(SimpleVoidValue.INSTANCE).setTerminated(true)
                 .setTerminationType(BlockTerminationType.JUMPED).setJumpBlockIndex(blockIndex).build();
     }
 
     @Override
     public ProceduralValueVisitorResult visitBranch(Branch branch) {
-        return new ProceduralValueVisitorResult.Builder().setTerminated(true)
+        return new ProceduralValueVisitorResult.Builder().setResultValue(SimpleVoidValue.INSTANCE).setTerminated(true)
                 .setTerminationType(BlockTerminationType.JUMPED).setJumpBlockIndex(branch.getBlockIndex()).build();
     }
 }
