@@ -88,9 +88,9 @@ public class ValueManager {
         return result;
     }
 
-    private void clearValues(Iterable<? extends IValue> values) {
+    private void clearValues(Iterable<? extends IValue> values) throws FractalException {
         for (IValue value : values) {
-            this.values.remove(value);
+            value.accept(new ValueScrubbingVisitor(this.values));
         }
     }
 }

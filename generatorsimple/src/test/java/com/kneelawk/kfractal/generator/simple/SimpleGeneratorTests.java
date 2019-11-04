@@ -88,15 +88,15 @@ class SimpleGeneratorTests {
         var z = loopCondition.addPhi(zBuilder::build);
 
         loopCondition.addValue(BranchConditional
-                .create(BoolNot.create(IntIsGreater.create(IntConstant.create(500), iterations)), ret.getBlockIndex(),
-                        loopArithmetic.getBlockIndex()));
+                .create(IntIsGreater.create(IntConstant.create(500), iterations), loopArithmetic.getBlockIndex(),
+                        ret.getBlockIndex()));
 
         var z1 = loopArithmetic.addValue(ComplexMultiply.create(z, z));
         var z2 = loopArithmetic.addValue(ComplexMultiply.create(z1, z1));
         var res = loopArithmetic.addValue(ComplexAdd.create(ComplexMultiply.create(z2, z), c));
         loopArithmetic.addValue(BranchConditional
-                .create(RealIsGreater.create(ComplexModulo.create(res), RealConstant.create(4)),
-                        loopIncrement.getBlockIndex(), ret.getBlockIndex()));
+                .create(RealIsGreater.create(ComplexModulo.create(res), RealConstant.create(4)), ret.getBlockIndex(),
+                        loopIncrement.getBlockIndex()));
 
         var iterationsIncrement = loopIncrement.addValue(IntAdd.create(iterations, IntConstant.create(1)));
         loopIncrement.addValue(Branch.create(loopCondition.getBlockIndex()));
