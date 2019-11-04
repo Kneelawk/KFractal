@@ -1,9 +1,7 @@
 package com.kneelawk.kfractal.generator.validation;
 
-import com.kneelawk.kfractal.generator.api.ir.instruction.IInstruction;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
 
 public interface InstructionCreator2 {
-    IInstruction create(IInstructionOutput output, IInstructionInput input);
+    IProceduralValue create(IProceduralValue left, IProceduralValue right);
 }

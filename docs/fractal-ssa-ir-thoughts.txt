@@ -1,0 +1,409 @@
+Programs contain functions and global variables.
+Every function is referenced by its index within the program.
+Every global variable is referenced by the global scope and its index within the global scope.
+
+Every variable MUST be initialized with a value.
+
+Functions contain:
+ * A return type
+ * Argument list
+ * BasicBlock list
+
+Every argument is referenced by the argument list scope and its index within the argument list.
+Every basic block is referenced by its index within the BasicBlock list.
+
+BasicBlocks contain:
+ * Instruction list
+
+Every BasicBlock must end with a no-return control-flow instruction.
+No-return control-flow instructions include:
+ * Return (returns from the current function)
+ * Jump (unconditionally jumps to another BasicBlock within this function)
+ * ConditionalJump (conditionally jumps to another BasicBlock within this function)
+
+All instructions in a BasicBlock's list should be kept in that order.
+All instructions not in a BasicBlock's list (referenced only as values used in other instructions) could be performed in
+any order.
+
+When walking an instruction graph, care should be taken to recognize duplicate uses of an instruction, allowing its value
+to be saved and re-used.
+
+The Instructions that have a result value will also implement the Value interface.
+Constants and VariableReferences will also implement the Value interface.
+
+How would I implement Phi instructions?
+What a Phi instruction supposed to do is merging values from other BasicBlocks into a value that can be used in this
+BasicBlock.
+Should Phi even be instruction like other instructions?
+Not if possible.
+I actually don't see the problem.
+CURRENT ISSUE: I do, the problem is when you're building a loop, how would you have a phi instruction referencing something that
+references the phi instruction?
+
+Maybe every instruction should have a reference to the BasicBlock it's in?
+No, that shouldn't be necessary, because everything referenced by an instruction should be in the same BasicBlock as that
+instruction and everything referenced by a phi instruction should be from a different block (which block is specified in
+the phi instruction).
+No Wait. What if an instruction referenced a value from another block that doesn't need to be merged with anything (
+therefore no phi instruction)?
+Does that prove that an instruction needs to know which BasicBlock it's in?
+Not necessarily. If the instruction was only created in that other block then it isn't necessary for it to be there.
+Unless it has side-effects. But if it has side-effects, it should already either have already been traversed when going
+through that BasicBlock (either as a top-level instruction or as a dependency). Therefore it should already be
+remembered by anything doing the traversing.
+
+IDEA #1:
+Instructions do not take other instructions as inputs. Rather, they take references to indices within their same BasicBlock.
+These indices will be returned by a basic block from adding an instruction.
+A Phi instruction takes both a basic block position reference and a basic block reference.
+
+PROBLEM: This doesn't work if an instruction is referencing another instruction in another BasicBlock who's value is not
+influenced by control-flow and therefore does not need to be passed through a Phi instruction.
+    This problem would be easily fixed by having every reference also contain information about the basic block it came from.
+
+Another issue is that this form of code can get rather bloated and unwieldy.
+
+IDEA #2:
+Instructions directly take other instructions as inputs. This solves some of the referencing issues. If an instruction was
+used in another BasicBlock, it will be remembered and therefore can have its result stored. Otherwise, it never needed to
+be in that basic block in the first place.
+
+The issue is that, due to the program structure's immutability, there is no way to have instruction variable use loops, even
+when they should be there (like when using Phi instructions in control-flow loops).
+    One way around this might be to have a special kind of reference that would be to a value that has not been defined yet.
+    This kind of reference would only be accepted by Phi instructions.
+
+    In fact, it might be a good idea to have Phi instructions only accept value or instruction references. There would be
+    two kinds of value references, ones that have already been defined and ones that haven't.
+
+Another issue is that because all instructions are encountered lazily, there is a chance that an instruction could end up
+in a less-optimal position than its intent.
+    This is not an issue because if an instruction were intended to be in a specific BasicBlock, it would be explicitly added
+    to that BasicBlock and therefore remembered when the program structure is being walked.
+
+IDEA #3:
+A hybrid approach.
+It might make sense for instructions to be able to take references to other instructions as arguments instead of only taking
+other instructions directly. This would partly be for the sake of compactness of serialized forms.
+
+Instructions can take other instructions directly as input values or indirectly as references. Phi instructions would only
+accept references. A normal instruction can only reference instructions before it in its current BasicBlock or in previous
+BasicBlocks. Phi instruction can reference instructions from any BasicBlock and from any position in a basic block.
+
+Here is a simple program using the ssa ir system:
+Program(
+[], // global variables (must be initialized)
+[
+    FunctionDefinition(
+        COMPLEX, // return type
+        [], // context arguments
+        [ // arguments
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [ // basic blocks
+            // the first basic block is considered the entry
+            BasicBlock([ // instructions in this basic block
+                Return(ComplexAdd(
+                    ComplexMultiply(ValueReference(ARGUMENTS, 0), ValueReference(ARGUMENTS, 0)),
+                    ValueReference(ARGUMENTS, 1)
+                ))
+            ])
+        ]
+    )
+]
+)
+
+Here is a slightly more complex one:
+Program(
+[],
+[
+    FunctionDefinition(
+        COMPLEX,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                ComplexMultiply(ValueReference(ARGUMENTS, 0), ValueReference(ARGUMENTS, 0)),
+                Return(ComplexAdd(
+                    ComplexAdd(
+                        InstructionReference(0, 0), // (index of the basic block and index within the basic block)
+                        FunctionCall(FunctionContext("cos", []), [
+                            InstructionReference(0, 0)
+                        ])
+                    ),
+                    ValueReference(ARGUMENTS, 1)
+                ))
+            ])
+        ]
+    )
+]
+)
+
+Here is a program that makes use of the phi instruction:
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                Phi([
+                    PhiBranch(IntConstant(0), -1),
+                    PhiBranch(InstructionReference(0, 7), 0)
+                ]),
+                Phi([
+                    PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                    PhiBranch(InstructionReference(0, 5), 0)
+                ]),
+                ConditionalJump(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, 0))), 1),
+                ComplexMultiply(InstructionReference(0, 1), InstructionReference(0, 1)),
+                ComplexMultiply(InstructionReference(0, 3), InstructionReference(0, 3)),
+                ComplexAdd(ComplexMultiply(InstructionReference(0, 4), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
+                ConditionalJump(RealIsGreater(ComplexModulo(InstructionReference(0, 5)), RealConstant(4)), 1),
+                IntAdd(InstructionReference(0, 0), IntConstant(1)),
+                Jump(0)
+            ]),
+            BasicBlock([
+                Return(InstructionReference(0, 0))
+            ])
+        ]
+    )
+]
+)
+
+This would have a java byte code representation similar to:
+class com.kneelawk.kfractal.generator.jvm.generated.Generated$yz3wmbDjgps {
+  public Generated$yz3wmbDjgps();
+    Code:
+       0: aload_0
+       1: invokespecial #1 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public int func$0(org.apache.commons.math3.complex.Complex, org.apache.commons.math3.complex.Complex);
+    Code:
+       0: aload_1
+       1: bipush 0
+       3: istore_3
+       4: astore 4
+       6: sipush 500
+       9: iload_3
+      10: if_icmple 64
+      13: aload 4
+      15: aload 4
+      17: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      20: astore 5
+      22: aload 5
+      24: aload 5
+      26: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      29: astore 5
+      31: aload 5
+      33: aload 5
+      35: invokevirtual #2 // Method com/apache/commons/math3/complex/Complex.multiply:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      38: aload_2
+      39: invokevirtual #3 // Method com/apache/commons/math3/complex/Complex.add:(Lcom/apache/commons/math3/complex/Complex;)Lcom/apache/commons/math3/complex/Complex;
+      42: astore 4
+      44: aload 4
+      46: invokevirtual #4 // Method com/apache/commons/math3/complex/Complex.abs:()Lcom/apache/commons/math3/complex/Complex;
+      49: ldc2_w #5 // double 4.0
+      52: dcmpg
+      53: ifgt 64
+      56: iload_3
+      57: bipush 1
+      59: iadd
+      60: istore_3
+      61: goto 6
+      64: iload_3
+      65: ireturn
+}
+
+In the java bytecode context, it currently seems best if every phi instruction is assigned a local variable index. Then anything
+that the phi instruction draws from would simply set the value of that local variable before jumping to that phi instructions's
+basic block.
+
+It also seems like every instruction that is referenced by two other instructions should have its own local variable index,
+simply because it is not always possible to simply push things on to the stack in the right order if the fractal ir structure
+doesn't guarantee instructions will be in the right order. Some generation-time optimisation might be necessary.
+
+The previous fractal ir program might have an LLVM IR representation similar to:
+declare { double, double } @kfComplexMultiply(double, double, double, double)
+
+declare { double, double } @kfComplexAdd(double, double, double, double)
+
+declare double @kfComplexModulo(double, double)
+
+define i32 @func0(double %arg0r, double %arg0i, double %arg1r, double %arg1i) {
+entry:
+  br label %block0
+block0:
+  %v0 = phi i32 [ 0, %entry], [ %v13, %block0$2 ]
+  %v1r = phi double [ %arg0r, %entry ], [ %v10r, %block0$2 ]
+  %v1i = phi double [ %arg0i, %entry ], [ %v10i, %block0$2 ]
+  %v2 = icmp sle i32 500, %v0
+  br i1 %v2, label %block1, label %block0$1
+block0$1:
+  %v3 = call { double, double } @kfComplexMultiply(double %v1r, double %v1i, double %v1r, double %v1i)
+  %v4r = extractvalue { double, double } %v3, 0
+  %v4i = extractvalue { double, double } %v3, 1
+  %v5 = call { double, double } @kfComplexMultiply(double %v4r, double %v4i, double %v4r, double %v4i)
+  %v6r = extractvalue { double, double } %v5, 0
+  %v6i = extractvalue { double, double } %v5, 1
+  %v7 = call { double, double } @kfComplexMultiply(double %v6r, double %v6i, double %v1r, double %v1i)
+  %v8r = extractvalue { double, double } %v7, 0
+  %v8i = extractvalue { double, double } %v7, 1
+  %v9 = call { double, double } @kfComplexAdd(double %v8r, double %v8i, double %arg1r, double %arg1i)
+  %v10r = extractvalue { double, double } %v9, 0
+  %v10i = extractvalue { double, double } %v9, 1
+  %v11 = call double @kfComplexModulo(double %v10r, double %v10i)
+  %v12 = fcmp ugt double %v11, 4.0
+  br i1 %v12, label %block1, label %block0$2
+block0$2:
+  %v13 = add i32 %v0, 1
+  br label %block0
+block1:
+  ret i32 %v0
+}
+
+Constructing an LLVM ir version of my program highlighted some shortcomings of the current Fractal IR. One of the important
+things is that currently jump instructions have the possibility to leave control-flow in the current basic block, leading
+to phi ambiguities. LLVM instead is makes every control-flow branch move to a new basic block on either path.
+
+Idea #4:
+Each control-flow branch has its own BasicBlock. Any instruction that causes control-flow branching must jump to a new BasicBlock
+no matter what.
+
+Here is the last program but making use of the improved branching system.
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock([
+                Phi([
+                    PhiBranch(IntConstant(0), -1),
+                    PhiBranch(InstructionReference(2, 0), 2)
+                ]),
+                Phi([
+                    PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                    PhiBranch(InstructionReference(1, 2), 2)
+                ]),
+                ConditionalBranch(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, 0))), 3, 1)
+            ]),
+            BasicBlock([
+                ComplexMultiply(InstructionReference(0, 1), InstructionReference(0, 1)),
+                ComplexMultiply(InstructionReference(1, 0), InstructionReference(1, 0)),
+                ComplexAdd(ComplexMultiply(InstructionReference(1, 1), InstructionReference(0, 1)), ValueReference(ARGUMENTS, 1)),
+                ConditionalBranch(RealIsGreater(ComplexModulo(InstructionReference(1, 2)), RealConstant(4)), 3, 2)
+            ]),
+            BasicBlock([
+                IntAdd(InstructionReference(0, 0), IntConstant(1)),
+                Jump(0)
+            ]),
+            BasicBlock([
+                Return(InstructionReference(0, 0))
+            ])
+        ]
+    )
+]
+)
+
+How would hierarchies work?
+Instructions, references, and constants would implement IValue.
+References and constants would implement IPhiInput.
+
+Issue: How do we place Phi instructions in the block structure? Do we just let any instruction depend on Phi instructions?
+Should we try to make sure Phi instructions come before all other instructions?
+    It makes the most sense for Phi instructions to have to be first in every BasicBlock because Phi instructions only deal
+    with values from already finished BasicBlocks, including previous iterations of the BasicBlock containing them.
+
+How should we enforce the Phi instruction order? Should we simply leave it up to the validator to make sure Phi instructions
+come first in every BasicBlock's body?
+    I think one way to make the order of Phi instructions clear is to have a separate list that comes first in every basic
+    block specifically for phi instructions.
+
+Here is how the last program would look with the modifications:
+Program(
+[],
+[
+    FunctionDefinition(
+        INT,
+        [],
+        [
+            ArgumentDeclaration(COMPLEX),
+            ArgumentDeclaration(COMPLEX)
+        ],
+        [
+            BasicBlock(
+                [
+                    Phi([
+                        PhiBranch(IntConstant(0), -1),
+                        PhiBranch(InstructionReference(2, BODY, 0), 2)
+                    ]),
+                    Phi([
+                        PhiBranch(ValueReference(ARGUMENTS, 0), -1),
+                        PhiBranch(InstructionReference(1, BODY, 2), 2)
+                    ])
+                ],
+                [
+                    ConditionalBranch(BoolNot(IntIsGreater(IntConstant(500), InstructionReference(0, PHI, 0))), 3, 1)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    ComplexMultiply(InstructionReference(0, PHI, 1), InstructionReference(0, PHI, 1)),
+                    ComplexMultiply(InstructionReference(1, BODY, 0), InstructionReference(1, BODY, 0)),
+                    ComplexAdd(ComplexMultiply(InstructionReference(1, BODY, 1), InstructionReference(0, BODY, 1)), ValueReference(ARGUMENTS, 1)),
+                    ConditionalBranch(RealIsGreater(ComplexModulo(InstructionReference(1, BODY, 2)), RealConstant(4)), 3, 2)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    IntAdd(InstructionReference(0, PHI, 0), IntConstant(1)),
+                    Jump(0)
+                ]
+            ),
+            BasicBlock(
+                [],
+                [
+                    Return(InstructionReference(0, PHI, 0))
+                ]
+            )
+        ]
+    )
+]
+)
+
+Issue: How would global variables work?
+    One way of doing it is to simply have every global variable be a pointer to managed memory. That way it still makes
+    sense to have a method for setting global variables on engines.
+
+    Drawbacks: Interacting with a global variable requires calling pointer load & store.
+
+    Another way to do it would be to have every global variable have a small static initializer that allows for pointer
+    allocation.
+
+    Drawbacks: This is messy and it's hard to determine global pointer lifetimes.
+
+    Issue with both of these: Interacting with globals is language dependant.
+        One way to do this would be to have all global variables be mutable, simply because the ssa way of doing things
+        doesn't apply nearly as well to them. There is no order of operations outside a function, therefore trying to define
+        globals and global dependencies in an ordered way does not make sense.
+
+        Furthermore, because of the fact that global variables are language-dependent, there should be specific instructions
+        for interacting with them.

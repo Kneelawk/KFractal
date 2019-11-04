@@ -1,9 +1,6 @@
 package com.kneelawk.kfractal.generator.validation;
 
-import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
-import com.kneelawk.kfractal.generator.api.ir.Program;
-import com.kneelawk.kfractal.generator.api.ir.ValueType;
-import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
+import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.util.ProgramPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -15,8 +12,12 @@ import static com.kneelawk.kfractal.generator.validation.ValueTypeUtils.createCo
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FunctionValidationTests {
+    // TODO: add missing return instruction tests.
+
+    // should the incompatible context variable tests be moved here?
+
     @Test
-    void testIllegalMissingReturnType() {
+    void testIllegalEmptyFunction() {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
@@ -25,8 +26,21 @@ class FunctionValidationTests {
         Program program = programBuilder.build();
 
         assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
-                () -> ProgramPrinter
-                        .printProgram(program));
+                () -> ProgramPrinter.printProgram(program));
+    }
+
+    @Test
+    void testIllegalBasicBlockMissingTerminator() {
+        Program.Builder programBuilder = new Program.Builder();
+        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
+        function.setReturnType(ValueTypes.VOID);
+        function.addBlock(new BasicBlock.Builder().build());
+        programBuilder.addFunction(function.build());
+
+        Program program = programBuilder.build();
+
+        assertThrows(FractalIRValidationException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter.printProgram(program));
     }
 
     @ParameterizedTest(name = "testIncompatibleFunctionReturnType({arguments})")
@@ -35,7 +49,11 @@ class FunctionValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(valueTypes.left);
-        function.addStatement(Return.create(createConstant(programBuilder, function, valueTypes.right)));
+
+        BasicBlock.Builder block = new BasicBlock.Builder();
+        block.addValue(Return.create(createConstant(programBuilder, block, valueTypes.right)));
+
+        function.addBlock(block.build());
         programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();

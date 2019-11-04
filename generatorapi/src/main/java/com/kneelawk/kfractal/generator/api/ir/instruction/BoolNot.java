@@ -1,91 +1,73 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * BoolNot - Instruction. Gets the not value of the second argument and stores it in the variable referenced by the
- * first argument.
+ * BoolNot - Instruction. Gets the not value of the argument.
  * <p>
- * BoolNot(Bool output, Bool input)
+ * BoolNot(Bool input)
  */
-public class BoolNot implements IInstruction {
-    private IInstructionOutput output;
-    private IInstructionInput input;
+public class BoolNot implements IProceduralValue {
+    private IProceduralValue input;
 
-    private BoolNot(IInstructionOutput output, IInstructionInput input) {
-        this.output = output;
+    private BoolNot(IProceduralValue input) {
         this.input = input;
     }
 
-    public IInstructionOutput getOutput() {
-        return output;
-    }
-
-    public IInstructionInput getInput() {
+    public IProceduralValue getInput() {
         return input;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitBoolNot(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitBoolNot(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("output", output)
                 .append("input", input)
                 .toString();
     }
 
-    public static BoolNot create(IInstructionOutput output,
-                                 IInstructionInput input) {
-        if (output == null)
-            throw new NullPointerException("Output cannot be null");
+    public static BoolNot create(IProceduralValue input) {
         if (input == null)
             throw new NullPointerException("Input cannot be null");
-        return new BoolNot(output, input);
+        return new BoolNot(input);
     }
 
     public static class Builder {
-        private IInstructionOutput output;
-        private IInstructionInput input;
+        private IProceduralValue input;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput output,
-                       IInstructionInput input) {
-            this.output = output;
+        public Builder(IProceduralValue input) {
             this.input = input;
         }
 
         public BoolNot build() {
-            if (output == null)
-                throw new IllegalStateException("No output specified");
             if (input == null)
                 throw new IllegalStateException("No input specified");
-            return new BoolNot(output, input);
+            return new BoolNot(input);
         }
 
-        public IInstructionOutput getOutput() {
-            return output;
-        }
-
-        public Builder setOutput(IInstructionOutput output) {
-            this.output = output;
-            return this;
-        }
-
-        public IInstructionInput getInput() {
+        public IProceduralValue getInput() {
             return input;
         }
 
-        public Builder setInput(IInstructionInput input) {
+        public Builder setInput(IProceduralValue input) {
             this.input = input;
             return this;
         }

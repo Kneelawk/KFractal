@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
 import com.kneelawk.kfractal.generator.api.engine.value.*;
-import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
-import com.kneelawk.kfractal.generator.api.ir.Program;
-import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
-import com.kneelawk.kfractal.generator.api.ir.VariableDeclaration;
+import com.kneelawk.kfractal.generator.api.ir.*;
+import com.kneelawk.kfractal.generator.api.ir.constant.IntConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.RealConstant;
 import com.kneelawk.kfractal.generator.api.ir.instruction.*;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.BoolConstant;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IntConstant;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.RealConstant;
+import com.kneelawk.kfractal.generator.api.ir.phi.Phi;
+import com.kneelawk.kfractal.generator.api.ir.phi.PhiBranch;
 import org.apache.commons.math3.complex.Complex;
 import org.junit.jupiter.api.Test;
 
@@ -28,9 +26,9 @@ class SimpleGeneratorTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.COMPLEX);
-        var z = function.addArgument(VariableDeclaration.create(ValueTypes.COMPLEX));
-        function.addStatement(ComplexMultiply.create(z, z, z));
-        function.addStatement(Return.create(z));
+        var z = function.addArgument(ArgumentDeclaration.create(ValueTypes.COMPLEX));
+        BasicBlock.Builder block = function.addBlock();
+        block.addValue(Return.create(ComplexMultiply.create(z, z)));
         int fIndex = programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -73,41 +71,40 @@ class SimpleGeneratorTests {
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.INT);
         // add the arguments
-        var z = function.addArgument(VariableDeclaration.create(ValueTypes.COMPLEX));
-        var c = function.addArgument(VariableDeclaration.create(ValueTypes.COMPLEX));
-        // add the local variables
-        var iterations = function.addLocalVariable(VariableDeclaration.create(ValueTypes.INT));
-        var abs = function.addLocalVariable(VariableDeclaration.create(ValueTypes.REAL));
-        var cont = function.addLocalVariable(VariableDeclaration.create(ValueTypes.BOOL));
-        var zTmp = function.addLocalVariable(VariableDeclaration.create(ValueTypes.COMPLEX));
-        // make continue 'true' because we know the loop has to do a calculation at least once
-        function.addStatement(Assign.create(cont, BoolConstant.create(true)));
-        // start on the loop
-        While.Builder loop = new While.Builder();
-        // the loop only continues if the 'continue' variable is 'true'
-        loop.setCondition(cont);
-        // do the z * z * z * z * z
-        loop.addWhileTrue(ComplexMultiply.create(zTmp, z, z));
-        loop.addWhileTrue(ComplexMultiply.create(zTmp, zTmp, zTmp));
-        loop.addWhileTrue(ComplexMultiply.create(z, zTmp, z));
-        // do the + c and store the whole thing back in z
-        loop.addWhileTrue(ComplexAdd.create(z, z, c));
-        // get the 'abs()' of z
-        loop.addWhileTrue(ComplexModulo.create(abs, z));
-        // set continue to false if the abs is greater than 4
-        loop.addWhileTrue(RealIsGreaterOrEqual.create(cont, RealConstant.create(4), abs));
-        // do the for-loop functionality of incrementing iterations if we've gotten this far and then checking whether
-        // or not to continue based on the new iterations value
-        If.Builder continueCheck = new If.Builder();
-        continueCheck.setCondition(cont);
-        // increment iterations
-        continueCheck.addIfTrue(IntAdd.create(iterations, iterations, IntConstant.create(1)));
-        // check to see if we've iterated too many times
-        continueCheck.addIfTrue(IntIsGreater.create(cont, IntConstant.create(500), iterations));
-        loop.addWhileTrue(continueCheck.build());
-        function.addStatement(loop.build());
-        // return the final value of iterations
-        function.addStatement(Return.create(iterations));
+        var zArgument = function.addArgument(ArgumentDeclaration.create(ValueTypes.COMPLEX));
+        var c = function.addArgument(ArgumentDeclaration.create(ValueTypes.COMPLEX));
+
+        BasicBlock.Builder loopCondition = function.addBlock();
+        BasicBlock.Builder loopArithmetic = function.addBlock();
+        BasicBlock.Builder loopIncrement = function.addBlock();
+        BasicBlock.Builder ret = function.addBlock();
+
+        Phi.Builder iterationsBuilder = new Phi.Builder();
+        iterationsBuilder.addBranch(PhiBranch.create(IntConstant.create(0), -1));
+        var iterations = loopCondition.addPhi(iterationsBuilder::build);
+
+        Phi.Builder zBuilder = new Phi.Builder();
+        zBuilder.addBranch(PhiBranch.create(zArgument, -1));
+        var z = loopCondition.addPhi(zBuilder::build);
+
+        loopCondition.addValue(BranchConditional
+                .create(IntIsGreater.create(IntConstant.create(500), iterations), loopArithmetic.getBlockIndex(),
+                        ret.getBlockIndex()));
+
+        var z1 = loopArithmetic.addValue(ComplexMultiply.create(z, z));
+        var z2 = loopArithmetic.addValue(ComplexMultiply.create(z1, z1));
+        var res = loopArithmetic.addValue(ComplexAdd.create(ComplexMultiply.create(z2, z), c));
+        loopArithmetic.addValue(BranchConditional
+                .create(RealIsGreater.create(ComplexModulo.create(res), RealConstant.create(4)), ret.getBlockIndex(),
+                        loopIncrement.getBlockIndex()));
+
+        var iterationsIncrement = loopIncrement.addValue(IntAdd.create(iterations, IntConstant.create(1)));
+        loopIncrement.addValue(Branch.create(loopCondition.getBlockIndex()));
+        iterationsBuilder.addBranch(PhiBranch.create(iterationsIncrement, loopIncrement.getBlockIndex()));
+        zBuilder.addBranch(PhiBranch.create(res, loopIncrement.getBlockIndex()));
+
+        ret.addValue(Return.create(iterations));
+
         int fIndex = programBuilder.addFunction(function.build());
 
         Program program = programBuilder.build();
@@ -126,6 +123,6 @@ class SimpleGeneratorTests {
 
         // test the results
         assertTrue(result instanceof IIntValue, "Result should be an int");
-        assertEquals(((IIntValue) result).getValue(), 73, "The result should be 73");
+        assertEquals(73, ((IIntValue) result).getValue(), "The result should be 73");
     }
 }

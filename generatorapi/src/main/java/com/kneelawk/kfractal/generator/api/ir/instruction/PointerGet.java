@@ -1,92 +1,73 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * PointerGet - Instruction. Retrieves the data pointed to by the handle in the second argument and stores it in the
- * variable referenced by the first argument.
+ * PointerGet - Instruction. Retrieves the data pointed to by the handle in the only argument.
  * <p>
- * PointerGet(* data, Pointer(*) pointer)
+ * PointerGet(Pointer(*) pointer)
  */
-public class PointerGet implements IInstruction {
-    private IInstructionOutput data;
-    private IInstructionInput pointer;
+public class PointerGet implements IProceduralValue {
+    private IProceduralValue pointer;
 
-    private PointerGet(IInstructionOutput data,
-                       IInstructionInput pointer) {
-        this.data = data;
+    private PointerGet(IProceduralValue pointer) {
         this.pointer = pointer;
     }
 
-    public IInstructionOutput getData() {
-        return data;
-    }
-
-    public IInstructionInput getPointer() {
+    public IProceduralValue getPointer() {
         return pointer;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitPointerGet(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitPointerGet(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("data", data)
                 .append("pointer", pointer)
                 .toString();
     }
 
-    public static PointerGet create(IInstructionOutput data,
-                                    IInstructionInput pointer) {
-        if (data == null)
-            throw new NullPointerException("Data cannot be null");
+    public static PointerGet create(IProceduralValue pointer) {
         if (pointer == null)
             throw new NullPointerException("Pointer cannot be null");
-        return new PointerGet(data, pointer);
+        return new PointerGet(pointer);
     }
 
     public static class Builder {
-        private IInstructionOutput data;
-        private IInstructionInput pointer;
+        private IProceduralValue pointer;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput data,
-                       IInstructionInput pointer) {
-            this.data = data;
+        public Builder(IProceduralValue pointer) {
             this.pointer = pointer;
         }
 
         public PointerGet build() {
-            if (data == null)
-                throw new IllegalStateException("No data specified");
             if (pointer == null)
                 throw new IllegalStateException("No pointer specified");
-            return new PointerGet(data, pointer);
+            return new PointerGet(pointer);
         }
 
-        public IInstructionOutput getData() {
-            return data;
-        }
-
-        public Builder setData(IInstructionOutput data) {
-            this.data = data;
-            return this;
-        }
-
-        public IInstructionInput getPointer() {
+        public IProceduralValue getPointer() {
             return pointer;
         }
 
-        public Builder setPointer(IInstructionInput pointer) {
+        public Builder setPointer(IProceduralValue pointer) {
             this.pointer = pointer;
             return this;
         }

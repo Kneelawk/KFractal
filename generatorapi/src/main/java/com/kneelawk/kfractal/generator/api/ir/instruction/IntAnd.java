@@ -1,116 +1,97 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntAnd - Instruction. Bitwise ands the last two arguments together and stores the result in the variable referenced
- * by the last argument.
+ * IntAnd - Instruction. Bitwise ands the two arguments together.
  * <p>
- * IntAnd(Int result, Int left, Int right)
+ * IntAnd(Int left, Int right)
  */
-public class IntAnd implements IInstruction {
-    private IInstructionOutput result;
-    private IInstructionInput left;
-    private IInstructionInput right;
+public class IntAnd implements IProceduralValue {
+    private IProceduralValue left;
+    private IProceduralValue right;
 
-    private IntAnd(IInstructionOutput result, IInstructionInput left,
-                   IInstructionInput right) {
-        this.result = result;
+    private IntAnd(IProceduralValue left, IProceduralValue right) {
         this.left = left;
         this.right = right;
     }
 
-    public IInstructionOutput getResult() {
-        return result;
-    }
-
-    public IInstructionInput getLeft() {
+    public IProceduralValue getLeft() {
         return left;
     }
 
-    public IInstructionInput getRight() {
+    public IProceduralValue getRight() {
         return right;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitIntAnd(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitIntAnd(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("result", result)
                 .append("left", left)
                 .append("right", right)
                 .toString();
     }
 
-    public static IntAnd create(IInstructionOutput result,
-                                IInstructionInput left,
-                                IInstructionInput right) {
-        if (result == null)
-            throw new NullPointerException("Result cannot be null");
+    public static IntAnd create(IProceduralValue left,
+                                IProceduralValue right) {
         if (left == null)
             throw new NullPointerException("Left cannot be null");
         if (right == null)
             throw new NullPointerException("Right cannot be null");
-        return new IntAnd(result, left, right);
+        return new IntAnd(left, right);
     }
 
     public static class Builder {
-        private IInstructionOutput result;
-        private IInstructionInput left;
-        private IInstructionInput right;
+        private IProceduralValue left;
+        private IProceduralValue right;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput result,
-                       IInstructionInput left,
-                       IInstructionInput right) {
-            this.result = result;
+        public Builder(IProceduralValue left,
+                       IProceduralValue right) {
             this.left = left;
             this.right = right;
         }
 
         public IntAnd build() {
-            if (result == null)
-                throw new IllegalStateException("No result specified");
             if (left == null)
                 throw new IllegalStateException("No left specified");
             if (right == null)
                 throw new IllegalStateException("No right specified");
-            return new IntAnd(result, left, right);
+            return new IntAnd(left, right);
         }
 
-        public IInstructionOutput getResult() {
-            return result;
-        }
-
-        public Builder setResult(IInstructionOutput result) {
-            this.result = result;
-            return this;
-        }
-
-        public IInstructionInput getLeft() {
+        public IProceduralValue getLeft() {
             return left;
         }
 
-        public Builder setLeft(IInstructionInput left) {
+        public Builder setLeft(IProceduralValue left) {
             this.left = left;
             return this;
         }
 
-        public IInstructionInput getRight() {
+        public IProceduralValue getRight() {
             return right;
         }
 
-        public Builder setRight(IInstructionInput right) {
+        public Builder setRight(IProceduralValue right) {
             this.right = right;
             return this;
         }
