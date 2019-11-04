@@ -1,120 +1,97 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * RealSubtract - Instruction. Subtracts the last argument from the second to last argument and stores the result in the
- * variable referenced by the first argument.
+ * RealSubtract - Instruction. Subtracts the second argument from the first argument.
  * <p>
- * RealSubtract(Real difference, Real minuend, Real subtrahend)
+ * RealSubtract(Real minuend, Real subtrahend)
  */
-public class RealSubtract implements IInstruction {
-    private IInstructionOutput difference;
-    private IInstructionInput minuend;
-    private IInstructionInput subtrahend;
+public class RealSubtract implements IProceduralValue {
+    private IProceduralValue minuend;
+    private IProceduralValue subtrahend;
 
-    private RealSubtract(IInstructionOutput difference,
-                         IInstructionInput minuend,
-                         IInstructionInput subtrahend) {
-        this.difference = difference;
+    private RealSubtract(IProceduralValue minuend, IProceduralValue subtrahend) {
         this.minuend = minuend;
         this.subtrahend = subtrahend;
     }
 
-    public IInstructionOutput getDifference() {
-        return difference;
-    }
-
-    public IInstructionInput getMinuend() {
+    public IProceduralValue getMinuend() {
         return minuend;
     }
 
-    public IInstructionInput getSubtrahend() {
+    public IProceduralValue getSubtrahend() {
         return subtrahend;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitRealSubtract(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitRealSubtract(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("difference", difference)
                 .append("minuend", minuend)
                 .append("subtrahend", subtrahend)
                 .toString();
     }
 
-    public static RealSubtract create(
-            IInstructionOutput difference,
-            IInstructionInput minuend,
-            IInstructionInput subtrahend) {
-        if (difference == null)
-            throw new NullPointerException("Difference cannot be null");
+    public static RealSubtract create(IProceduralValue minuend,
+                                      IProceduralValue subtrahend) {
         if (minuend == null)
             throw new NullPointerException("Minuend cannot be null");
         if (subtrahend == null)
             throw new NullPointerException("Subtrahend cannot be null");
-        return new RealSubtract(difference, minuend, subtrahend);
+        return new RealSubtract(minuend, subtrahend);
     }
 
     public static class Builder {
-        private IInstructionOutput difference;
-        private IInstructionInput minuend;
-        private IInstructionInput subtrahend;
+        private IProceduralValue minuend;
+        private IProceduralValue subtrahend;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput difference,
-                       IInstructionInput minuend,
-                       IInstructionInput subtrahend) {
-            this.difference = difference;
+        public Builder(IProceduralValue minuend,
+                       IProceduralValue subtrahend) {
             this.minuend = minuend;
             this.subtrahend = subtrahend;
         }
 
         public RealSubtract build() {
-            if (difference == null)
-                throw new IllegalStateException("No difference specified");
             if (minuend == null)
                 throw new IllegalStateException("No minuend specified");
             if (subtrahend == null)
                 throw new IllegalStateException("No subtrahend specified");
-            return new RealSubtract(difference, minuend, subtrahend);
+            return new RealSubtract(minuend, subtrahend);
         }
 
-        public IInstructionOutput getDifference() {
-            return difference;
-        }
-
-        public Builder setDifference(
-                IInstructionOutput difference) {
-            this.difference = difference;
-            return this;
-        }
-
-        public IInstructionInput getMinuend() {
+        public IProceduralValue getMinuend() {
             return minuend;
         }
 
-        public Builder setMinuend(IInstructionInput minuend) {
+        public Builder setMinuend(IProceduralValue minuend) {
             this.minuend = minuend;
             return this;
         }
 
-        public IInstructionInput getSubtrahend() {
+        public IProceduralValue getSubtrahend() {
             return subtrahend;
         }
 
-        public Builder setSubtrahend(
-                IInstructionInput subtrahend) {
+        public Builder setSubtrahend(IProceduralValue subtrahend) {
             this.subtrahend = subtrahend;
             return this;
         }

@@ -2,9 +2,9 @@ package com.kneelawk.kfractal.generator.validation;
 
 import com.google.common.collect.ImmutableSet;
 import com.kneelawk.kfractal.generator.api.ir.*;
-import com.kneelawk.kfractal.generator.api.ir.attribute.IAttribute;
+import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.VoidConstant;
+import com.kneelawk.kfractal.generator.api.ir.constant.VoidConstant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -16,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class VariableValidationTests {
+    // TODO: Investigate local "variable" usages
+
     @Test
     void testIllegalVoidVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        var v = function.addLocalVariable(VariableDeclaration.create(ValueTypes.VOID));
-        function.addStatement(Return.create(v));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.VOID));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -31,11 +29,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullFunctionVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(ValueTypes.NULL_FUNCTION));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -43,11 +37,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullPointerVariableType() {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(VariableDeclaration.create(ValueTypes.NULL_POINTER));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_POINTER));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -56,12 +46,8 @@ class VariableValidationTests {
     @MethodSource("nonPointerValueTypes")
     void testIllegalPreallocatedAnnotation(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(ValueTypes.VOID);
-        function.addLocalVariable(
-                VariableDeclaration.create(variableType, ImmutableSet.of(IAttribute.PREALLOCATED)));
-        function.addStatement(Return.create(VoidConstant.INSTANCE));
-        program.addFunction(function.build());
+        program.addGlobalVariable(
+                GlobalDeclaration.create(variableType, ImmutableSet.of(IGlobalAttribute.PREALLOCATED)));
 
         assertThrows(IllegalVariableAttributeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -74,11 +60,7 @@ class VariableValidationTests {
     @ArgumentsSource(VariableValueTypesProvider.class)
     void testVariableDeclaration(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        FunctionDefinition.Builder function = new FunctionDefinition.Builder();
-        function.setReturnType(variableType);
-        var v = function.addLocalVariable(VariableDeclaration.create(variableType));
-        function.addStatement(Return.create(v));
-        program.addFunction(function.build());
+        program.addGlobalVariable(GlobalDeclaration.create(variableType));
 
         assertDoesNotThrow(() -> ProgramValidator.checkValidity(program.build()));
     }

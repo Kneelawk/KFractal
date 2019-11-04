@@ -1,118 +1,98 @@
 package com.kneelawk.kfractal.generator.api.ir.instruction;
 
 import com.kneelawk.kfractal.generator.api.FractalException;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionInput;
-import com.kneelawk.kfractal.generator.api.ir.instruction.io.IInstructionOutput;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValue;
+import com.kneelawk.kfractal.generator.api.ir.IProceduralValueVisitor;
+import com.kneelawk.kfractal.generator.api.ir.IValueVisitor;
 import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * IntIsGreaterOrEqual - Instruction. Checks to see if the second to last argument is greater than or equal to the last
- * argument and stores the resulting boolean in the variable referenced by the first argument.
+ * IntIsGreaterOrEqual - Instruction. Checks to see if the first argument is greater than or equal to the second
+ * argument.
  * <p>
- * IntIsGreaterOrEqual(Bool result, Int subject, Int basis)
+ * IntIsGreaterOrEqual(Int subject, Int basis)
  */
-public class IntIsGreaterOrEqual implements IInstruction {
-    private IInstructionOutput result;
-    private IInstructionInput subject;
-    private IInstructionInput basis;
+public class IntIsGreaterOrEqual implements IProceduralValue {
+    private IProceduralValue subject;
+    private IProceduralValue basis;
 
-    private IntIsGreaterOrEqual(IInstructionOutput result,
-                                IInstructionInput subject,
-                                IInstructionInput basis) {
-        this.result = result;
+    private IntIsGreaterOrEqual(IProceduralValue subject, IProceduralValue basis) {
         this.subject = subject;
         this.basis = basis;
     }
 
-    public IInstructionOutput getResult() {
-        return result;
-    }
-
-    public IInstructionInput getSubject() {
+    public IProceduralValue getSubject() {
         return subject;
     }
 
-    public IInstructionInput getBasis() {
+    public IProceduralValue getBasis() {
         return basis;
     }
 
     @Override
-    public <R> R accept(IInstructionVisitor<R> visitor) throws FractalException {
+    public <R> R accept(IProceduralValueVisitor<R> visitor) throws FractalException {
+        return visitor.visitIntIsGreaterOrEqual(this);
+    }
+
+    @Override
+    public <R> R accept(IValueVisitor<R> visitor)
+            throws FractalException {
         return visitor.visitIntIsGreaterOrEqual(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("result", result)
                 .append("subject", subject)
                 .append("basis", basis)
                 .toString();
     }
 
-    public static IntIsGreaterOrEqual create(
-            IInstructionOutput result,
-            IInstructionInput subject,
-            IInstructionInput basis) {
-        if (result == null)
-            throw new NullPointerException("Result cannot be null");
+    public static IntIsGreaterOrEqual create(IProceduralValue subject,
+                                             IProceduralValue basis) {
         if (subject == null)
             throw new NullPointerException("Subject cannot be null");
         if (basis == null)
             throw new NullPointerException("Basis cannot be null");
-        return new IntIsGreaterOrEqual(result, subject, basis);
+        return new IntIsGreaterOrEqual(subject, basis);
     }
 
     public static class Builder {
-        private IInstructionOutput result;
-        private IInstructionInput subject;
-        private IInstructionInput basis;
+        private IProceduralValue subject;
+        private IProceduralValue basis;
 
         public Builder() {
         }
 
-        public Builder(IInstructionOutput result,
-                       IInstructionInput subject,
-                       IInstructionInput basis) {
-            this.result = result;
+        public Builder(IProceduralValue subject,
+                       IProceduralValue basis) {
             this.subject = subject;
             this.basis = basis;
         }
 
         public IntIsGreaterOrEqual build() {
-            if (result == null)
-                throw new IllegalStateException("No result specified");
             if (subject == null)
                 throw new IllegalStateException("No subject specified");
             if (basis == null)
                 throw new IllegalStateException("No basis specified");
-            return new IntIsGreaterOrEqual(result, subject, basis);
+            return new IntIsGreaterOrEqual(subject, basis);
         }
 
-        public IInstructionOutput getResult() {
-            return result;
-        }
-
-        public Builder setResult(IInstructionOutput result) {
-            this.result = result;
-            return this;
-        }
-
-        public IInstructionInput getSubject() {
+        public IProceduralValue getSubject() {
             return subject;
         }
 
-        public Builder setSubject(IInstructionInput subject) {
+        public Builder setSubject(IProceduralValue subject) {
             this.subject = subject;
             return this;
         }
 
-        public IInstructionInput getBasis() {
+        public IProceduralValue getBasis() {
             return basis;
         }
 
-        public Builder setBasis(IInstructionInput basis) {
+        public Builder setBasis(IProceduralValue basis) {
             this.basis = basis;
             return this;
         }

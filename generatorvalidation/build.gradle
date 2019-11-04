@@ -15,5 +15,6 @@ test {
     moduleOptions {
         addModules = ['com.kneelawk.kfractal.generator.util']
         addReads = ['com.kneelawk.kfractal.generator.validation': 'com.kneelawk.kfractal.generator.util']
+        addOpens = ['com.kneelawk.kfractal.generator.api/com.kneelawk.kfractal.generator.api.ir.instruction': 'com.kneelawk.kfractal.generator.validation']
     }
 }

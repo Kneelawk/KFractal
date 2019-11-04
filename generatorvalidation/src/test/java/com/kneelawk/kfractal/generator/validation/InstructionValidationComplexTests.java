@@ -13,110 +13,117 @@ import java.util.stream.Stream;
 
 import static com.kneelawk.kfractal.generator.validation.ValueTypeAsserts.*;
 
-public class InstructionValidationComplexTests {
-    private static final List<ValueType> oneRealAndOneComplexValueTypes =
-            ImmutableList.of(ValueTypes.REAL, ValueTypes.COMPLEX);
-    private static final List<ValueType> threeComplexValueTypes =
-            ImmutableList.of(ValueTypes.COMPLEX, ValueTypes.COMPLEX, ValueTypes.COMPLEX);
+class InstructionValidationComplexTests {
+    private static final List<ValueType> twoComplexValueTypes =
+            ImmutableList.of(ValueTypes.COMPLEX, ValueTypes.COMPLEX);
 
-    private static Stream<ImmutableList<ValueType>> notOneRealAndOneComplexValueTypes() {
+    private static Stream<ValueType> notOneComplexValueType() {
         return VariableValueTypesProvider.variableValueTypes()
-                .flatMap(a -> VariableValueTypesProvider.variableValueTypes().map(b -> ImmutableList.of(a, b)))
-                .filter(l -> !l.equals(oneRealAndOneComplexValueTypes));
+                .filter(l -> !l.equals(ValueTypes.COMPLEX));
     }
 
-    private static Stream<ImmutableList<ValueType>> notThreeComplexValueTypes() {
+    private static Stream<ImmutableList<ValueType>> notTwoComplexValueTypes() {
         return VariableValueTypesProvider.variableValueTypes().flatMap(
-                a -> VariableValueTypesProvider.variableValueTypes().flatMap(
-                        b -> VariableValueTypesProvider.variableValueTypes().map(c -> ImmutableList.of(a, b, c))))
-                .filter(l -> !l.equals(threeComplexValueTypes));
+                        a -> VariableValueTypesProvider.variableValueTypes().map(b -> ImmutableList.of(a, b)))
+                .filter(l -> !l.equals(twoComplexValueTypes));
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexAddTypes({arguments})")
-    @MethodSource("notThreeComplexValueTypes")
+    @MethodSource("notTwoComplexValueTypes")
     void testIncompatibleComplexAddTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, ComplexAdd::create);
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexAdd::create);
     }
 
     @Test
     void testCompatibleComplexAddTypes() {
-        assertThreeCompatibleValueTypes(threeComplexValueTypes, ComplexAdd::create);
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexAdd::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexSubtractTypes({arguments})")
-    @MethodSource("notThreeComplexValueTypes")
+    @MethodSource("notTwoComplexValueTypes")
     void testIncompatibleComplexSubtractTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, ComplexSubtract::create);
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexSubtract::create);
     }
 
     @Test
     void testCompatibleComplexSubtractTypes() {
-        assertThreeCompatibleValueTypes(threeComplexValueTypes, ComplexSubtract::create);
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexSubtract::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexMultiplyTypes({arguments})")
-    @MethodSource("notThreeComplexValueTypes")
+    @MethodSource("notTwoComplexValueTypes")
     void testIncompatibleComplexMultiplyTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, ComplexMultiply::create);
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexMultiply::create);
     }
 
     @Test
     void testCompatibleComplexMultiplyTypes() {
-        assertThreeCompatibleValueTypes(threeComplexValueTypes, ComplexMultiply::create);
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexMultiply::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexDivideTypes({arguments})")
-    @MethodSource("notThreeComplexValueTypes")
+    @MethodSource("notTwoComplexValueTypes")
     void testIncompatibleComplexDivideTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, ComplexDivide::create);
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexDivide::create);
     }
 
     @Test
     void testCompatibleComplexDivideTypes() {
-        assertThreeCompatibleValueTypes(threeComplexValueTypes, ComplexDivide::create);
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexDivide::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexPowerTypes({arguments})")
-    @MethodSource("notThreeComplexValueTypes")
+    @MethodSource("notTwoComplexValueTypes")
     void testIncompatibleComplexPowerTypes(List<ValueType> variableTypes) {
-        assertThreeIncompatibleValueTypes(variableTypes, ComplexPower::create);
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexPower::create);
     }
 
     @Test
     void testCompatibleComplexPowerTypes() {
-        assertThreeCompatibleValueTypes(threeComplexValueTypes, ComplexPower::create);
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexPower::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexGetRealTypes({arguments})")
-    @MethodSource("notOneRealAndOneComplexValueTypes")
-    void testIncompatibleComplexGetRealTypes(List<ValueType> variableTypes) {
-        assertTwoIncompatibleValueTypes(variableTypes, ComplexGetReal::create);
+    @MethodSource("notOneComplexValueType")
+    void testIncompatibleComplexGetRealTypes(ValueType variableTypes) {
+        assertOneIncompatibleValueType(variableTypes, ComplexGetReal::create);
     }
 
     @Test
     void testCompatibleComplexGetRealTypes() {
-        assertTwoCompatibleValueTypes(oneRealAndOneComplexValueTypes, ComplexGetReal::create);
+        assertOneCompatibleValueType(ValueTypes.COMPLEX, ComplexGetReal::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexGetImaginaryTypes({arguments})")
-    @MethodSource("notOneRealAndOneComplexValueTypes")
-    void testIncompatibleComplexGetImaginaryTypes(List<ValueType> variableTypes) {
-        assertTwoIncompatibleValueTypes(variableTypes, ComplexGetImaginary::create);
+    @MethodSource("notOneComplexValueType")
+    void testIncompatibleComplexGetImaginaryTypes(ValueType variableTypes) {
+        assertOneIncompatibleValueType(variableTypes, ComplexGetImaginary::create);
     }
 
     @Test
     void testCompatibleComplexGetImaginaryTypes() {
-        assertTwoCompatibleValueTypes(oneRealAndOneComplexValueTypes, ComplexGetImaginary::create);
+        assertOneCompatibleValueType(ValueTypes.COMPLEX, ComplexGetImaginary::create);
     }
 
     @ParameterizedTest(name = "testIncompatibleComplexModuloTypes({arguments})")
-    @MethodSource("notOneRealAndOneComplexValueTypes")
-    void testIncompatibleComplexModuloTypes(List<ValueType> variableTypes) {
-        assertTwoIncompatibleValueTypes(variableTypes, ComplexModulo::create);
+    @MethodSource("notOneComplexValueType")
+    void testIncompatibleComplexModuloTypes(ValueType variableTypes) {
+        assertOneIncompatibleValueType(variableTypes, ComplexModulo::create);
     }
 
     @Test
     void testCompatibleComplexModuloTypes() {
-        assertTwoCompatibleValueTypes(oneRealAndOneComplexValueTypes, ComplexModulo::create);
+        assertOneCompatibleValueType(ValueTypes.COMPLEX, ComplexModulo::create);
+    }
+
+    @ParameterizedTest(name = "testIncompatibleComplexIsEqualTypes({arguments})")
+    @MethodSource("notTwoComplexValueTypes")
+    void testIncompatibleComplexIsEqualTypes(List<ValueType> variableTypes) {
+        assertTwoIncompatibleValueTypes(variableTypes, ComplexIsEqual::create);
+    }
+
+    @Test
+    void testCompatibleComplexIsEqualTypes() {
+        assertTwoCompatibleValueTypes(twoComplexValueTypes, ComplexIsEqual::create);
     }
 }
