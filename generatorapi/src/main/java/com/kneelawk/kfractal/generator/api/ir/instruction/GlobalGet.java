@@ -8,14 +8,14 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class GlobalGet implements IProceduralValue {
-    private int globalIndex;
+    private String globalName;
 
-    private GlobalGet(int globalIndex) {
-        this.globalIndex = globalIndex;
+    private GlobalGet(String globalName) {
+        this.globalName = globalName;
     }
 
-    public int getGlobalIndex() {
-        return globalIndex;
+    public String getGlobalName() {
+        return globalName;
     }
 
     @Override
@@ -24,42 +24,45 @@ public class GlobalGet implements IProceduralValue {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor)
-            throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitGlobalGet(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("globalIndex", globalIndex)
+                .append("globalName", globalName)
                 .toString();
     }
 
-    public static GlobalGet create(int globalIndex) {
-        return new GlobalGet(globalIndex);
+    public static GlobalGet create(String globalName) {
+        if (globalName == null)
+            throw new NullPointerException("GlobalName cannot be null");
+        return new GlobalGet(globalName);
     }
 
     public static class Builder {
-        private int globalIndex;
+        private String globalName;
 
         public Builder() {
         }
 
-        public Builder(int globalIndex) {
-            this.globalIndex = globalIndex;
+        public Builder(String globalName) {
+            this.globalName = globalName;
         }
 
         public GlobalGet build() {
-            return new GlobalGet(globalIndex);
+            if (globalName == null)
+                throw new IllegalStateException("No globalName specified");
+            return new GlobalGet(globalName);
         }
 
-        public int getGlobalIndex() {
-            return globalIndex;
+        public String getGlobalName() {
+            return globalName;
         }
 
-        public Builder setGlobalIndex(int globalIndex) {
-            this.globalIndex = globalIndex;
+        public Builder setGlobalName(String globalName) {
+            this.globalName = globalName;
             return this;
         }
     }
