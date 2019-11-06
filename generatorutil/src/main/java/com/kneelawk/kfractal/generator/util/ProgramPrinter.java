@@ -8,6 +8,7 @@ import com.kneelawk.kfractal.generator.api.ir.phi.PhiBranch;
 import com.kneelawk.kfractal.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProgramPrinter {
     public static String printProgram(Program program) {
@@ -15,13 +16,13 @@ public class ProgramPrinter {
         builder.append("Program(").append(System.lineSeparator());
         builder.append("[");
         boolean first = true;
-        for (int i = 0; i < program.getGlobalVariables().size(); i++) {
-            GlobalDeclaration variable = program.getGlobalVariables().get(i);
+        for (Map.Entry<String, GlobalDeclaration> entry : program.getGlobalVariables().entrySet()) {
+            GlobalDeclaration variable = entry.getValue();
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 1);
-            builder.append(i).append("=");
+            builder.append('"').append(entry.getKey()).append("\"=");
             printGlobalDeclaration(builder, variable);
             first = false;
         }
@@ -33,13 +34,13 @@ public class ProgramPrinter {
         builder.append("],").append(System.lineSeparator());
         builder.append("[");
         first = true;
-        for (int i = 0; i < program.getFunctions().size(); i++) {
-            FunctionDefinition function = program.getFunctions().get(i);
+        for (Map.Entry<String, FunctionDefinition> entry : program.getFunctions().entrySet()) {
+            FunctionDefinition function = entry.getValue();
             if (!first)
                 builder.append(",");
             builder.append(System.lineSeparator());
             StringUtils.indent(builder, 1);
-            builder.append(i).append("=");
+            builder.append('"').append(entry.getKey()).append("\"=");
             printFunctionDefinition(builder, function);
             first = false;
         }

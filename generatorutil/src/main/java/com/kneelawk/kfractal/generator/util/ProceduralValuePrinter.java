@@ -85,13 +85,13 @@ class ProceduralValuePrinter implements IProceduralValueVisitor<Void> {
 
     @Override
     public Void visitGlobalGet(GlobalGet globalGet) {
-        builder.append("GlobalGet(").append(globalGet.getGlobalIndex()).append(")");
+        builder.append("GlobalGet(\"").append(globalGet.getGlobalName()).append("\")");
         return null;
     }
 
     @Override
     public Void visitGlobalSet(GlobalSet globalSet) throws FractalException {
-        builder.append("GlobalSet(").append(globalSet.getGlobalIndex()).append(", ");
+        builder.append("GlobalSet(\"").append(globalSet.getGlobalName()).append("\", ");
         globalSet.getData().accept(this);
         builder.append(")");
         return null;
@@ -439,7 +439,7 @@ class ProceduralValuePrinter implements IProceduralValueVisitor<Void> {
 
     @Override
     public Void visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
-        builder.append("FunctionCreate(").append(functionCreate.getFunctionIndex()).append(", [ ");
+        builder.append("FunctionCreate(\"").append(functionCreate.getFunctionName()).append("\", [ ");
         boolean first = true;
         for (IProceduralValue input : functionCreate.getContextVariables()) {
             if (!first)
