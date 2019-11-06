@@ -14,7 +14,7 @@ public interface IEngineValueFactory {
 
     IComplexValue newComplex(Complex complex) throws FractalException;
 
-    IFunctionValue newFunction(int index, List<IEngineValue> contextValues) throws FractalException;
+    IFunctionValue newFunction(String name, List<IEngineValue> contextValues) throws FractalException;
 
     IFunctionValue nullFunction() throws FractalException;
 
