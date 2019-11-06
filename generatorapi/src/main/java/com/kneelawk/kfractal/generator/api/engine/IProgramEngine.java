@@ -15,13 +15,13 @@ public interface IProgramEngine {
 
     IEngineValueFactory getValueFactory() throws FractalException;
 
-    ValueType getGlobalValueType(int index) throws FractalException;
+    ValueType getGlobalValueType(String name) throws FractalException;
 
-    IEngineValue getGlobalValue(int index) throws FractalException;
+    IEngineValue getGlobalValue(String name) throws FractalException;
 
-    void setGlobalValue(int index, IEngineValue value) throws FractalException;
+    void setGlobalValue(String name, IEngineValue value) throws FractalException;
 
-    ValueTypes.FunctionType getFunctionSignature(int index) throws FractalException;
+    ValueTypes.FunctionType getFunctionSignature(String name) throws FractalException;
 
-    IFunctionValue getFunction(int index, List<IEngineValue> contextValues) throws FractalException;
+    IFunctionValue getFunction(String name, List<IEngineValue> contextValues) throws FractalException;
 }
