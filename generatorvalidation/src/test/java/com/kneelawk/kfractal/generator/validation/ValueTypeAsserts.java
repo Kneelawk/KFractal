@@ -16,11 +16,10 @@ class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(creator.create(createConstant(programBuilder, block, argumentTypes.get(0)),
                 createConstant(programBuilder, block, argumentTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -33,11 +32,10 @@ class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(creator.create(createConstant(programBuilder, block, argumentTypes.get(0)),
                 createConstant(programBuilder, block, argumentTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -49,10 +47,9 @@ class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(creator.create(createConstant(programBuilder, block, argumentType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -65,10 +62,9 @@ class ValueTypeAsserts {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(creator.create(createConstant(programBuilder, block, argumentType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();

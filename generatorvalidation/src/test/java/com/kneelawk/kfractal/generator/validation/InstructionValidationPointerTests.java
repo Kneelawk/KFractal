@@ -86,10 +86,9 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerAllocate.create(valueType));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -104,10 +103,9 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerAllocate.create(valueType));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -121,10 +119,9 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -138,10 +135,9 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerFree.create(NullPointer.INSTANCE));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -156,10 +152,9 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -190,12 +185,11 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(PointerSet
                 .create(createConstant(programBuilder, block, valueTypes.get(0)),
                         createConstant(programBuilder, block, valueTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -210,13 +204,12 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         var p = block.addValue(PointerAllocate.create(valueTypes.getLeft()));
         block.addValue(PointerSet
                 .create(p, createConstant(programBuilder, block, valueTypes.getRight())));
         block.addValue(PointerFree.create(p));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -231,11 +224,10 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(
                 PointerSet.create(NullPointer.INSTANCE, createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -250,12 +242,11 @@ public class InstructionValidationPointerTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         var p = block.addValue(PointerAllocate.create(valueTypes.getLeft()));
         block.addValue(PointerSet
                 .create(p, createConstant(programBuilder, block, valueTypes.getRight())));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();

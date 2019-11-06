@@ -58,12 +58,11 @@ public class ValueTypeUtils {
                     newFunction.addArgument(ArgumentDeclaration.create(argumentType));
                 }
 
-                BasicBlock.Builder newBlock = new BasicBlock.Builder();
+                BasicBlock.Builder newBlock = newFunction.addBlock();
                 newBlock.addValue(Return.create(createConstant(programBuilder, newBlock,
                         ImmutableSet.<String>builder().addAll(usedFunctionNames).add(functionName).build(),
                         usedGlobalNames, functionType.getReturnType())));
 
-                newFunction.addBlock(newBlock.build());
                 programBuilder.addFunction(functionName, newFunction.build());
                 return FunctionCreate.create(functionName);
             }

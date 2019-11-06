@@ -20,9 +20,8 @@ class InstructionValidationReturnTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(valueTypes.getLeft());
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(Return.create(createConstant(programBuilder, block, valueTypes.getRight())));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -37,9 +36,8 @@ class InstructionValidationReturnTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(valueType);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(Return.create(createConstant(programBuilder, block, valueType)));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
@@ -52,9 +50,8 @@ class InstructionValidationReturnTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        function.addBlock(block.build());
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();

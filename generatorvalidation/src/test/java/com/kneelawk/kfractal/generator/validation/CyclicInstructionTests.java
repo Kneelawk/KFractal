@@ -19,7 +19,7 @@ public class CyclicInstructionTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
 
         // mimic mutability
         BoolNot not = BoolNot.create(VoidConstant.INSTANCE);
@@ -28,11 +28,12 @@ public class CyclicInstructionTests {
         input.set(not, BoolNot.create(not));
 
         block.addValue(not);
-        function.addBlock(block.build());
+
         programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
-        assertThrows(CyclicProceduralInstructionException.class, () -> ProgramValidator.checkValidity(program), () -> ProgramPrinter.printProgram(program));
+        assertThrows(CyclicProceduralInstructionException.class, () -> ProgramValidator.checkValidity(program),
+                () -> ProgramPrinter.printProgram(program));
     }
 }
