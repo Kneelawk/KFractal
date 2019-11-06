@@ -29,7 +29,7 @@ class SimpleGeneratorTests {
         var z = function.addArgument(ArgumentDeclaration.create(ValueTypes.COMPLEX));
         BasicBlock.Builder block = function.addBlock();
         block.addValue(Return.create(ComplexMultiply.create(z, z)));
-        int fIndex = programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -39,7 +39,7 @@ class SimpleGeneratorTests {
         IEngineValueFactory valueFactory = engine.getValueFactory();
 
         // get the function
-        IFunctionValue f = engine.getFunction(fIndex, ImmutableList.of());
+        IFunctionValue f = engine.getFunction("f", ImmutableList.of());
 
         // invoke the function
         IEngineValue result = f.invoke(ImmutableList.of(valueFactory.newComplex(new Complex(1, 1))));
@@ -105,7 +105,7 @@ class SimpleGeneratorTests {
 
         ret.addValue(Return.create(iterations));
 
-        int fIndex = programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -115,7 +115,7 @@ class SimpleGeneratorTests {
         IEngineValueFactory valueFactory = engine.getValueFactory();
 
         // get the function
-        IFunctionValue f = engine.getFunction(fIndex, ImmutableList.of());
+        IFunctionValue f = engine.getFunction("f", ImmutableList.of());
 
         // invoke the function
         IEngineValue result = f.invoke(ImmutableList.of(valueFactory.newComplex(new Complex(0, 0)),
