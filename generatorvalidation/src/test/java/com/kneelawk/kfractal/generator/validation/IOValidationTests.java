@@ -30,11 +30,10 @@ class IOValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder functionBuilder = new FunctionDefinition.Builder();
         functionBuilder.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder block = new BasicBlock.Builder();
-        block.addValue(FunctionCall.create(FunctionCreate.create(100)));
+        BasicBlock.Builder block = functionBuilder.addBlock();
+        block.addValue(FunctionCall.create(FunctionCreate.create("missing")));
         block.addValue(Return.create(VoidConstant.INSTANCE));
-        functionBuilder.addBlock(block.build());
-        programBuilder.addFunction(functionBuilder.build());
+        programBuilder.addFunction("f", functionBuilder.build());
 
         Program program = programBuilder.build();
 
@@ -50,18 +49,16 @@ class IOValidationTests {
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
         var ga = gFunctionBuilder.addContextVariable(ArgumentDeclaration.create(ValueTypes.COMPLEX));
-        BasicBlock.Builder gBlock = new BasicBlock.Builder();
+        BasicBlock.Builder gBlock = gFunctionBuilder.addBlock();
         gBlock.addValue(Return.create(ComplexAdd.create(ga, ComplexConstant.create(new Complex(0, 2)))));
-        gFunctionBuilder.addBlock(gBlock.build());
-        int gIndex = programBuilder.addFunction(gFunctionBuilder.build());
+        programBuilder.addFunction("g", gFunctionBuilder.build());
 
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder fBlock = new BasicBlock.Builder();
-        fBlock.addValue(FunctionCreate.create(gIndex));
+        BasicBlock.Builder fBlock = fFunctionBuilder.addBlock();
+        fBlock.addValue(FunctionCreate.create("g"));
         fBlock.addValue(Return.create(VoidConstant.INSTANCE));
-        fFunctionBuilder.addBlock(fBlock.build());
-        programBuilder.addFunction(fFunctionBuilder.build());
+        programBuilder.addFunction("f", fFunctionBuilder.build());
 
         // test the validator
         assertThrows(IncompatibleFunctionContextException.class,
@@ -75,18 +72,16 @@ class IOValidationTests {
         FunctionDefinition.Builder gFunctionBuilder = new FunctionDefinition.Builder();
         gFunctionBuilder.setReturnType(ValueTypes.COMPLEX);
         var ga = gFunctionBuilder.addContextVariable(ArgumentDeclaration.create(ValueTypes.COMPLEX));
-        BasicBlock.Builder gBlock = new BasicBlock.Builder();
+        BasicBlock.Builder gBlock = gFunctionBuilder.addBlock();
         gBlock.addValue(Return.create(ComplexAdd.create(ga, ComplexConstant.create(new Complex(0, 2)))));
-        gFunctionBuilder.addBlock(gBlock.build());
-        int gIndex = programBuilder.addFunction(gFunctionBuilder.build());
+        programBuilder.addFunction("g", gFunctionBuilder.build());
 
         FunctionDefinition.Builder fFunctionBuilder = new FunctionDefinition.Builder();
         fFunctionBuilder.setReturnType(ValueTypes.VOID);
-        BasicBlock.Builder fBlock = new BasicBlock.Builder();
-        fBlock.addValue(FunctionCreate.create(gIndex, ImmutableList.of(ComplexConstant.create(new Complex(2, 0)))));
+        BasicBlock.Builder fBlock = fFunctionBuilder.addBlock();
+        fBlock.addValue(FunctionCreate.create("g", ImmutableList.of(ComplexConstant.create(new Complex(2, 0)))));
         fBlock.addValue(Return.create(VoidConstant.INSTANCE));
-        fFunctionBuilder.addBlock(fBlock.build());
-        programBuilder.addFunction(fFunctionBuilder.build());
+        programBuilder.addFunction("f", fFunctionBuilder.build());
 
         // test the validator
         assertDoesNotThrow(() -> ProgramValidator.checkValidity(programBuilder.build()));

@@ -21,7 +21,7 @@ class FunctionValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -34,8 +34,8 @@ class FunctionValidationTests {
         Program.Builder programBuilder = new Program.Builder();
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
-        function.addBlock(new BasicBlock.Builder().build());
-        programBuilder.addFunction(function.build());
+        function.addBlock();
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -50,11 +50,10 @@ class FunctionValidationTests {
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(valueTypes.left);
 
-        BasicBlock.Builder block = new BasicBlock.Builder();
+        BasicBlock.Builder block = function.addBlock();
         block.addValue(Return.create(createConstant(programBuilder, block, valueTypes.right)));
 
-        function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 

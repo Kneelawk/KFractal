@@ -195,20 +195,19 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<Valida
 
     @Override
     public ValidatingVisitorResult visitGlobalGet(GlobalGet globalGet) throws FractalException {
-        if (globalGet.getGlobalIndex() < 0 ||
-                globalGet.getGlobalIndex() >= context.getProgram().getGlobalVariables().size()) {
-            throw new FractalIRValidationException("Invalid global index");
+        if (!context.getProgram().getGlobalVariables().containsKey(globalGet.getGlobalName())) {
+            throw new MissingVariableReferenceException("Invalid global name");
         }
         return ValidatingVisitorResult.create();
     }
 
     @Override
     public ValidatingVisitorResult visitGlobalSet(GlobalSet globalSet) throws FractalException {
-        int globalIndex = globalSet.getGlobalIndex();
-        if (globalIndex < 0 || globalIndex >= context.getProgram().getGlobalVariables().size()) {
-            throw new FractalIRValidationException("Invalid global index");
+        String globalName = globalSet.getGlobalName();
+        if (!context.getProgram().getGlobalVariables().containsKey(globalName)) {
+            throw new MissingVariableReferenceException("Invalid global name");
         }
-        validValueTypeIfTrue(context.getProgram().getGlobalVariables().get(globalIndex).getType()
+        validValueTypeIfTrue(context.getProgram().getGlobalVariables().get(globalName).getType()
                         .isAssignableFrom(cache.getType(globalSet.getData(), context)),
                 "GlobalSet global and data are of incompatible types");
         tryVisit(globalSet, globalSet.getData());
@@ -570,13 +569,13 @@ class ValidatingProceduralValueVisitor implements IProceduralValueVisitor<Valida
 
     @Override
     public ValidatingVisitorResult visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
-        int functionIndex = functionCreate.getFunctionIndex();
-        if (functionIndex < 0 || functionIndex >= context.getProgram().getFunctions().size()) {
+        String functionName = functionCreate.getFunctionName();
+        if (!context.getProgram().getFunctions().containsKey(functionName)) {
             throw new MissingFunctionReferenceException("Invalid function create function index");
         }
 
         // compare context variable types
-        FunctionDefinition target = context.getProgram().getFunctions().get(functionIndex);
+        FunctionDefinition target = context.getProgram().getFunctions().get(functionName);
         List<ArgumentDeclaration> targetContextVariables = target.getContextVariables();
         List<IProceduralValue> createContextVariables = functionCreate.getContextVariables();
         int targetContextVariablesSize = targetContextVariables.size();

@@ -12,9 +12,9 @@ import java.util.Set;
 
 public class ProgramValidator {
     public static void checkValidity(Program program) throws FractalException {
-        checkGlobals(program.getGlobalVariables());
+        checkGlobals(program.getGlobalVariables().values());
 
-        for (FunctionDefinition function : program.getFunctions()) {
+        for (FunctionDefinition function : program.getFunctions().values()) {
             checkFunction(function, program);
         }
     }

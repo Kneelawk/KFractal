@@ -1,5 +1,6 @@
 package com.kneelawk.kfractal.generator.validation;
 
+import com.google.common.collect.ImmutableSet;
 import com.kneelawk.kfractal.generator.api.ir.*;
 import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.api.ir.constant.*;
@@ -10,10 +11,28 @@ import com.kneelawk.kfractal.generator.api.ir.instruction.Return;
 import com.kneelawk.kfractal.generator.api.ir.reference.InstructionReference;
 import org.apache.commons.math3.complex.Complex;
 
+import java.util.Set;
+
 public class ValueTypeUtils {
+    private static String findFunctionName(Set<String> usedNames) {
+        int index = 0;
+        while (usedNames.contains("func_" + index)) {
+            index++;
+        }
+        return "func_" + index;
+    }
+
+    private static String findGlobalName(Set<String> usedNames) {
+        int index = 0;
+        while (usedNames.contains("global_" + index)) {
+            index++;
+        }
+        return "global_" + index;
+    }
+
     static IProceduralValue createConstant(Program.Builder programBuilder,
                                            BasicBlock.Builder blockBuilder,
-                                           int functionOffset, int globalVariableOffset, int localVariableOffset,
+                                           Set<String> usedFunctionNames, Set<String> usedGlobalNames,
                                            ValueType type) {
         if (ValueTypes.isVoid(type)) {
             return VoidConstant.INSTANCE;
@@ -31,33 +50,37 @@ public class ValueTypeUtils {
             } else {
                 ValueTypes.FunctionType functionType = ValueTypes.toFunction(type);
                 FunctionDefinition.Builder newFunction = new FunctionDefinition.Builder();
+                String functionName = findFunctionName(
+                        ImmutableSet.<String>builder().addAll(programBuilder.getFunctions().keySet())
+                                .addAll(usedFunctionNames).build());
                 newFunction.setReturnType(functionType.getReturnType());
                 for (ValueType argumentType : functionType.getArgumentTypes()) {
                     newFunction.addArgument(ArgumentDeclaration.create(argumentType));
                 }
 
-                BasicBlock.Builder newBlock = new BasicBlock.Builder();
-                newBlock.addValue(
-                        Return.create(createConstant(programBuilder, newBlock,
-                                functionOffset, globalVariableOffset, 0,
-                                functionType.getReturnType())));
+                BasicBlock.Builder newBlock = newFunction.addBlock();
+                newBlock.addValue(Return.create(createConstant(programBuilder, newBlock,
+                        ImmutableSet.<String>builder().addAll(usedFunctionNames).add(functionName).build(),
+                        usedGlobalNames, functionType.getReturnType())));
 
-                newFunction.addBlock(newBlock.build());
-                int functionIndex = programBuilder.addFunction(newFunction.build());
-                return FunctionCreate.create(functionIndex + functionOffset);
+                programBuilder.addFunction(functionName, newFunction.build());
+                return FunctionCreate.create(functionName);
             }
         } else if (ValueTypes.isPointer(type)) {
             if (ValueTypes.isNullPointer(type)) {
                 return NullPointer.INSTANCE;
             } else {
                 // TODO: Stop relying on preallocated variables
-                int pointer =
-                        programBuilder.addGlobalVariable(GlobalDeclaration.create(type, IGlobalAttribute.PREALLOCATED))
-                                + globalVariableOffset;
-                InstructionReference reference = blockBuilder.addValue(GlobalGet.create(pointer));
+                String globalName = findGlobalName(
+                        ImmutableSet.<String>builder().addAll(programBuilder.getGlobalVariables().keySet())
+                                .addAll(usedGlobalNames).build());
+                programBuilder
+                        .addGlobalVariable(globalName, GlobalDeclaration.create(type, IGlobalAttribute.PREALLOCATED));
+                InstructionReference reference = blockBuilder.addValue(GlobalGet.create(globalName));
                 blockBuilder.addValue(PointerSet.create(reference,
-                        createConstant(programBuilder, blockBuilder, functionOffset, globalVariableOffset,
-                                localVariableOffset, ValueTypes.toPointer(type).getPointerType())));
+                        createConstant(programBuilder, blockBuilder, usedFunctionNames,
+                                ImmutableSet.<String>builder().addAll(usedGlobalNames).add(globalName).build(),
+                                ValueTypes.toPointer(type).getPointerType())));
                 return reference;
             }
         } else {
@@ -67,6 +90,6 @@ public class ValueTypeUtils {
 
     static IProceduralValue createConstant(Program.Builder programBuilder, BasicBlock.Builder blockBuilder,
                                            ValueType type) {
-        return createConstant(programBuilder, blockBuilder, 0, 0, 0, type);
+        return createConstant(programBuilder, blockBuilder, ImmutableSet.of(), ImmutableSet.of(), type);
     }
 }

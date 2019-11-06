@@ -21,7 +21,7 @@ class VariableValidationTests {
     @Test
     void testIllegalVoidVariableType() {
         Program.Builder program = new Program.Builder();
-        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.VOID));
+        program.addGlobalVariable("v", GlobalDeclaration.create(ValueTypes.VOID));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -29,7 +29,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullFunctionVariableType() {
         Program.Builder program = new Program.Builder();
-        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
+        program.addGlobalVariable("v", GlobalDeclaration.create(ValueTypes.NULL_FUNCTION));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -37,7 +37,7 @@ class VariableValidationTests {
     @Test
     void testIllegalNullPointerVariableType() {
         Program.Builder program = new Program.Builder();
-        program.addGlobalVariable(GlobalDeclaration.create(ValueTypes.NULL_POINTER));
+        program.addGlobalVariable("v", GlobalDeclaration.create(ValueTypes.NULL_POINTER));
 
         assertThrows(IllegalVariableTypeException.class, () -> ProgramValidator.checkValidity(program.build()));
     }
@@ -46,7 +46,7 @@ class VariableValidationTests {
     @MethodSource("nonPointerValueTypes")
     void testIllegalPreallocatedAnnotation(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        program.addGlobalVariable(
+        program.addGlobalVariable("v",
                 GlobalDeclaration.create(variableType, ImmutableSet.of(IGlobalAttribute.PREALLOCATED)));
 
         assertThrows(IllegalVariableAttributeException.class, () -> ProgramValidator.checkValidity(program.build()));
@@ -60,7 +60,7 @@ class VariableValidationTests {
     @ArgumentsSource(VariableValueTypesProvider.class)
     void testVariableDeclaration(ValueType variableType) {
         Program.Builder program = new Program.Builder();
-        program.addGlobalVariable(GlobalDeclaration.create(variableType));
+        program.addGlobalVariable("v", GlobalDeclaration.create(variableType));
 
         assertDoesNotThrow(() -> ProgramValidator.checkValidity(program.build()));
     }

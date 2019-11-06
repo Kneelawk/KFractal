@@ -8,16 +8,16 @@ import com.kneelawk.kfractal.util.KFractalToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class GlobalSet implements IProceduralValue {
-    private int globalIndex;
+    private String globalName;
     private IProceduralValue data;
 
-    private GlobalSet(int globalIndex, IProceduralValue data) {
-        this.globalIndex = globalIndex;
+    private GlobalSet(String globalName, IProceduralValue data) {
+        this.globalName = globalName;
         this.data = data;
     }
 
-    public int getGlobalIndex() {
-        return globalIndex;
+    public String getGlobalName() {
+        return globalName;
     }
 
     public IProceduralValue getData() {
@@ -30,49 +30,53 @@ public class GlobalSet implements IProceduralValue {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor)
-            throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitGlobalSet(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("globalIndex", globalIndex)
+                .append("globalName", globalName)
                 .append("data", data)
                 .toString();
     }
 
-    public static GlobalSet create(int globalIndex, IProceduralValue data) {
+    public static GlobalSet create(String globalName,
+                                   IProceduralValue data) {
+        if (globalName == null)
+            throw new NullPointerException("GlobalName cannot be null");
         if (data == null)
             throw new NullPointerException("Data cannot be null");
-        return new GlobalSet(globalIndex, data);
+        return new GlobalSet(globalName, data);
     }
 
     public static class Builder {
-        private int globalIndex;
+        private String globalName;
         private IProceduralValue data;
 
         public Builder() {
         }
 
-        public Builder(int globalIndex, IProceduralValue data) {
-            this.globalIndex = globalIndex;
+        public Builder(String globalName, IProceduralValue data) {
+            this.globalName = globalName;
             this.data = data;
         }
 
         public GlobalSet build() {
+            if (globalName == null)
+                throw new IllegalStateException("No globalName specified");
             if (data == null)
                 throw new IllegalStateException("No data specified");
-            return new GlobalSet(globalIndex, data);
+            return new GlobalSet(globalName, data);
         }
 
-        public int getGlobalIndex() {
-            return globalIndex;
+        public String getGlobalName() {
+            return globalName;
         }
 
-        public Builder setGlobalIndex(int globalIndex) {
-            this.globalIndex = globalIndex;
+        public Builder setGlobalName(String globalName) {
+            this.globalName = globalName;
             return this;
         }
 
