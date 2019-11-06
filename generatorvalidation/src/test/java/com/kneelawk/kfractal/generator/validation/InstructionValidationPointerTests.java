@@ -90,7 +90,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerAllocate.create(valueType));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -108,7 +108,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerAllocate.create(valueType));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -125,7 +125,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -142,7 +142,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerFree.create(NullPointer.INSTANCE));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -160,7 +160,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerFree.create(createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -196,7 +196,7 @@ public class InstructionValidationPointerTests {
                         createConstant(programBuilder, block, valueTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -217,7 +217,7 @@ public class InstructionValidationPointerTests {
         block.addValue(PointerFree.create(p));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -236,7 +236,7 @@ public class InstructionValidationPointerTests {
                 PointerSet.create(NullPointer.INSTANCE, createConstant(programBuilder, block, valueType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -256,7 +256,7 @@ public class InstructionValidationPointerTests {
                 .create(p, createConstant(programBuilder, block, valueTypes.getRight())));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 

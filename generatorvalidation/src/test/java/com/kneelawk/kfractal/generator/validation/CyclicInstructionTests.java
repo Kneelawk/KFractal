@@ -29,7 +29,7 @@ public class CyclicInstructionTests {
 
         block.addValue(not);
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 

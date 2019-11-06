@@ -23,7 +23,7 @@ class InstructionValidationReturnTests {
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(Return.create(createConstant(programBuilder, block, valueTypes.getRight())));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -40,7 +40,7 @@ class InstructionValidationReturnTests {
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(Return.create(createConstant(programBuilder, block, valueType)));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -55,7 +55,7 @@ class InstructionValidationReturnTests {
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
