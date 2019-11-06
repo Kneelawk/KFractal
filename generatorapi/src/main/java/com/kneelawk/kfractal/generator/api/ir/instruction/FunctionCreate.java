@@ -20,17 +20,17 @@ import java.util.List;
  * FunctionCreate(functionName, [ ** contextVariables ])
  */
 public class FunctionCreate implements IProceduralValue {
-    private int functionIndex;
+    private String functionName;
     private List<IProceduralValue> contextVariables;
 
-    private FunctionCreate(int functionIndex,
+    private FunctionCreate(String functionName,
                            List<IProceduralValue> contextVariables) {
-        this.functionIndex = functionIndex;
+        this.functionName = functionName;
         this.contextVariables = contextVariables;
     }
 
-    public int getFunctionIndex() {
-        return functionIndex;
+    public String getFunctionName() {
+        return functionName;
     }
 
     public List<IProceduralValue> getContextVariables() {
@@ -43,65 +43,64 @@ public class FunctionCreate implements IProceduralValue {
     }
 
     @Override
-    public <R> R accept(IValueVisitor<R> visitor)
-            throws FractalException {
+    public <R> R accept(IValueVisitor<R> visitor) throws FractalException {
         return visitor.visitFunctionCreate(this);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, KFractalToStringStyle.KFRACTAL_TO_STRING_STYLE)
-                .append("functionIndex", functionIndex)
+                .append("functionName", functionName)
                 .append("contextVariables", contextVariables)
                 .toString();
     }
 
-    public static FunctionCreate create(int functionIndex) {
-        if (functionIndex < 0)
-            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
-        return new FunctionCreate(functionIndex, ImmutableList.of());
+    public static FunctionCreate create(String functionName) {
+        if (functionName == null)
+            throw new NullPointerException("FunctionName cannot be null");
+        return new FunctionCreate(functionName, ImmutableList.of());
     }
 
-    public static FunctionCreate create(int functionIndex,
+    public static FunctionCreate create(String functionName,
                                         IProceduralValue... contextVariables) {
-        if (functionIndex < 0)
-            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
-        return new FunctionCreate(functionIndex, ImmutableList.copyOf(contextVariables));
+        if (functionName == null)
+            throw new NullPointerException("FunctionName cannot be null");
+        return new FunctionCreate(functionName, ImmutableList.copyOf(contextVariables));
     }
 
-    public static FunctionCreate create(int functionIndex,
-                                        List<IProceduralValue> contextVariables) {
-        if (functionIndex < 0)
-            throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
-        return new FunctionCreate(functionIndex, ImmutableList.copyOf(contextVariables));
+    public static FunctionCreate create(String functionName,
+                                        Iterable<IProceduralValue> contextVariables) {
+        if (functionName == null)
+            throw new NullPointerException("FunctionName cannot be null");
+        return new FunctionCreate(functionName, ImmutableList.copyOf(contextVariables));
     }
 
     public static class Builder {
-        private int functionIndex;
-        private List<IProceduralValue>
-                contextVariables = Lists.newArrayList();
+        private String functionName;
+        private List<IProceduralValue> contextVariables =
+                Lists.newArrayList();
 
         public Builder() {
         }
 
-        public Builder(int functionIndex,
+        public Builder(String functionName,
                        Collection<IProceduralValue> contextVariables) {
-            this.functionIndex = functionIndex;
+            this.functionName = functionName;
             this.contextVariables.addAll(contextVariables);
         }
 
         public FunctionCreate build() {
-            if (functionIndex < 0)
-                throw new IndexOutOfBoundsException("FunctionContextConstant index cannot be less than 0");
-            return new FunctionCreate(functionIndex, ImmutableList.copyOf(contextVariables));
+            if (functionName == null)
+                throw new IllegalStateException("No functionName specified");
+            return new FunctionCreate(functionName, ImmutableList.copyOf(contextVariables));
         }
 
-        public int getFunctionIndex() {
-            return functionIndex;
+        public String getFunctionName() {
+            return functionName;
         }
 
-        public Builder setFunctionIndex(int functionIndex) {
-            this.functionIndex = functionIndex;
+        public Builder setFunctionName(String functionName) {
+            this.functionName = functionName;
             return this;
         }
 
@@ -110,9 +109,9 @@ public class FunctionCreate implements IProceduralValue {
         }
 
         public Builder setContextVariables(
-                List<IProceduralValue> contextVariables) {
+                Collection<IProceduralValue> contextVariables) {
             this.contextVariables.clear();
-            contextVariables.addAll(contextVariables);
+            this.contextVariables.addAll(contextVariables);
             return this;
         }
 
@@ -121,12 +120,14 @@ public class FunctionCreate implements IProceduralValue {
             return this;
         }
 
-        public Builder addContextVariables(IProceduralValue... contextVariables) {
+        public Builder addContextVariables(
+                IProceduralValue... contextVariables) {
             this.contextVariables.addAll(Arrays.asList(contextVariables));
             return this;
         }
 
-        public Builder addContextVariables(Collection<IProceduralValue> contextVariables) {
+        public Builder addContextVariables(
+                Collection<IProceduralValue> contextVariables) {
             this.contextVariables.addAll(contextVariables);
             return this;
         }

@@ -95,18 +95,18 @@ class InstructionValidationFunctionTests {
         otherBlock.addValue(
                 Return.create(createConstant(programBuilder, otherBlock, functionType.getReturnType())));
         otherFunction.addBlock(otherBlock.build());
-        int gIndex = programBuilder.addFunction(otherFunction.build());
+        programBuilder.addFunction("g", otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(FunctionCall
-                .create(FunctionCreate.create(gIndex),
+                .create(FunctionCreate.create("g"),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, block, v))
                                 .collect(Collectors.toList())));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -123,7 +123,7 @@ class InstructionValidationFunctionTests {
         block.addValue(FunctionCall.create(NullFunction.INSTANCE));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -144,18 +144,18 @@ class InstructionValidationFunctionTests {
         otherBlock.addValue(
                 Return.create(createConstant(programBuilder, otherBlock, functionType.getReturnType())));
         otherFunction.addBlock(otherBlock.build());
-        int gIndex = programBuilder.addFunction(otherFunction.build());
+        programBuilder.addFunction("g", otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(FunctionCall
-                .create(FunctionCreate.create(gIndex),
+                .create(FunctionCreate.create("g"),
                         functionAndArgs.getRight().stream().map(v -> createConstant(programBuilder, block, v))
                                 .collect(Collectors.toList())));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -172,16 +172,16 @@ class InstructionValidationFunctionTests {
         BasicBlock.Builder otherBlock = new BasicBlock.Builder();
         otherBlock.addValue(Return.create(VoidConstant.INSTANCE));
         otherFunction.addBlock(otherBlock.build());
-        int gIndex = programBuilder.addFunction(otherFunction.build());
+        programBuilder.addFunction("g", otherFunction.build());
 
         FunctionDefinition.Builder function = new FunctionDefinition.Builder();
         function.setReturnType(ValueTypes.VOID);
         BasicBlock.Builder block = new BasicBlock.Builder();
         block.addValue(FunctionCall
-                .create(FunctionCreate.create(gIndex)));
+                .create(FunctionCreate.create("g")));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 

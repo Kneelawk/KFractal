@@ -108,9 +108,12 @@ class TypeLookupValueVisitor implements IValueVisitor<ValueType> {
     }
 
     @Override
-    public ValueType visitGlobalGet(GlobalGet globalGet) {
-        return
-                context.getProgram().getGlobalVariables().get(globalGet.getGlobalIndex()).getType();
+    public ValueType visitGlobalGet(GlobalGet globalGet) throws FractalException {
+        String name = globalGet.getGlobalName();
+        if (!context.getProgram().getGlobalVariables().containsKey(name)) {
+            throw new MissingVariableReferenceException("Cannot determine the type of a global variable that does not exist");
+        }
+        return context.getProgram().getGlobalVariables().get(name).getType();
     }
 
     @Override
@@ -295,12 +298,12 @@ class TypeLookupValueVisitor implements IValueVisitor<ValueType> {
 
     @Override
     public ValueType visitFunctionCreate(FunctionCreate functionCreate) throws FractalException {
-        int index = functionCreate.getFunctionIndex();
-        if (index < 0 || index > context.getProgram().getFunctions().size()) {
+        String name = functionCreate.getFunctionName();
+        if (!context.getProgram().getFunctions().containsKey(name)) {
             throw new MissingFunctionReferenceException("Cannot determine type of a function that does not exist");
         }
 
-        FunctionDefinition function = context.getProgram().getFunctions().get(functionCreate.getFunctionIndex());
+        FunctionDefinition function = context.getProgram().getFunctions().get(name);
         ImmutableList.Builder<ValueType> arguments = ImmutableList.builder();
         for (ArgumentDeclaration argument : function.getArguments()) {
             arguments.add(argument.getType());

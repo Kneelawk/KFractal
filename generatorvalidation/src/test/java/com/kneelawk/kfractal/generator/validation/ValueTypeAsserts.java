@@ -21,7 +21,7 @@ class ValueTypeAsserts {
                 createConstant(programBuilder, block, argumentTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -38,7 +38,7 @@ class ValueTypeAsserts {
                 createConstant(programBuilder, block, argumentTypes.get(1))));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -53,7 +53,7 @@ class ValueTypeAsserts {
         block.addValue(creator.create(createConstant(programBuilder, block, argumentType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
@@ -69,7 +69,7 @@ class ValueTypeAsserts {
         block.addValue(creator.create(createConstant(programBuilder, block, argumentType)));
         block.addValue(Return.create(VoidConstant.INSTANCE));
         function.addBlock(block.build());
-        programBuilder.addFunction(function.build());
+        programBuilder.addFunction("f", function.build());
 
         Program program = programBuilder.build();
 
