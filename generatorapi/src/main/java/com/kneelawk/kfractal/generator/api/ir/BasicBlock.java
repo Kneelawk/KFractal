@@ -67,18 +67,10 @@ public class BasicBlock {
     public static class Builder {
         private List<Supplier<Phi>> phis = Lists.newArrayList();
         private List<Supplier<IProceduralValue>> body = Lists.newArrayList();
-        private int blockIndex = 0;
-
-        public Builder() {
-        }
+        private int blockIndex;
 
         public Builder(int blockIndex) {
             this.blockIndex = blockIndex;
-        }
-
-        public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IProceduralValue>> body) {
-            this.phis.addAll(phis);
-            this.body.addAll(body);
         }
 
         public Builder(Collection<Supplier<Phi>> phis, Collection<Supplier<IProceduralValue>> body, int blockIndex) {
