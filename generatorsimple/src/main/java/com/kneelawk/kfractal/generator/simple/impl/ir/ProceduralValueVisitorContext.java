@@ -1,7 +1,9 @@
 package com.kneelawk.kfractal.generator.simple.impl.ir;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.kneelawk.kfractal.generator.api.engine.value.IEngineValue;
 import com.kneelawk.kfractal.generator.api.ir.BasicBlock;
 import com.kneelawk.kfractal.generator.api.ir.FunctionDefinition;
@@ -12,18 +14,19 @@ import com.kneelawk.kfractal.generator.simple.impl.ValueContainer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 class ProceduralValueVisitorContext {
     private final SimpleProgramEngine engine;
     private final Program program;
-    private final List<ValueContainer> globalVariables;
+    private final Map<String, ValueContainer> globalVariables;
     private final FunctionDefinition function;
     private final List<IEngineValue> contextVariables;
     private final List<IEngineValue> arguments;
     private final BasicBlock block;
 
     private ProceduralValueVisitorContext(SimpleProgramEngine engine, Program program,
-                                          List<ValueContainer> globalVariables,
+                                          Map<String, ValueContainer> globalVariables,
                                           FunctionDefinition function,
                                           List<IEngineValue> contextVariables,
                                           List<IEngineValue> arguments,
@@ -45,7 +48,7 @@ class ProceduralValueVisitorContext {
         return program;
     }
 
-    public List<ValueContainer> getGlobalVariables() {
+    public Map<String, ValueContainer> getGlobalVariables() {
         return globalVariables;
     }
 
@@ -68,7 +71,7 @@ class ProceduralValueVisitorContext {
     public static ProceduralValueVisitorContext create(
             SimpleProgramEngine engine,
             Program program,
-            Iterable<ValueContainer> globalVariables,
+            Map<String, ValueContainer> globalVariables,
             FunctionDefinition function,
             Iterable<IEngineValue> contextVariables,
             Iterable<IEngineValue> arguments,
@@ -82,7 +85,7 @@ class ProceduralValueVisitorContext {
         if (block == null)
             throw new NullPointerException("Block cannot be null");
         return new ProceduralValueVisitorContext(engine, program,
-                ImmutableList.copyOf(globalVariables), function,
+                ImmutableMap.copyOf(globalVariables), function,
                 ImmutableList.copyOf(contextVariables),
                 ImmutableList.copyOf(arguments), block);
     }
@@ -90,8 +93,8 @@ class ProceduralValueVisitorContext {
     public static class Builder {
         private SimpleProgramEngine engine;
         private Program program;
-        private List<ValueContainer> globalVariables =
-                Lists.newArrayList();
+        private Map<String, ValueContainer>
+                globalVariables = Maps.newHashMap();
         private FunctionDefinition function;
         private List<IEngineValue> contextVariables =
                 Lists.newArrayList();
@@ -104,14 +107,14 @@ class ProceduralValueVisitorContext {
 
         public Builder(SimpleProgramEngine engine,
                        Program program,
-                       Collection<ValueContainer> globalVariables,
+                       Map<String, ValueContainer> globalVariables,
                        FunctionDefinition function,
                        Collection<IEngineValue> contextVariables,
                        Collection<IEngineValue> arguments,
                        BasicBlock block) {
             this.engine = engine;
             this.program = program;
-            this.globalVariables.addAll(globalVariables);
+            this.globalVariables.putAll(globalVariables);
             this.function = function;
             this.contextVariables.addAll(contextVariables);
             this.arguments.addAll(arguments);
@@ -128,7 +131,7 @@ class ProceduralValueVisitorContext {
             if (block == null)
                 throw new IllegalStateException("No block specified");
             return new ProceduralValueVisitorContext(engine, program,
-                    ImmutableList.copyOf(globalVariables), function,
+                    ImmutableMap.copyOf(globalVariables), function,
                     ImmutableList.copyOf(contextVariables),
                     ImmutableList.copyOf(arguments), block);
         }
@@ -151,31 +154,26 @@ class ProceduralValueVisitorContext {
             return this;
         }
 
-        public List<ValueContainer> getGlobalVariables() {
+        public Map<String, ValueContainer> getGlobalVariables() {
             return globalVariables;
         }
 
         public Builder setGlobalVariables(
-                Collection<ValueContainer> globalVariables) {
+                Map<String, ValueContainer> globalVariables) {
             this.globalVariables.clear();
-            this.globalVariables.addAll(globalVariables);
+            this.globalVariables.putAll(globalVariables);
             return this;
         }
 
-        public Builder addGlobalVariable(ValueContainer globalVariable) {
-            globalVariables.add(globalVariable);
+        public Builder putGlobalVariable(String key,
+                                         ValueContainer value) {
+            this.globalVariables.put(key, value);
             return this;
         }
 
-        public Builder addGlobalVariables(
-                ValueContainer... globalVariables) {
-            this.globalVariables.addAll(Arrays.asList(globalVariables));
-            return this;
-        }
-
-        public Builder addGlobalVariables(
-                Collection<ValueContainer> globalVariables) {
-            this.globalVariables.addAll(globalVariables);
+        public Builder putGlobalVariables(
+                Map<String, ValueContainer> globalVariables) {
+            this.globalVariables.putAll(globalVariables);
             return this;
         }
 

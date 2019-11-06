@@ -19,7 +19,7 @@ public class ValueManager {
 
     public BasicBlockResult runBasicBlock(BasicBlock block, int previousBlockIndex, FunctionDefinition function,
                                    List<IEngineValue> contextVariables, List<IEngineValue> arguments, Program program,
-                                   SimpleProgramEngine engine, List<ValueContainer> globalVariables)
+                                   SimpleProgramEngine engine, Map<String, ValueContainer> globalVariables)
             throws FractalException {
         PhiInputVisitorContext phiInputVisitorContext =
                 PhiInputVisitorContext.create(function, contextVariables, arguments);

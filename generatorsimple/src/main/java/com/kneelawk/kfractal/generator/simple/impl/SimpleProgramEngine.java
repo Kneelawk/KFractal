@@ -1,6 +1,7 @@
 package com.kneelawk.kfractal.generator.simple.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.kneelawk.kfractal.generator.api.FractalException;
 import com.kneelawk.kfractal.generator.api.engine.FractalEngineException;
 import com.kneelawk.kfractal.generator.api.engine.IProgramEngine;
@@ -15,6 +16,7 @@ import com.kneelawk.kfractal.generator.simple.impl.ir.ValueManager;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -25,28 +27,29 @@ public class SimpleProgramEngine implements IProgramEngine {
 
     private final SimpleEngineValueFactory factory = new SimpleEngineValueFactory(this);
 
-    private List<ValueContainer> globalScope;
+    private Map<String, ValueContainer> globalScope;
     private Program program;
 
     @Override
     public void initialize(Program program) throws FractalEngineException {
         this.program = program;
-        ImmutableList.Builder<ValueContainer> globalVariablesBuilder = ImmutableList.builder();
-        addVariablesToScope(globalVariablesBuilder, program.getGlobalVariables());
+        ImmutableMap.Builder<String, ValueContainer> globalVariablesBuilder = ImmutableMap.builder();
+        addVariablesToScope(globalVariablesBuilder, program.getGlobalVariables().entrySet());
         globalScope = globalVariablesBuilder.build();
     }
 
-    private void addVariablesToScope(ImmutableList.Builder<ValueContainer> scope,
-                                     Iterable<GlobalDeclaration> variables)
+    private void addVariablesToScope(ImmutableMap.Builder<String, ValueContainer> scope,
+                                     Iterable<Map.Entry<String, GlobalDeclaration>> variables)
             throws FractalEngineException {
-        for (GlobalDeclaration v : variables) {
+        for (Map.Entry<String, GlobalDeclaration> entry : variables) {
+            GlobalDeclaration v = entry.getValue();
             IEngineValue value;
             if (ValueTypes.isPointer(v.getType()) && v.getAttributes().contains(IGlobalAttribute.PREALLOCATED)) {
                 value = factory.newPointer(getDefaultValue(ValueTypes.toPointer(v.getType()).getPointerType()));
             } else {
                 value = getDefaultValue(v.getType());
             }
-            scope.add(new ValueContainer(v.getType(), value));
+            scope.put(entry.getKey(), new ValueContainer(v.getType(), value));
         }
     }
 
@@ -76,39 +79,39 @@ public class SimpleProgramEngine implements IProgramEngine {
     }
 
     @Override
-    public ValueType getGlobalValueType(int index) throws FractalEngineException {
-        return globalScope.get(index).getType();
+    public ValueType getGlobalValueType(String name) throws FractalEngineException {
+        return globalScope.get(name).getType();
     }
 
     @Override
-    public IEngineValue getGlobalValue(int index) throws FractalEngineException {
-        return globalScope.get(index).getValue();
+    public IEngineValue getGlobalValue(String name) throws FractalEngineException {
+        return globalScope.get(name).getValue();
     }
 
     @Override
-    public void setGlobalValue(int index, IEngineValue value) throws FractalEngineException {
-        globalScope.get(index).setValue(value);
+    public void setGlobalValue(String name, IEngineValue value) throws FractalEngineException {
+        globalScope.get(name).setValue(value);
     }
 
     @Override
-    public ValueTypes.FunctionType getFunctionSignature(int index) throws FractalEngineException {
-        FunctionDefinition definition = program.getFunctions().get(index);
+    public ValueTypes.FunctionType getFunctionSignature(String name) throws FractalEngineException {
+        FunctionDefinition definition = program.getFunctions().get(name);
         return ValueTypes.FUNCTION(definition.getReturnType(),
                 definition.getArguments().stream().map(ArgumentDeclaration::getType).collect(Collectors.toList()));
     }
 
     @Override
-    public IFunctionValue getFunction(int index, List<IEngineValue> contextValues) throws FractalEngineException {
-        if (index < program.getFunctions().size()) {
-            return new SimpleFunctionValue(this, index, ImmutableList.copyOf(contextValues));
+    public IFunctionValue getFunction(String name, List<IEngineValue> contextValues) throws FractalEngineException {
+        if (program.getFunctions().containsKey(name)) {
+            return new SimpleFunctionValue(this, name, ImmutableList.copyOf(contextValues));
         } else {
-            throw new FractalEngineException("Unable to find function: index: " + index);
+            throw new FractalEngineException("Unable to find function: " + name);
         }
     }
 
-    IEngineValue invokeFunction(int index, List<IEngineValue> contextVariables, List<IEngineValue> arguments)
+    IEngineValue invokeFunction(String name, List<IEngineValue> contextVariables, List<IEngineValue> arguments)
             throws FractalException {
-        FunctionDefinition definition = program.getFunctions().get(index);
+        FunctionDefinition definition = program.getFunctions().get(name);
         List<ArgumentDeclaration> contextVariableList = definition.getContextVariables();
         List<ArgumentDeclaration> argumentList = definition.getArguments();
 

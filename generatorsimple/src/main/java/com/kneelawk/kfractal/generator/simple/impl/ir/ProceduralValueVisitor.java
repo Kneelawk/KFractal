@@ -110,13 +110,13 @@ public class ProceduralValueVisitor implements IProceduralValueVisitor<Procedura
     @Override
     public ProceduralValueVisitorResult visitGlobalGet(GlobalGet globalGet) {
         return ProceduralValueVisitorResult
-                .create(context.getGlobalVariables().get(globalGet.getGlobalIndex()).getValue());
+                .create(context.getGlobalVariables().get(globalGet.getGlobalName()).getValue());
     }
 
     @Override
     public ProceduralValueVisitorResult visitGlobalSet(GlobalSet globalSet) throws FractalException {
         IEngineValue value = shouldNotTerminate(valueManager.getOrGenerateValue(globalSet.getData(), context));
-        context.getGlobalVariables().get(globalSet.getGlobalIndex()).setValue(value);
+        context.getGlobalVariables().get(globalSet.getGlobalName()).setValue(value);
         return ProceduralValueVisitorResult.create(SimpleVoidValue.INSTANCE);
     }
 
@@ -432,7 +432,7 @@ public class ProceduralValueVisitor implements IProceduralValueVisitor<Procedura
             contextValues.add(shouldNotTerminate(valueManager.getOrGenerateValue(input, context)));
         }
         return ProceduralValueVisitorResult
-                .create(context.getEngine().getFunction(functionCreate.getFunctionIndex(), contextValues.build()));
+                .create(context.getEngine().getFunction(functionCreate.getFunctionName(), contextValues.build()));
     }
 
     @Override
