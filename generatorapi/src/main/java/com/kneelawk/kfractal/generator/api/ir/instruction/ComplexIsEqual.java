@@ -16,7 +16,7 @@ public class ComplexIsEqual implements IProceduralValue {
     private IProceduralValue left;
     private IProceduralValue right;
 
-    public ComplexIsEqual(IProceduralValue left, IProceduralValue right) {
+    private ComplexIsEqual(IProceduralValue left, IProceduralValue right) {
         this.left = left;
         this.right = right;
     }
