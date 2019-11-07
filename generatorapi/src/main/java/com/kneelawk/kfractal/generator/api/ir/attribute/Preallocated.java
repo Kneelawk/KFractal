@@ -17,4 +17,9 @@ public class Preallocated implements IGlobalAttribute {
     public <R> R accept(IGlobalAttributeVisitor<R> visitor) throws FractalException {
         return visitor.visitPreallocated();
     }
+
+    @Override
+    public String toString() {
+        return "Preallocated";
+    }
 }
