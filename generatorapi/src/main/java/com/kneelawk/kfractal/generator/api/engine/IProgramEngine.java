@@ -9,17 +9,22 @@ import com.kneelawk.kfractal.generator.api.ir.ValueType;
 import com.kneelawk.kfractal.generator.api.ir.ValueTypes;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IProgramEngine {
     void initialize(Program program) throws FractalException;
 
     IEngineValueFactory getValueFactory() throws FractalException;
 
+    Map<String, ValueType> getGlobalValueTypes() throws FractalException;
+
     ValueType getGlobalValueType(String name) throws FractalException;
 
     IEngineValue getGlobalValue(String name) throws FractalException;
 
     void setGlobalValue(String name, IEngineValue value) throws FractalException;
+
+    Map<String, ValueTypes.FunctionType> getFunctionSignatures() throws FractalException;
 
     ValueTypes.FunctionType getFunctionSignature(String name) throws FractalException;
 
