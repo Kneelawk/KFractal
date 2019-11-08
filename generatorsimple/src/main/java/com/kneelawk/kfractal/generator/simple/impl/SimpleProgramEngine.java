@@ -13,6 +13,7 @@ import com.kneelawk.kfractal.generator.api.ir.attribute.IGlobalAttribute;
 import com.kneelawk.kfractal.generator.simple.impl.ir.BasicBlockResult;
 import com.kneelawk.kfractal.generator.simple.impl.ir.BlockTerminationType;
 import com.kneelawk.kfractal.generator.simple.impl.ir.ValueManager;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.complex.Complex;
 
 import java.util.List;
@@ -79,6 +80,12 @@ public class SimpleProgramEngine implements IProgramEngine {
     }
 
     @Override
+    public Map<String, ValueType> getGlobalValueTypes() throws FractalException {
+        return globalScope.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue().getType()))
+                .collect(ImmutableMap.toImmutableMap(Pair::getKey, Pair::getValue));
+    }
+
+    @Override
     public ValueType getGlobalValueType(String name) throws FractalEngineException {
         return globalScope.get(name).getType();
     }
@@ -91,6 +98,15 @@ public class SimpleProgramEngine implements IProgramEngine {
     @Override
     public void setGlobalValue(String name, IEngineValue value) throws FractalEngineException {
         globalScope.get(name).setValue(value);
+    }
+
+    @Override
+    public Map<String, ValueTypes.FunctionType> getFunctionSignatures() throws FractalException {
+        return program.getFunctions().entrySet().stream().map(e -> Pair.of(e.getKey(), ValueTypes
+                .FUNCTION(e.getValue().getReturnType(),
+                        e.getValue().getArguments().stream().map(ArgumentDeclaration::getType)
+                                .collect(ImmutableList.toImmutableList()))))
+                .collect(ImmutableMap.toImmutableMap(Pair::getKey, Pair::getValue));
     }
 
     @Override
